@@ -114,6 +114,7 @@ export default function PlayScreen() {
         <Text style={[styles.title, fontsLoaded && styles.titleWithCustomFont]}>DIALED</Text>
         
         {/* Mode Toggle */}
+        <Text style={styles.toggleLabel}>Course Mode</Text>
         <View style={styles.toggleContainer}>
           <TouchableOpacity 
             style={[styles.toggleButton, courseMode === "Indoor" && styles.toggleButtonSelected]} 
@@ -130,6 +131,7 @@ export default function PlayScreen() {
         </View>
         
         {/* Hole Count Toggle */}
+        <Text style={styles.toggleLabel}>Round Length</Text>
         <View style={styles.toggleContainer}>
           <TouchableOpacity 
             style={[styles.toggleButton, holeCount === 9 && styles.toggleButtonSelected]} 
@@ -145,8 +147,8 @@ export default function PlayScreen() {
           </TouchableOpacity>
         </View>
         
-        <TouchableOpacity style={styles.button} onPress={handleStartNewGame}>
-          <Text style={styles.buttonText}>New Game</Text>
+        <TouchableOpacity style={styles.newGameButton} onPress={handleStartNewGame}>
+          <Text style={styles.newGameButtonText}>New Game</Text>
         </TouchableOpacity>
       </View>
     );
@@ -319,28 +321,36 @@ const styles = StyleSheet.create({
     fontSize: 48,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 50,
+    marginBottom: 60,
     color: '#FFFFFF',
   },
   titleWithCustomFont: {
     fontFamily: 'BebasNeue_400Regular',
     fontSize: 84,
     letterSpacing: 6,
-    marginBottom: 60,
+    marginBottom: 80,
+  },
+  toggleLabel: {
+    color: '#B0B0B0',
+    fontSize: 14,
+    marginBottom: 6,
+    width: '80%',
+    textAlign: 'left',
   },
   toggleContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
+    marginBottom: 25,
     width: '80%',
+    backgroundColor: '#3D3D3D',
+    borderRadius: 12,
+    padding: 4,
   },
   toggleButton: {
     flex: 1,
-    paddingVertical: 15,
-    backgroundColor: '#3D3D3D',
+    paddingVertical: 12,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
-    margin: 5,
   },
   toggleButtonSelected: {
     backgroundColor: '#93C757',
@@ -348,10 +358,11 @@ const styles = StyleSheet.create({
   toggleText: {
     color: '#B0B0B0',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   toggleTextSelected: {
     color: '#FFFFFF',
+    fontWeight: 'bold',
   },
   holeNumber: {
     fontSize: 54,
@@ -455,6 +466,26 @@ const styles = StyleSheet.create({
   },
   startRoundButton: {
     marginTop: 40,
+  },
+  newGameButton: {
+    backgroundColor: '#93C757',
+    paddingVertical: 20,
+    paddingHorizontal: 40,
+    borderRadius: 16,
+    marginHorizontal: 20,
+    marginTop: 40,
+    width: '80%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  newGameButtonText: {
+    color: '#FFFFFF',
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   buttonText: {
     color: '#FFFFFF',
