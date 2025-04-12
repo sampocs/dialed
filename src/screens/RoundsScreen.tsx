@@ -50,13 +50,13 @@ export default function RoundsScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.roundsList}>
-        {rounds.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No rounds played yet</Text>
-          </View>
-        ) : (
-          rounds
+      {rounds.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No rounds played yet</Text>
+        </View>
+      ) : (
+        <ScrollView style={styles.roundsList}>
+          {rounds
             .sort((a, b) => b.date - a.date)
             .map((round) => (
               <View key={round.id} style={styles.roundItem}>
@@ -123,9 +123,9 @@ export default function RoundsScreen() {
                   </View>
                 )}
               </View>
-            ))
-        )}
-      </ScrollView>
+            ))}
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -144,12 +144,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -40,  // To account for the paddingTop in the container
+    marginTop: -20,
   },
   emptyText: {
     textAlign: 'center',
     color: '#B0B0B0',
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '500',
   },
   roundItem: {
     marginBottom: 20,

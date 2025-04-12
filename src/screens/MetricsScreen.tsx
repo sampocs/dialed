@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292929',
-    paddingTop: 60,
+    paddingTop: 20,
   },
   header: {
     flexDirection: 'row',
@@ -174,12 +174,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -40,
+    marginTop: -20,
   },
   emptyText: {
     textAlign: 'center',
     color: '#B0B0B0',
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '500',
   },
   statsContainer: {
     flexDirection: 'row',

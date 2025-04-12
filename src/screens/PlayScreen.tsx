@@ -124,7 +124,7 @@ export default function PlayScreen() {
           <Scorecard course={currentRound.course} />
         </View>
         
-        <TouchableOpacity style={styles.button} onPress={handleStartRound}>
+        <TouchableOpacity style={[styles.button, styles.startRoundButton]} onPress={handleStartRound}>
           <Text style={styles.buttonText}>Start Round</Text>
         </TouchableOpacity>
       </View>
@@ -377,6 +377,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     borderRadius: 16,
     marginHorizontal: 20,
+  },
+  startRoundButton: {
+    marginTop: 40,
   },
   buttonText: {
     color: '#FFFFFF',
