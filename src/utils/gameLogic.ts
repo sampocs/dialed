@@ -192,6 +192,7 @@ export function calculateStats(rounds: Round[]) {
   if (rounds.length === 0) {
     return {
       averageScore: 0,
+      averageTotal: 0,
       bestRound: null,
       recentTrend: 0,
     };
@@ -202,6 +203,7 @@ export function calculateStats(rounds: Round[]) {
   if (completedRounds.length === 0) {
     return {
       averageScore: 0,
+      averageTotal: 0,
       bestRound: null,
       recentTrend: 0,
     };
@@ -209,6 +211,10 @@ export function calculateStats(rounds: Round[]) {
 
   const averageScore =
     completedRounds.reduce((sum, round) => sum + round.differential, 0) /
+    completedRounds.length;
+
+  const averageTotal =
+    completedRounds.reduce((sum, round) => sum + round.totalScore, 0) /
     completedRounds.length;
 
   const bestRound = completedRounds.reduce((best, current) =>
@@ -229,6 +235,7 @@ export function calculateStats(rounds: Round[]) {
 
   return {
     averageScore,
+    averageTotal,
     bestRound,
     recentTrend,
   };

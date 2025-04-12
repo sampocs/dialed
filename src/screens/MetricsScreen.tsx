@@ -302,29 +302,38 @@ export default function MetricsScreen() {
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>Average Score</Text>
-          <Text style={styles.statValue}>
-            {stats.averageScore > 0 ? '+' : ''}
-            {stats.averageScore.toFixed(1)}
-          </Text>
+          <View style={styles.scoreContainer}>
+            <Text style={styles.statValue}>{Math.round(stats.averageTotal * 10) / 10}</Text>
+            <Text style={styles.differentialText}>
+              ({stats.averageScore > 0 ? '+' : ''}{Math.round(stats.averageScore * 10) / 10})
+            </Text>
+          </View>
         </View>
 
         {stats.bestRound && (
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Best Round</Text>
-            <Text style={styles.statValue}>
-              {stats.bestRound.differential > 0 ? '+' : ''}
-              {stats.bestRound.differential}
-            </Text>
+            <View style={styles.scoreContainer}>
+              <Text style={styles.statValue}>{stats.bestRound.totalScore}</Text>
+              <Text style={styles.differentialText}>
+                ({stats.bestRound.differential > 0 ? '+' : ''}{stats.bestRound.differential})
+              </Text>
+            </View>
           </View>
         )}
 
         {sortedCompletedRounds.length > 0 && (
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>Last Round</Text>
-            <Text style={styles.statValue}>
-              {sortedCompletedRounds[sortedCompletedRounds.length - 1].differential > 0 ? '+' : ''}
-              {sortedCompletedRounds[sortedCompletedRounds.length - 1].differential}
-            </Text>
+            <View style={styles.scoreContainer}>
+              <Text style={styles.statValue}>
+                {sortedCompletedRounds[sortedCompletedRounds.length - 1].totalScore}
+              </Text>
+              <Text style={styles.differentialText}>
+                ({sortedCompletedRounds[sortedCompletedRounds.length - 1].differential > 0 ? '+' : ''}
+                {sortedCompletedRounds[sortedCompletedRounds.length - 1].differential})
+              </Text>
+            </View>
           </View>
         )}
       </View>
@@ -479,6 +488,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#FFFFFF',
+  },
+  scoreContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4, // Add spacing between score and differential
+  },
+  differentialText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#B0B0B0',
   },
   graphContainer: {
     flex: 1,
