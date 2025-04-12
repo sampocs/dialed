@@ -250,7 +250,9 @@ export default function PlayScreen() {
             onPress={() => handleNavigateHole('prev')}
             style={[styles.overlayNavButton, styles.leftNavButton]}
           >
-            <Text style={styles.navButtonText}>←</Text>
+            <View style={[styles.navButtonIcon, styles.leftNavIcon]}>
+              <Text style={styles.navButtonText}>←</Text>
+            </View>
           </TouchableOpacity>
         )}
         
@@ -259,7 +261,9 @@ export default function PlayScreen() {
             onPress={() => handleNavigateHole('next')}
             style={[styles.overlayNavButton, styles.rightNavButton]}
           >
-            <Text style={styles.navButtonText}>→</Text>
+            <View style={[styles.navButtonIcon, styles.rightNavIcon]}>
+              <Text style={styles.navButtonText}>→</Text>
+            </View>
           </TouchableOpacity>
         )}
       </View>
@@ -584,18 +588,34 @@ const styles = StyleSheet.create({
   },
   overlayNavButton: {
     position: 'absolute',
-    top: '65%',
-    marginTop: -30,
-    padding: 20,
+    top: 0,
+    bottom: 0,
+    width: '25%',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
   },
   leftNavButton: {
-    left: 10,
+    left: 0,
   },
   rightNavButton: {
-    right: 10,
+    right: 0,
+  },
+  navButtonIcon: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  leftNavIcon: {
+    position: 'absolute',
+    left: 40,
+    top: '71%',
+    marginTop: -30,
+  },
+  rightNavIcon: {
+    position: 'absolute',
+    right: 40,
+    top: '71%',
+    marginTop: -30,
   },
   navButtonText: {
     fontSize: 42,
