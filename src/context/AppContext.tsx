@@ -79,16 +79,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const completedRound = { ...state.currentRound, completed: true };
     const updatedRounds = [...state.rounds, completedRound];
     
+    // Save the completed round to storage
     await Promise.all([
       storage.saveRounds(updatedRounds),
-      storage.saveCurrentRound(null),
+      storage.saveCurrentRound(completedRound),
     ]);
 
+    // Update state to show the completed round
     setState(current => ({
       ...current,
       rounds: updatedRounds,
-      currentRound: null,
-      gameState: 'no-game',
+      currentRound: completedRound,
+      gameState: 'game-complete',
     }));
   };
 

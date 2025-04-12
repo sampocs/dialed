@@ -72,9 +72,16 @@ export default function PlayScreen() {
   };
 
   const handleQuit = () => {
+    // For 'game-ready' or 'game-complete' state, quit immediately without confirmation
+    if (gameState === 'game-ready' || gameState === 'game-complete') {
+      quitGame();
+      return;
+    }
+    
+    // For 'game-in-progress' state, show confirmation dialog
     Alert.alert(
       'Quit the game?',
-      'Are you sure you want to quit? Your progress will be lost.',
+      'Your progress will be lost.',
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Quit', style: 'destructive', onPress: quitGame },
@@ -83,14 +90,7 @@ export default function PlayScreen() {
   };
 
   const handleComplete = () => {
-    Alert.alert(
-      'Complete Round',
-      'Are you sure you want to complete this round?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Complete', onPress: completeRound },
-      ]
-    );
+    completeRound();
   };
 
   // Function to calculate the current score details
@@ -177,6 +177,36 @@ export default function PlayScreen() {
         <TouchableOpacity style={[styles.button, styles.startRoundButton]} onPress={handleStartRound}>
           <Text style={styles.buttonText}>Start Round</Text>
         </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if (gameState === 'game-complete' && currentRound) {
+    // Calculate the total score and differential
+    const totalScore = currentRound.totalScore;
+    const differential = currentRound.differential;
+    
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.spacer} />
+          <TouchableOpacity onPress={handleQuit} style={styles.quitButton}>
+            <Text style={styles.quitButtonText}>✕</Text>
+          </TouchableOpacity>
+        </View>
+        
+        <Text style={styles.titleSmall}>Round Complete!</Text>
+        
+        <View style={styles.roundSummary}>
+          <Text style={styles.courseName}>{currentRound.courseName}</Text>
+          <Text style={styles.scoreText}>
+            Final Score: {totalScore} ({differential >= 0 ? '+' : ''}{differential})
+          </Text>
+        </View>
+        
+        <View style={styles.scorecardContainer}>
+          <Scorecard course={currentRound.course} />
+        </View>
       </View>
     );
   }
@@ -579,5 +609,19 @@ const styles = StyleSheet.create({
     width: '90%',
     maxHeight: '70%',
     marginVertical: 20,
+  },
+  roundSummary: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  courseName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 10,
+  },
+  scoreText: {
+    fontSize: 18,
+    color: '#FFFFFF',
   },
 }); 
