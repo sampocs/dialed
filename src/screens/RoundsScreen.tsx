@@ -316,15 +316,6 @@ export default function RoundsScreen() {
               </View>
               
               <View style={styles.scorecardActions}>
-                {selectedRound && (
-                  <TouchableOpacity 
-                    onPress={() => handleEditRound(selectedRound)}
-                    style={styles.actionButton}
-                  >
-                    <MaterialCommunityIcons name="pencil" size={22} color="#93C757" />
-                  </TouchableOpacity>
-                )}
-                
                 <TouchableOpacity 
                   onPress={() => setShowScorecardModal(false)}
                   style={styles.closeButton}
@@ -335,19 +326,31 @@ export default function RoundsScreen() {
             </View>
             
             <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent}>
-              {selectedRound && <Scorecard course={selectedRound.course} showCourseMode={false} />}
+              {/* Apply custom styling to reduce space between table and summary */}
+              <View style={styles.scorecardWrapper}>
+                {selectedRound && <Scorecard course={selectedRound.course} showCourseMode={false} />}
+              </View>
             </ScrollView>
-            
-            {/* Trash button in bottom right corner */}
-            {selectedRound && (
+          </View>
+          
+          {/* Action buttons moved outside the modal content */}
+          {selectedRound && (
+            <View style={styles.floatingActionButtonsContainer}>
+              <TouchableOpacity 
+                onPress={() => handleEditRound(selectedRound)}
+                style={styles.floatingActionButton}
+              >
+                <MaterialCommunityIcons name="pencil" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+              
               <TouchableOpacity 
                 onPress={() => handleDeleteRound(selectedRound.id)}
-                style={styles.deleteFloatingButton}
+                style={styles.floatingActionButton}
               >
-                <MaterialCommunityIcons name="trash-can-outline" size={24} color="#B0B0B0" />
+                <MaterialCommunityIcons name="trash-can-outline" size={24} color="#FFFFFF" />
               </TouchableOpacity>
-            )}
-          </View>
+            </View>
+          )}
         </View>
       </Modal>
     </View>
@@ -530,6 +533,9 @@ const styles = StyleSheet.create({
   scorecardScrollView: {
     width: '100%',
   },
+  scorecardWrapper: {
+    width: '100%',
+  },
   scorecardContent: {
     paddingVertical: 16,
     paddingHorizontal: 16,
@@ -563,21 +569,40 @@ const styles = StyleSheet.create({
     color: '#B0B0B0',
     fontStyle: 'italic',
   },
-  deleteFloatingButton: {
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+    marginTop: 20,
+  },
+  inlineActionButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginHorizontal: 4,
+  },
+  floatingActionButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+    marginTop: 20,
     position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: 'rgba(41, 41, 41, 0.8)',
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    bottom: 50,
+    left: 0,
+    right: 0,
+  },
+  floatingActionButton: {
+    padding: 12,
+    marginHorizontal: 12,
+    backgroundColor: 'rgba(147, 199, 87, 0.8)',
+    borderRadius: 30,
+    width: 60,
+    height: 60,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
     elevation: 5,
-    zIndex: 10,
   },
 }); 
