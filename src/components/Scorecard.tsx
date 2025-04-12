@@ -58,7 +58,7 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
                 </View>
               );
             })}
-            <View style={styles.cell}>
+            <View style={styles.lastCell}>
               <Text style={styles.cellText}>
                 {holes.reduce((sum, hole) => sum + hole.par, 0)}
               </Text>
@@ -78,9 +78,9 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
                 </View>
               );
             })}
-            <View style={styles.cell}>
+            <View style={styles.lastCell}>
               <Text style={styles.cellText}>
-                {holes.reduce((sum, hole) => sum + hole.distance, 0)}ft
+                {holes.reduce((sum, hole) => sum + hole.distance, 0)}
               </Text>
             </View>
           </View>
@@ -98,7 +98,7 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
                 </View>
               );
             })}
-            <View style={styles.cell}>
+            <View style={styles.lastCell}>
               <Text style={styles.cellText}>
                 {holes.reduce((sum, hole) => sum + (hole.score || 0), 0)}
               </Text>
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   headerCell: {
     flex: 1,
     minWidth: 30,
-    padding: 8,
+    padding: 5,
     alignItems: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   labelCell: {
     flex: 1,
     minWidth: 55,
-    padding: 8,
+    padding: 5,
     alignItems: 'flex-start',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
@@ -177,7 +177,16 @@ const styles = StyleSheet.create({
   cell: {
     flex: 1,
     minWidth: 30,
-    padding: 8,
+    padding: 5,
+    alignItems: 'center',
+    borderRightWidth: 1,
+    borderRightColor: '#3D3D3D',
+    backgroundColor: '#292929',
+  },
+  lastCell: {
+    flex: 1,
+    minWidth: 40,
+    padding: 5,
     alignItems: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
