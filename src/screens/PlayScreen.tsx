@@ -29,6 +29,8 @@ export default function PlayScreen() {
   } = useApp();
   const [currentHole, setCurrentHole] = useState(1);
   const [showScorecard, setShowScorecard] = useState(false);
+  const [courseMode, setCourseMode] = useState<"Indoor" | "Outdoor">("Indoor");
+  const [holeCount, setHoleCount] = useState<9 | 18>(18);
   
   // Load the Bebas Neue font
   const [fontsLoaded] = useFonts({
@@ -36,7 +38,7 @@ export default function PlayScreen() {
   });
 
   const handleStartNewGame = () => {
-    startNewGame();
+    startNewGame(courseMode, holeCount);
   };
 
   const handleStartRound = () => {
@@ -110,6 +112,39 @@ export default function PlayScreen() {
     return (
       <View style={styles.container}>
         <Text style={[styles.title, fontsLoaded && styles.titleWithCustomFont]}>DIALED</Text>
+        
+        {/* Mode Toggle */}
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity 
+            style={[styles.toggleButton, courseMode === "Indoor" && styles.toggleButtonSelected]} 
+            onPress={() => setCourseMode("Indoor")}
+          >
+            <Text style={[styles.toggleText, courseMode === "Indoor" && styles.toggleTextSelected]}>Indoor</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.toggleButton, courseMode === "Outdoor" && styles.toggleButtonSelected]} 
+            onPress={() => setCourseMode("Outdoor")}
+          >
+            <Text style={[styles.toggleText, courseMode === "Outdoor" && styles.toggleTextSelected]}>Outdoor</Text>
+          </TouchableOpacity>
+        </View>
+        
+        {/* Hole Count Toggle */}
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity 
+            style={[styles.toggleButton, holeCount === 9 && styles.toggleButtonSelected]} 
+            onPress={() => setHoleCount(9)}
+          >
+            <Text style={[styles.toggleText, holeCount === 9 && styles.toggleTextSelected]}>9 Holes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.toggleButton, holeCount === 18 && styles.toggleButtonSelected]} 
+            onPress={() => setHoleCount(18)}
+          >
+            <Text style={[styles.toggleText, holeCount === 18 && styles.toggleTextSelected]}>18 Holes</Text>
+          </TouchableOpacity>
+        </View>
+        
         <TouchableOpacity style={styles.button} onPress={handleStartNewGame}>
           <Text style={styles.buttonText}>New Game</Text>
         </TouchableOpacity>
@@ -284,14 +319,39 @@ const styles = StyleSheet.create({
     fontSize: 48,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 300,
+    marginBottom: 50,
     color: '#FFFFFF',
   },
   titleWithCustomFont: {
     fontFamily: 'BebasNeue_400Regular',
     fontSize: 84,
     letterSpacing: 6,
-    marginBottom: 280,
+    marginBottom: 60,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+    width: '80%',
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: 15,
+    backgroundColor: '#3D3D3D',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    margin: 5,
+  },
+  toggleButtonSelected: {
+    backgroundColor: '#93C757',
+  },
+  toggleText: {
+    color: '#B0B0B0',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  toggleTextSelected: {
+    color: '#FFFFFF',
   },
   holeNumber: {
     fontSize: 54,
@@ -391,6 +451,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     borderRadius: 16,
     marginHorizontal: 20,
+    marginTop: 20,
   },
   startRoundButton: {
     marginTop: 40,

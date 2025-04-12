@@ -90,18 +90,28 @@ export function generateCourse(): Course {
     frontNineDistance,
     backNinePar,
     backNineDistance,
+    courseMode: "Indoor", // Default to Indoor
+    holeCount: 18, // Default to 18 holes
   };
 }
 
-export function createNewRound(): Round {
+export function createNewRound(
+  courseMode: "Indoor" | "Outdoor" = "Indoor",
+  holeCount: 9 | 18 = 18
+): Round {
   // Get a random course name from the COURSES array
   const randomIndex = Math.floor(Math.random() * COURSES.length);
   const courseName = COURSES[randomIndex];
 
+  const course = generateCourse();
+  // Update the course with the provided mode and hole count
+  course.courseMode = courseMode;
+  course.holeCount = holeCount;
+
   return {
     id: Date.now().toString(),
     date: Date.now(),
-    course: generateCourse(),
+    course,
     totalScore: 0,
     differential: 0,
     completed: false,
