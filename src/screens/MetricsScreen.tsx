@@ -143,7 +143,7 @@ export default function MetricsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#292929',
     paddingTop: 60,
   },
   header: {
@@ -156,20 +156,21 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#FFFFFF',
   },
   toggleButton: {
-    backgroundColor: '#F2F2F7',
+    backgroundColor: '#3D3D3D',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
   },
   toggleButtonText: {
     fontSize: 14,
-    color: '#007AFF',
+    color: '#93C757',
   },
   emptyText: {
     textAlign: 'center',
-    color: '#666666',
+    color: '#B0B0B0',
     marginTop: 40,
   },
   statsContainer: {
@@ -183,12 +184,13 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 14,
-    color: '#666666',
+    color: '#B0B0B0',
     marginBottom: 4,
   },
   statValue: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#FFFFFF',
   },
   graphContainer: {
     flexDirection: 'row',
@@ -210,6 +212,6 @@ const styles = StyleSheet.create({
   },
   axisLabel: {
     fontSize: 12,
-    color: '#666666',
+    color: '#B0B0B0',
   },
 }); 

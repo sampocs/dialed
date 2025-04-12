@@ -17,11 +17,11 @@ function TabNavigator() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#8E8E93',
+        tabBarActiveTintColor: '#93C757',
+        tabBarInactiveTintColor: '#B0B0B0',
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
-          borderTopColor: '#C6C6C8',
+          backgroundColor: '#292929',
+          borderTopColor: '#3D3D3D',
         },
       }}
     >

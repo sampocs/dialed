@@ -170,7 +170,7 @@ export default function PlayScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#292929',
     paddingTop: 60,
   },
   header: {
@@ -185,10 +185,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 40,
+    color: '#FFFFFF',
   },
   holeNumber: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#FFFFFF',
   },
   quitButton: {
     padding: 10,
@@ -204,10 +206,11 @@ const styles = StyleSheet.create({
   parText: {
     fontSize: 20,
     marginBottom: 8,
+    color: '#FFFFFF',
   },
   distanceText: {
     fontSize: 18,
-    color: '#666666',
+    color: '#B0B0B0',
   },
   navigation: {
     flexDirection: 'row',
@@ -221,7 +224,7 @@ const styles = StyleSheet.create({
   },
   navButtonText: {
     fontSize: 24,
-    color: '#007AFF',
+    color: '#93C757',
   },
   scoreButtons: {
     flexDirection: 'row',
@@ -232,19 +235,19 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     borderWidth: 2,
-    borderColor: '#007AFF',
+    borderColor: '#93C757',
     justifyContent: 'center',
     alignItems: 'center',
   },
   scoreButtonSelected: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#93C757',
   },
   scoreButtonText: {
     fontSize: 24,
-    color: '#007AFF',
+    color: '#93C757',
   },
   submitButton: {
-    backgroundColor: '#34C759',
+    backgroundColor: '#93C757',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -258,7 +261,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#93C757',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -276,7 +279,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   scorecardButtonText: {
-    color: '#007AFF',
+    color: '#93C757',
     fontSize: 16,
     textAlign: 'center',
   },
@@ -290,9 +293,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: '#3D3D3D',
   },
   scorecardText: {
     fontSize: 14,
+    color: '#FFFFFF',
   },
 }); 

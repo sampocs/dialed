@@ -152,7 +152,7 @@ export default function RoundsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#292929',
     paddingTop: 60,
   },
   header: {
@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
+    color: '#FFFFFF',
   },
   roundsList: {
     flex: 1,
@@ -167,12 +168,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    color: '#666666',
+    color: '#B0B0B0',
     marginTop: 40,
   },
   roundItem: {
     marginBottom: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#3D3D3D',
     borderRadius: 8,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
@@ -193,10 +194,12 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 16,
     marginBottom: 4,
+    color: '#FFFFFF',
   },
   scoreText: {
     fontSize: 18,
     fontWeight: '600',
+    color: '#FFFFFF',
   },
   starIcon: {
     fontSize: 20,
@@ -212,7 +215,7 @@ const styles = StyleSheet.create({
   scorecard: {
     marginTop: 16,
     borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
+    borderTopColor: '#3D3D3D',
     paddingTop: 16,
   },
   scorecardHeader: {
@@ -220,35 +223,37 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: '#3D3D3D',
   },
   scorecardHeaderText: {
     fontSize: 14,
     fontWeight: '600',
     flex: 1,
     textAlign: 'center',
+    color: '#FFFFFF',
   },
   scorecardRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: '#3D3D3D',
   },
   scorecardText: {
     fontSize: 14,
     flex: 1,
     textAlign: 'center',
+    color: '#FFFFFF',
   },
   scorecardSummary: {
     marginTop: 16,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
+    borderTopColor: '#3D3D3D',
   },
   summaryText: {
     fontSize: 14,
-    color: '#666666',
+    color: '#B0B0B0',
     marginBottom: 4,
   },
 }); 
