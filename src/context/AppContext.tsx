@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { AppState, Player, Round } from '../types';
+import { AppState, Player, Round, RoundEdit } from '../types';
 import * as storage from '../utils/storage';
 import { createNewRound, updateScore } from '../utils/gameLogic';
 
@@ -12,6 +12,10 @@ interface AppContextType extends AppState {
   quitGame: () => Promise<void>;
   deleteRound: (roundId: string) => Promise<void>;
   editRound: (roundId: string, updatedRound: Round) => Promise<void>;
+  startEditMode: (roundId: string) => Promise<void>;
+  saveRoundEdit: () => Promise<void>;
+  cancelRoundEdit: () => Promise<void>;
+  hasEditChanges: () => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -22,6 +26,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     currentRound: null,
     rounds: [],
     gameState: 'no-game',
+    editState: null,
   });
 
   useEffect(() => {
@@ -65,12 +70,59 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  const startEditMode = async (roundId: string) => {
+    const roundToEdit = state.rounds.find(round => round.id === roundId);
+    if (!roundToEdit) return;
+
+    // Create a copy of the round to edit
+    const roundCopy = JSON.parse(JSON.stringify(roundToEdit));
+    
+    // Store original scores to track changes
+    const originalScores: Record<number, number | undefined> = {};
+    roundCopy.course.holes.forEach((hole: { number: number; score: number | undefined }) => {
+      originalScores[hole.number] = hole.score;
+    });
+
+    await storage.saveCurrentRound(roundCopy);
+    setState(current => ({
+      ...current,
+      currentRound: roundCopy,
+      gameState: 'edit-mode',
+      editState: {
+        roundId,
+        originalScores,
+        hasChanges: false,
+      }
+    }));
+  };
+
   const updateHoleScore = async (holeNumber: number, score: number | undefined) => {
     if (!state.currentRound) return;
 
     const updatedRound = updateScore(state.currentRound, holeNumber, score);
     await storage.saveCurrentRound(updatedRound);
-    setState(current => ({ ...current, currentRound: updatedRound }));
+    
+    // If in edit mode, check if there are changes
+    if (state.gameState === 'edit-mode' && state.editState) {
+      const originalScore = state.editState.originalScores[holeNumber];
+      const hasChanges = Object.keys(state.editState.originalScores).some(holeNum => {
+        const holeNumber = parseInt(holeNum);
+        const originalScore = state.editState?.originalScores[holeNumber];
+        const currentScore = updatedRound.course.holes.find(h => h.number === holeNumber)?.score;
+        return originalScore !== currentScore;
+      });
+      
+      setState(current => ({ 
+        ...current, 
+        currentRound: updatedRound,
+        editState: {
+          ...current.editState!,
+          hasChanges
+        }
+      }));
+    } else {
+      setState(current => ({ ...current, currentRound: updatedRound }));
+    }
   };
 
   const completeRound = async () => {
@@ -94,12 +146,49 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  const saveRoundEdit = async () => {
+    if (!state.currentRound || !state.editState) return;
+    
+    // Find the original round and update it
+    const originalRoundIndex = state.rounds.findIndex(round => round.id === state.editState?.roundId);
+    if (originalRoundIndex === -1) return;
+    
+    const updatedRounds = [...state.rounds];
+    updatedRounds[originalRoundIndex] = state.currentRound;
+    
+    await storage.saveRounds(updatedRounds);
+    await storage.saveCurrentRound(null);
+    
+    setState(current => ({
+      ...current,
+      rounds: updatedRounds,
+      currentRound: null,
+      gameState: 'no-game',
+      editState: null
+    }));
+  };
+
+  const cancelRoundEdit = async () => {
+    await storage.saveCurrentRound(null);
+    setState(current => ({
+      ...current,
+      currentRound: null,
+      gameState: 'no-game',
+      editState: null
+    }));
+  };
+
+  const hasEditChanges = () => {
+    return state.editState?.hasChanges || false;
+  };
+
   const quitGame = async () => {
     await storage.saveCurrentRound(null);
     setState(current => ({
       ...current,
       currentRound: null,
       gameState: 'no-game',
+      editState: null
     }));
   };
 
@@ -129,6 +218,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         quitGame,
         deleteRound,
         editRound,
+        startEditMode,
+        saveRoundEdit,
+        cancelRoundEdit,
+        hasEditChanges,
       }}
     >
       {children}

@@ -357,13 +357,13 @@ const styles = StyleSheet.create({
   },
   summaryContainer: {
     paddingHorizontal: 16,
-    marginTop: 16,
+    marginTop: 4,
     alignItems: 'center',
     width: '100%',
   },
   summaryText: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 16,
+    fontWeight: '600',
     color: '#FFFFFF',
     textAlign: 'center',
   },

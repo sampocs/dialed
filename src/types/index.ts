@@ -35,11 +35,19 @@ export type GameState =
   | "no-game"
   | "game-ready"
   | "game-in-progress"
-  | "game-complete";
+  | "game-complete"
+  | "edit-mode";
+
+export interface RoundEdit {
+  roundId: string;
+  originalScores: Record<number, number | undefined>;
+  hasChanges: boolean;
+}
 
 export interface AppState {
   player: Player | undefined;
   currentRound: Round | null;
   rounds: Round[];
   gameState: GameState;
+  editState: RoundEdit | null;
 }
