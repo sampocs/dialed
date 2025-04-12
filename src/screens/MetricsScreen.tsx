@@ -25,9 +25,11 @@ export default function MetricsScreen() {
   if (points.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={styles.emptyText}>
-          Play some rounds to see your performance metrics
-        </Text>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            No rounds played yet
+          </Text>
+        </View>
       </View>
     );
   }
@@ -168,10 +170,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#93C757',
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -40,
+  },
   emptyText: {
     textAlign: 'center',
     color: '#B0B0B0',
-    marginTop: 40,
+    fontSize: 16,
   },
   statsContainer: {
     flexDirection: 'row',

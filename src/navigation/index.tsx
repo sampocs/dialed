@@ -3,9 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useApp } from '../context/AppContext';
 import PlayScreen from '../screens/PlayScreen';
 import RoundsScreen from '../screens/RoundsScreen';
 import MetricsScreen from '../screens/MetricsScreen';
+import NameInputModal from '../screens/NameInputModal';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -37,7 +39,7 @@ function TabNavigator() {
         component={RoundsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="history" size={size} color={color} />
+            <MaterialCommunityIcons name="format-list-bulleted" size={size} color={color} />
           ),
         }}
       />
@@ -55,10 +57,20 @@ function TabNavigator() {
 }
 
 export default function Navigation() {
+  const { player } = useApp();
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Main" component={TabNavigator} />
+        {!player ? (
+          <Stack.Screen
+            name="NameInput"
+            component={NameInputModal}
+            options={{ presentation: 'modal' }}
+          />
+        ) : (
+          <Stack.Screen name="Main" component={TabNavigator} />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

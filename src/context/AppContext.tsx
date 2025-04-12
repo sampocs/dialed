@@ -18,7 +18,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AppState>({
-    player: { name: "Player" },
+    player: undefined,
     currentRound: null,
     rounds: [],
     gameState: 'no-game',
@@ -30,14 +30,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const loadInitialState = async () => {
     const initialState = await storage.loadInitialState();
-    
-    const player = initialState.player || { name: "Player" };
-    
-    setState(current => ({ 
-      ...current, 
-      ...initialState,
-      player
-    }));
+    setState(current => ({ ...current, ...initialState }));
   };
 
   const setPlayer = async (player: Player) => {

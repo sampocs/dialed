@@ -11,28 +11,8 @@ import { useApp } from '../context/AppContext';
 import { Round } from '../types';
 
 export default function RoundsScreen() {
-  const { rounds, player, deleteRound, setPlayer } = useApp();
+  const { rounds, deleteRound } = useApp();
   const [expandedRoundId, setExpandedRoundId] = useState<string | null>(null);
-
-  const handleLongPressHeader = () => {
-    Alert.prompt(
-      'Change Name',
-      'Enter your new name',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Save',
-          onPress: (newName) => {
-            if (newName?.trim()) {
-              setPlayer({ name: newName.trim() });
-            }
-          },
-        },
-      ],
-      'plain-text',
-      player?.name
-    );
-  };
 
   const handleDeleteRound = (roundId: string) => {
     Alert.alert(
@@ -70,13 +50,11 @@ export default function RoundsScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onLongPress={handleLongPressHeader}>
-        <Text style={styles.header}>{player?.name}'s Rounds</Text>
-      </TouchableOpacity>
-
       <ScrollView style={styles.roundsList}>
         {rounds.length === 0 ? (
-          <Text style={styles.emptyText}>No rounds played yet</Text>
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No rounds played yet</Text>
+          </View>
         ) : (
           rounds
             .sort((a, b) => b.date - a.date)
@@ -94,8 +72,11 @@ export default function RoundsScreen() {
                       <Text style={styles.dateText}>
                         {formatDate(round.date)}
                       </Text>
+                      <Text style={styles.courseNameText}>
+                        {round.courseName}
+                      </Text>
                       <Text style={styles.scoreText}>
-                        Score: {round.totalScore} ({round.differential > 0 ? '+' : ''}
+                        Score: {round.totalScore > 0 ? round.totalScore : '-'} ({round.differential > 0 ? '+' : ''}
                         {round.differential})
                       </Text>
                     </View>
@@ -128,7 +109,7 @@ export default function RoundsScreen() {
                         <Text style={styles.scorecardText}>
                           {hole.distance} ft
                         </Text>
-                        <Text style={styles.scorecardText}>{hole.score}</Text>
+                        <Text style={styles.scorecardText}>{hole.score || '-'}</Text>
                       </View>
                     ))}
                     <View style={styles.scorecardSummary}>
@@ -153,23 +134,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292929',
-    paddingTop: 60,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#FFFFFF',
+    paddingTop: 20,
   },
   roundsList: {
     flex: 1,
     paddingHorizontal: 20,
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -40,  // To account for the paddingTop in the container
+  },
   emptyText: {
     textAlign: 'center',
     color: '#B0B0B0',
-    marginTop: 40,
+    fontSize: 16,
   },
   roundItem: {
     marginBottom: 20,
@@ -195,6 +175,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 4,
     color: '#FFFFFF',
+  },
+  courseNameText: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    marginBottom: 4,
+    color: '#B0B0B0',
   },
   scoreText: {
     fontSize: 18,
