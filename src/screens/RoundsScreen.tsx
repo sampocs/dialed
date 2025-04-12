@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,6 @@ import {
   Alert,
   Modal,
   Animated,
-  ToastAndroid,
   Platform,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
@@ -35,30 +34,11 @@ export default function RoundsScreen() {
   const [selectedRound, setSelectedRound] = useState<Round | null>(null);
   const [showScorecardModal, setShowScorecardModal] = useState(false);
   const highlightAnim = useRef(new Animated.Value(0)).current;
-  const [hasShowTip, setHasShowTip] = useState(false);
   const navigation = useNavigation<RootTabNavigationProp>();
   
   // Filter state
   const [holeCountFilter, setHoleCountFilter] = useState<9 | 18 | null>(null);
   const [courseModeFilter, setCourseModeFilter] = useState<"Indoor" | "Outdoor" | null>(null);
-
-  useEffect(() => {
-    // Show tip about long press to delete on first render if there are rounds
-    if (rounds.length > 0 && !hasShowTip) {
-      setHasShowTip(true);
-      if (Platform.OS === 'android') {
-        ToastAndroid.show('Tip: Long press a round to delete it', ToastAndroid.SHORT);
-      } else {
-        // For iOS we'll just add a tip at the top
-        Alert.alert(
-          'Tip',
-          'Long press a round to delete it',
-          [{ text: 'Got it' }],
-          { cancelable: true }
-        );
-      }
-    }
-  }, [rounds.length, hasShowTip]);
 
   const handleDeleteRound = (roundId: string) => {
     Alert.alert(
