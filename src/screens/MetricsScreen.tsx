@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { calculateStats } from '../utils/gameLogic';
+import Svg, { Path, Circle } from 'react-native-svg';
 
 export default function MetricsScreen() {
   const { rounds } = useApp();
@@ -36,21 +37,24 @@ export default function MetricsScreen() {
 
   const minY = Math.min(...points.map((p) => p.y));
   const maxY = Math.max(...points.map((p) => p.y));
+  const yRange = maxY === minY ? 1 : maxY - minY;
   const graphHeight = 200;
-  const graphWidth = Dimensions.get('window').width - 40;
-  const xStep = graphWidth / (points.length - 1);
+  const graphWidth = Dimensions.get('window').width - 60;
+  
+  const xStep = points.length > 1 ? graphWidth / (points.length - 1) : graphWidth;
 
   const normalizeY = (y: number) => {
-    const range = maxY - minY;
-    return graphHeight - ((y - minY) / range) * graphHeight;
+    return graphHeight - ((y - minY) / yRange) * graphHeight;
   };
 
-  const pathData = points
-    .map(
-      (point, index) =>
-        `${index === 0 ? 'M' : 'L'} ${index * xStep} ${normalizeY(point.y)}`
-    )
-    .join(' ');
+  const pathData = points.length > 1 
+    ? points
+        .map(
+          (point, index) =>
+            `${index === 0 ? 'M' : 'L'} ${index * xStep} ${normalizeY(point.y)}`
+        )
+        .join(' ')
+    : '';
 
   return (
     <View style={styles.container}>
@@ -112,15 +116,17 @@ export default function MetricsScreen() {
           <Text style={styles.axisLabel}>{Math.floor(minY)}</Text>
         </View>
         <View style={styles.graph}>
-          <svg width={graphWidth} height={graphHeight}>
-            <path
-              d={pathData}
-              stroke="#007AFF"
-              strokeWidth="2"
-              fill="none"
-            />
+          <Svg width={graphWidth} height={graphHeight}>
+            {points.length > 1 && (
+              <Path
+                d={pathData}
+                stroke="#007AFF"
+                strokeWidth="2"
+                fill="none"
+              />
+            )}
             {points.map((point, index) => (
-              <circle
+              <Circle
                 key={index}
                 cx={index * xStep}
                 cy={normalizeY(point.y)}
@@ -128,7 +134,7 @@ export default function MetricsScreen() {
                 fill="#007AFF"
               />
             ))}
-          </svg>
+          </Svg>
           <View style={styles.xAxis}>
             {points.map((_, index) => (
               <Text key={index} style={styles.axisLabel}>
