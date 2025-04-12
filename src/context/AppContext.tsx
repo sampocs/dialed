@@ -6,7 +6,8 @@ import { createNewRound, updateScore } from '../utils/gameLogic';
 interface AppContextType extends AppState {
   setPlayer: (player: Player) => Promise<void>;
   startNewGame: () => Promise<void>;
-  updateHoleScore: (holeNumber: number, score: number) => Promise<void>;
+  startRound: () => Promise<void>;
+  updateHoleScore: (holeNumber: number, score: number | undefined) => Promise<void>;
   completeRound: () => Promise<void>;
   quitGame: () => Promise<void>;
   deleteRound: (roundId: string) => Promise<void>;
@@ -29,6 +30,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const loadInitialState = async () => {
     const initialState = await storage.loadInitialState();
+    
+    // Set a default player if one doesn't exist
+    if (!initialState.player) {
+      const defaultPlayer = { name: "Player" };
+      await storage.savePlayer(defaultPlayer);
+      initialState.player = defaultPlayer;
+    }
+    
     setState(current => ({ ...current, ...initialState }));
   };
 
@@ -43,11 +52,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState(current => ({
       ...current,
       currentRound: newRound,
+      gameState: 'game-ready',
+    }));
+  };
+
+  const startRound = async () => {
+    if (!state.currentRound) return;
+    
+    setState(current => ({
+      ...current,
       gameState: 'game-in-progress',
     }));
   };
 
-  const updateHoleScore = async (holeNumber: number, score: number) => {
+  const updateHoleScore = async (holeNumber: number, score: number | undefined) => {
     if (!state.currentRound) return;
 
     const updatedRound = updateScore(state.currentRound, holeNumber, score);
@@ -103,6 +121,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         ...state,
         setPlayer,
         startNewGame,
+        startRound,
         updateHoleScore,
         completeRound,
         quitGame,

@@ -25,9 +25,11 @@ export default function MetricsScreen() {
   if (points.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={styles.emptyText}>
-          Play some rounds to see your performance metrics
-        </Text>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            No rounds played yet
+          </Text>
+        </View>
       </View>
     );
   }
@@ -143,8 +145,8 @@ export default function MetricsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingTop: 60,
+    backgroundColor: '#292929',
+    paddingTop: 20,
   },
   header: {
     flexDirection: 'row',
@@ -156,21 +158,29 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#FFFFFF',
   },
   toggleButton: {
-    backgroundColor: '#F2F2F7',
+    backgroundColor: '#3D3D3D',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
   },
   toggleButtonText: {
     fontSize: 14,
-    color: '#007AFF',
+    color: '#93C757',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -20,
   },
   emptyText: {
     textAlign: 'center',
-    color: '#666666',
-    marginTop: 40,
+    color: '#B0B0B0',
+    fontSize: 18,
+    fontWeight: '500',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -183,12 +193,13 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 14,
-    color: '#666666',
+    color: '#B0B0B0',
     marginBottom: 4,
   },
   statValue: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#FFFFFF',
   },
   graphContainer: {
     flexDirection: 'row',
@@ -210,6 +221,6 @@ const styles = StyleSheet.create({
   },
   axisLabel: {
     fontSize: 12,
-    color: '#666666',
+    color: '#B0B0B0',
   },
 }); 

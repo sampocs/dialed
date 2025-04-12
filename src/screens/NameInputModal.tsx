@@ -53,7 +53,7 @@ export default function NameInputModal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#292929',
   },
   content: {
     flex: 1,
@@ -65,11 +65,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#000000',
+    color: '#FFFFFF',
   },
   subtitle: {
     fontSize: 16,
-    color: '#666666',
+    color: '#B0B0B0',
     marginBottom: 24,
     textAlign: 'center',
   },
@@ -77,22 +77,23 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     borderWidth: 1,
-    borderColor: '#CCCCCC',
+    borderColor: '#3D3D3D',
     borderRadius: 8,
     paddingHorizontal: 16,
     fontSize: 16,
     marginBottom: 24,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#3D3D3D',
+    color: '#FFFFFF',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#93C757',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     width: '100%',
   },
   buttonDisabled: {
-    backgroundColor: '#CCCCCC',
+    backgroundColor: '#3D3D3D',
   },
   buttonText: {
     color: '#FFFFFF',

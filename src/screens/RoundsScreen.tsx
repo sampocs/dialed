@@ -11,28 +11,8 @@ import { useApp } from '../context/AppContext';
 import { Round } from '../types';
 
 export default function RoundsScreen() {
-  const { rounds, player, deleteRound, setPlayer } = useApp();
+  const { rounds, deleteRound } = useApp();
   const [expandedRoundId, setExpandedRoundId] = useState<string | null>(null);
-
-  const handleLongPressHeader = () => {
-    Alert.prompt(
-      'Change Name',
-      'Enter your new name',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Save',
-          onPress: (newName) => {
-            if (newName?.trim()) {
-              setPlayer({ name: newName.trim() });
-            }
-          },
-        },
-      ],
-      'plain-text',
-      player?.name
-    );
-  };
 
   const handleDeleteRound = (roundId: string) => {
     Alert.alert(
@@ -70,15 +50,13 @@ export default function RoundsScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onLongPress={handleLongPressHeader}>
-        <Text style={styles.header}>{player?.name}'s Rounds</Text>
-      </TouchableOpacity>
-
-      <ScrollView style={styles.roundsList}>
-        {rounds.length === 0 ? (
+      {rounds.length === 0 ? (
+        <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>No rounds played yet</Text>
-        ) : (
-          rounds
+        </View>
+      ) : (
+        <ScrollView style={styles.roundsList}>
+          {rounds
             .sort((a, b) => b.date - a.date)
             .map((round) => (
               <View key={round.id} style={styles.roundItem}>
@@ -94,8 +72,11 @@ export default function RoundsScreen() {
                       <Text style={styles.dateText}>
                         {formatDate(round.date)}
                       </Text>
+                      <Text style={styles.courseNameText}>
+                        {round.courseName}
+                      </Text>
                       <Text style={styles.scoreText}>
-                        Score: {round.totalScore} ({round.differential > 0 ? '+' : ''}
+                        Score: {round.totalScore > 0 ? round.totalScore : '-'} ({round.differential > 0 ? '+' : ''}
                         {round.differential})
                       </Text>
                     </View>
@@ -128,7 +109,7 @@ export default function RoundsScreen() {
                         <Text style={styles.scorecardText}>
                           {hole.distance} ft
                         </Text>
-                        <Text style={styles.scorecardText}>{hole.score}</Text>
+                        <Text style={styles.scorecardText}>{hole.score || '-'}</Text>
                       </View>
                     ))}
                     <View style={styles.scorecardSummary}>
@@ -142,9 +123,9 @@ export default function RoundsScreen() {
                   </View>
                 )}
               </View>
-            ))
-        )}
-      </ScrollView>
+            ))}
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -152,27 +133,28 @@ export default function RoundsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingTop: 60,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
+    backgroundColor: '#292929',
+    paddingTop: 20,
   },
   roundsList: {
     flex: 1,
     paddingHorizontal: 20,
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -20,
+  },
   emptyText: {
     textAlign: 'center',
-    color: '#666666',
-    marginTop: 40,
+    color: '#B0B0B0',
+    fontSize: 18,
+    fontWeight: '500',
   },
   roundItem: {
     marginBottom: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#3D3D3D',
     borderRadius: 8,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
@@ -193,10 +175,18 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 16,
     marginBottom: 4,
+    color: '#FFFFFF',
+  },
+  courseNameText: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    marginBottom: 4,
+    color: '#B0B0B0',
   },
   scoreText: {
     fontSize: 18,
     fontWeight: '600',
+    color: '#FFFFFF',
   },
   starIcon: {
     fontSize: 20,
@@ -212,7 +202,7 @@ const styles = StyleSheet.create({
   scorecard: {
     marginTop: 16,
     borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
+    borderTopColor: '#3D3D3D',
     paddingTop: 16,
   },
   scorecardHeader: {
@@ -220,35 +210,37 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: '#3D3D3D',
   },
   scorecardHeaderText: {
     fontSize: 14,
     fontWeight: '600',
     flex: 1,
     textAlign: 'center',
+    color: '#FFFFFF',
   },
   scorecardRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: '#3D3D3D',
   },
   scorecardText: {
     fontSize: 14,
     flex: 1,
     textAlign: 'center',
+    color: '#FFFFFF',
   },
   scorecardSummary: {
     marginTop: 16,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
+    borderTopColor: '#3D3D3D',
   },
   summaryText: {
     fontSize: 14,
-    color: '#666666',
+    color: '#B0B0B0',
     marginBottom: 4,
   },
 }); 
