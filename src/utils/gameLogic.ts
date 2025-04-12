@@ -107,7 +107,7 @@ export function createNewRound(): Round {
 export function updateScore(
   round: Round,
   holeNumber: number,
-  score: number
+  score: number | undefined
 ): Round {
   const updatedHoles = round.course.holes.map((hole) =>
     hole.number === holeNumber ? { ...hole, score } : hole
