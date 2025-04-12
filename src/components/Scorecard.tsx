@@ -143,11 +143,74 @@ const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true }) 
             <View style={styles.labelCell}>
               <Text style={styles.labelText}>Score</Text>
             </View>
-            {holes.map((hole) => (
-              <View key={`score-${hole.number}`} style={styles.cell}>
-                <Text style={styles.cellText}>{hole.score || '-'}</Text>
-              </View>
-            ))}
+            {holes.map((hole) => {
+              // Skip rendering if no score
+              if (hole.score === undefined) {
+                return (
+                  <View key={`score-${hole.number}`} style={styles.cell}>
+                    <Text style={styles.cellText}>-</Text>
+                  </View>
+                );
+              }
+              
+              // Calculate relation to par
+              const relativeToPar = hole.score - hole.par;
+              
+              // For par (0), just show the number
+              if (relativeToPar === 0) {
+                return (
+                  <View key={`score-${hole.number}`} style={styles.cell}>
+                    <View style={styles.parIndicator}>
+                      <Text style={styles.scoreIndicatorText}>{hole.score}</Text>
+                    </View>
+                  </View>
+                );
+              }
+              
+              // For birdie (-1), show in a circle
+              else if (relativeToPar === -1) {
+                return (
+                  <View key={`score-${hole.number}`} style={styles.cell}>
+                    <View style={styles.birdieIndicator}>
+                      <Text style={styles.scoreIndicatorText}>{hole.score}</Text>
+                    </View>
+                  </View>
+                );
+              }
+              
+              // For eagle (-2), show in a double circle
+              else if (relativeToPar <= -2) {
+                return (
+                  <View key={`score-${hole.number}`} style={styles.cell}>
+                    <View style={styles.eagleIndicator}>
+                      <Text style={styles.scoreIndicatorText}>{hole.score}</Text>
+                    </View>
+                  </View>
+                );
+              }
+              
+              // For bogey (+1), show in a square
+              else if (relativeToPar === 1) {
+                return (
+                  <View key={`score-${hole.number}`} style={styles.cell}>
+                    <View style={styles.bogeyIndicator}>
+                      <Text style={styles.scoreIndicatorText}>{hole.score}</Text>
+                    </View>
+                  </View>
+                );
+              }
+              
+              // For double bogey (+2 or worse), show in a double square
+              else {
+                return (
+                  <View key={`score-${hole.number}`} style={styles.cell}>
+                    <View style={styles.doubleBogeyIndicator}>
+                      <Text style={styles.scoreIndicatorText}>{hole.score}</Text>
+                    </View>
+                  </View>
+                );
+              }
+            })}
             <View style={styles.lastCell}>
               <Text style={styles.cellText}>
                 {totalScore > 0 ? totalScore : '-'}
@@ -207,54 +270,67 @@ const styles = StyleSheet.create({
   },
   headerCell: {
     flex: 1,
+    height: 30,
     paddingVertical: 5,
     paddingHorizontal: 2,
     alignItems: 'center',
+    justifyContent: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
     backgroundColor: '#3D3D3D',
   },
   headerLabelCell: {
     width: 55,
+    height: 30,
     paddingVertical: 5,
     paddingHorizontal: 2,
     alignItems: 'center',
+    justifyContent: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
     backgroundColor: '#3D3D3D',
   },
   headerLastCell: {
     width: 40,
+    height: 30,
     paddingVertical: 5,
     paddingHorizontal: 2,
     alignItems: 'center',
+    justifyContent: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
     backgroundColor: '#3D3D3D',
   },
   labelCell: {
     width: 55,
+    height: 30,
     paddingVertical: 5,
     paddingHorizontal: 2,
+    paddingLeft: 4,
     alignItems: 'flex-start',
+    justifyContent: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
     backgroundColor: '#3D3D3D',
   },
   cell: {
     flex: 1,
+    height: 30,
     paddingVertical: 5,
     paddingHorizontal: 2,
     alignItems: 'center',
+    justifyContent: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
     backgroundColor: '#292929',
   },
   lastCell: {
     width: 40,
+    height: 30,
     paddingVertical: 5,
     paddingHorizontal: 2,
     alignItems: 'center',
+    justifyContent: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
     backgroundColor: '#292929',
@@ -296,6 +372,56 @@ const styles = StyleSheet.create({
     color: '#B0B0B0',
     textAlign: 'center',
     marginBottom: 8,
+  },
+  // Score indicators
+  parIndicator: {
+    width: 22,
+    height: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  birdieIndicator: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1,
+    borderColor: '#93C757',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  eagleIndicator: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1,
+    borderColor: '#93C757',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(147, 199, 87, 0.2)',
+  },
+  bogeyIndicator: {
+    width: 22,
+    height: 22,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#93C757',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  doubleBogeyIndicator: {
+    width: 22,
+    height: 22,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#93C757',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(147, 199, 87, 0.2)',
+  },
+  scoreIndicatorText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '500',
   },
 });
 
