@@ -141,12 +141,10 @@ export default function PlayScreen() {
           </TouchableOpacity>
         </View>
         
-        <Text style={styles.titleSmall}>Round Complete!</Text>
-        
         <View style={styles.roundSummary}>
-          <Text style={styles.courseName}>{currentRound.courseName}</Text>
+          <Text style={styles.courseNameLarge}>{currentRound.courseName}</Text>
           <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
-          <Text style={styles.scoreText}>
+          <Text style={[styles.scoreText, styles.scoreTextSpaced]}>
             Final Score: {totalScore} ({differential >= 0 ? '+' : ''}{differential})
           </Text>
         </View>
@@ -459,13 +457,19 @@ const styles = StyleSheet.create({
   },
   roundSummary: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   courseName: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
     marginBottom: 2,
+  },
+  courseNameLarge: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 6,
   },
   courseTypeText: {
     fontSize: 16,
@@ -475,5 +479,8 @@ const styles = StyleSheet.create({
   scoreText: {
     fontSize: 18,
     color: '#FFFFFF',
+  },
+  scoreTextSpaced: {
+    marginTop: 10,
   },
 }); 

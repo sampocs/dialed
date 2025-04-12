@@ -362,8 +362,7 @@ export default function RoundsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E1E1E',
-    padding: 16,
+    backgroundColor: '#292929',
   },
   filterSection: {
     paddingTop: 60,

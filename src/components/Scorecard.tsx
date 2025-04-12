@@ -54,20 +54,6 @@ const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true }) 
 
   // Create summary text based on completed score
   const renderSummary = () => {
-    // Only show score information if there's at least one completed hole
-    if (completedHoles.length === 0) {
-      return (
-        <View style={styles.summaryContainer}>
-          {showCourseMode && (
-            <Text style={styles.courseMode}>{course.courseMode}</Text>
-          )}
-          <Text style={styles.summaryText}>
-            Length: {totalDistance} {course.courseMode === "Indoor" ? "ft" : "yd"}
-          </Text>
-        </View>
-      );
-    }
-
     return (
       <View style={styles.summaryContainer}>
         {showCourseMode && (
@@ -75,7 +61,6 @@ const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true }) 
         )}
         <Text style={styles.summaryText}>
           Length: {totalDistance} {course.courseMode === "Indoor" ? "ft" : "yd"}
-          {'         '}Score: {completedHolesScore} ({formatDifferential(differential)})
         </Text>
       </View>
     );
