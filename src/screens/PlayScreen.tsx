@@ -180,6 +180,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     marginBottom: 20,
+    width: '100%',
+    position: 'absolute',
+    top: 50,
   },
   title: {
     fontSize: 48,
@@ -198,7 +201,7 @@ const styles = StyleSheet.create({
   },
   quitButtonText: {
     fontSize: 24,
-    color: '#FF3B30',
+    color: '#B0B0B0',
   },
   scoreInfo: {
     alignItems: 'center',
