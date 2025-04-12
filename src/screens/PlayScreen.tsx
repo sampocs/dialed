@@ -286,5 +286,6 @@ const styles = StyleSheet.create({
   },
   scorecardContent: {
     width: '100%',
+    paddingHorizontal: 16,
   },
 }); 

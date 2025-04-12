@@ -68,7 +68,7 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
           {/* Distance Row */}
           <View style={styles.row}>
             <View style={styles.labelCell}>
-              <Text style={styles.labelText}>Distance</Text>
+              <Text style={styles.labelText}>Length</Text>
             </View>
             {holes.map((hole) => {
               console.log(`Rendering distance for hole ${hole.number}:`, hole.distance);
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   },
   headerCell: {
     flex: 1,
-    minWidth: 40,
+    minWidth: 30,
     padding: 8,
     alignItems: 'center',
     borderRightWidth: 1,
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   },
   labelCell: {
     flex: 1,
-    minWidth: 60,
+    minWidth: 55,
     padding: 8,
     alignItems: 'flex-start',
     borderRightWidth: 1,
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   },
   cell: {
     flex: 1,
-    minWidth: 40,
+    minWidth: 30,
     padding: 8,
     alignItems: 'center',
     borderRightWidth: 1,
@@ -185,17 +185,17 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
   },
   labelText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
   },
   cellText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 13,
   },
 });
 
