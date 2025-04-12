@@ -21,6 +21,18 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
   const backNineScore = calculateCumulativeScore(backNine);
   const totalScore = frontNineScore + backNineScore;
 
+  // Get completed holes (holes with a score)
+  const completedHoles = course.holes.filter(hole => hole.score !== undefined);
+  
+  // Calculate total par for completed holes only
+  const completedHolesPar = completedHoles.reduce((sum, hole) => sum + hole.par, 0);
+  
+  // Calculate total score for completed holes only
+  const completedHolesScore = completedHoles.reduce((sum, hole) => sum + (hole.score || 0), 0);
+  
+  // Calculate differential based on completed holes only
+  const differential = completedHolesScore - completedHolesPar;
+
   const renderTable = (holes: Hole[], title: string, totalLabel: string) => {
     console.log(`Rendering ${title} table with holes:`, holes);
     return (
@@ -112,7 +124,7 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.totalScore}>
-        Total Score: {totalScore} ({totalScore - course.totalPar > 0 ? '+' : ''}{totalScore - course.totalPar})
+        Total Score: {completedHolesScore} ({differential >= 0 ? '+' : ''}{differential})
       </Text>
       {renderTable(frontNine, 'Front Nine', 'F')}
       {renderTable(backNine, 'Back Nine', 'B')}

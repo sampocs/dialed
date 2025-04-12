@@ -33,10 +33,6 @@ export default function PlayScreen() {
     if (!isValidScore(hole.par, score)) return;
 
     updateHoleScore(currentHole, score);
-
-    if (currentHole < 18) {
-      setCurrentHole(currentHole + 1);
-    }
   };
 
   const handleNavigateHole = (direction: 'prev' | 'next') => {
@@ -69,6 +65,25 @@ export default function PlayScreen() {
     );
   };
 
+  // Function to calculate the current score details
+  const calculateScoreDetails = () => {
+    if (!currentRound) return { totalScore: 0, differential: 0 };
+    
+    // Get completed holes (holes with a score)
+    const completedHoles = currentRound.course.holes.filter(hole => hole.score !== undefined);
+    
+    // Calculate total par for completed holes only
+    const completedHolesPar = completedHoles.reduce((sum, hole) => sum + hole.par, 0);
+    
+    // Calculate total score for completed holes only
+    const completedHolesScore = completedHoles.reduce((sum, hole) => sum + (hole.score || 0), 0);
+    
+    // Calculate differential based on completed holes only
+    const differential = completedHolesScore - completedHolesPar;
+    
+    return { totalScore: completedHolesScore, differential };
+  };
+
   if (gameState === 'no-game') {
     return (
       <View style={styles.container}>
@@ -85,6 +100,7 @@ export default function PlayScreen() {
   const currentHoleData = currentRound.course.holes[currentHole - 1];
   const isLastHole = currentHole === 18;
   const hasScore = currentHoleData.score !== undefined;
+  const { totalScore, differential } = calculateScoreDetails();
 
   return (
     <View style={styles.container}>
@@ -119,6 +135,13 @@ export default function PlayScreen() {
             <Text style={styles.navButtonText}>→</Text>
           </TouchableOpacity>
         )}
+      </View>
+
+      {/* Total Score Display */}
+      <View style={styles.totalScoreContainer}>
+        <Text style={styles.totalScoreText}>
+          Total Score: {totalScore} ({differential >= 0 ? '+' : ''}{differential})
+        </Text>
       </View>
 
       <View style={styles.navigation}>
@@ -231,6 +254,19 @@ const styles = StyleSheet.create({
   distanceText: {
     fontSize: 36,
     color: '#B0B0B0',
+  },
+  totalScoreContainer: {
+    marginBottom: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    backgroundColor: '#3D3D3D',
+  },
+  totalScoreText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
   navigation: {
     flexDirection: 'row',
