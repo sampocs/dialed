@@ -25,9 +25,9 @@ export default function MetricsScreen() {
     const tabBarHeight = 80; // Increased to account for tab bar
     const bottomInset = insets.bottom;
     
-    // Add more buffer space (60px)
+    // Add more buffer space (80px instead of 60px)
     const availableHeight = windowHeight - headerHeight - filterSectionHeight - 
-                            statsHeight - tabBarHeight - bottomInset - insets.top - 60;
+                            statsHeight - tabBarHeight - bottomInset - insets.top - 80;
     
     // Ensure minimum height
     setGraphHeight(Math.max(availableHeight, 150));
@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 20,
-    paddingBottom: 50,
+    paddingBottom: 65,
   },
   yAxis: {
     width: 40,
