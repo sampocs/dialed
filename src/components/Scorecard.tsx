@@ -165,10 +165,10 @@ const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true }) 
         // For 9-hole courses, don't show a title
         renderTable(frontNine, 'T')
       ) : (
-        // For 18-hole courses, use "Front Nine" and "Back Nine"
+        // For 18-hole courses, don't show titles either
         <>
-          {renderTable(frontNine, 'F', 'Front Nine')}
-          {renderTable(backNine, 'B', 'Back Nine')}
+          {renderTable(frontNine, 'F')}
+          {renderTable(backNine, 'B')}
         </>
       )}
       {renderSummary()}
