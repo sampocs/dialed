@@ -39,7 +39,7 @@ function TabNavigator() {
         component={RoundsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="history" size={size} color={color} />
+            <MaterialCommunityIcons name="format-list-bulleted" size={size} color={color} />
           ),
         }}
       />
