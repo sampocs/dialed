@@ -270,7 +270,7 @@ export default function PlayScreen() {
 
       <View style={styles.navigation}>
         <View style={styles.scoreButtons}>
-          {Array.from({ length: currentHoleData.par === 3 ? 4 : 3 }).map(
+          {Array.from({ length: currentHoleData.par === 1 ? 3 : 4 }).map(
             (_, index) => (
               <TouchableOpacity
                 key={index + 1}

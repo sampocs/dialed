@@ -184,8 +184,8 @@ export function updateScore(
 }
 
 export function isValidScore(par: number, score: number): boolean {
-  if (par === 3) return score >= 1 && score <= 4;
-  return score >= 1 && score <= 3;
+  if (par === 1) return score >= 1 && score <= 3;
+  return score >= 1 && score <= 4; // For par 2 and par 3
 }
 
 export function calculateStats(rounds: Round[]) {
