@@ -229,6 +229,21 @@ export default function MetricsScreen() {
       .join(' ');
   };
 
+  // Calculate horizontal grid lines for every integer value
+  const getHorizontalGridLines = () => {
+    const start = Math.floor(paddedMinY);
+    const end = Math.ceil(paddedMaxY);
+    const gridLines = [];
+    
+    for (let i = start; i <= end; i++) {
+      gridLines.push(i);
+    }
+    
+    return gridLines;
+  };
+  
+  const horizontalGridLines = getHorizontalGridLines();
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header with Performance title and toggle */}
@@ -340,6 +355,28 @@ export default function MetricsScreen() {
         </View>
         <View style={styles.graph}>
           <Svg width={graphWidth} height={graphHeight}>
+            {/* Horizontal grid lines - for every integer value */}
+            {horizontalGridLines.map((value, index) => (
+              <Path
+                key={`hgrid-${index}`}
+                d={`M 0 ${normalizeY(value, graphHeight)} H ${graphWidth}`}
+                stroke="#3D3D3D"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+              />
+            ))}
+            
+            {/* Vertical grid lines - only for visible tick marks */}
+            {visibleTickIndices.map((originalIndex, index) => (
+              <Path
+                key={`vgrid-${index}`}
+                d={`M ${pointX(originalIndex)} 0 V ${graphHeight}`}
+                stroke="#3D3D3D"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+              />
+            ))}
+            
             {points.length > 1 && (
               <Path
                 d={getPathData(graphHeight)}
