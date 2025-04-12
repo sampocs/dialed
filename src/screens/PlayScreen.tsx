@@ -196,10 +196,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   holeNumber: {
-    fontSize: 24,
+    fontSize: 42,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 10,
+    marginBottom: 30,
   },
   quitButton: {
     padding: 10,
@@ -210,16 +210,16 @@ const styles = StyleSheet.create({
   },
   scoreInfo: {
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 40,
     marginTop: 100,
   },
   parText: {
-    fontSize: 20,
-    marginBottom: 8,
+    fontSize: 32,
+    marginBottom: 15,
     color: '#FFFFFF',
   },
   distanceText: {
-    fontSize: 18,
+    fontSize: 28,
     color: '#B0B0B0',
   },
   navigation: {
