@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, StatusBar, ScrollView } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { calculateStats } from '../utils/gameLogic';
 import Svg, { Path, Circle } from 'react-native-svg';
@@ -9,9 +9,28 @@ export default function MetricsScreen() {
   const { rounds } = useApp();
   const [showDifferential, setShowDifferential] = useState(true);
   const insets = useSafeAreaInsets();
+  
+  // Filter state - initialize with defaults so one is always selected
+  const [holeCountFilter, setHoleCountFilter] = useState<9 | 18>(9);
+  const [courseModeFilter, setCourseModeFilter] = useState<"Indoor" | "Outdoor">("Indoor");
 
-  const stats = useMemo(() => calculateStats(rounds), [rounds]);
-  const completedRounds = rounds.filter((round) => round.completed);
+  // Filter rounds based on selected filters
+  const filteredRounds = rounds.filter(round => {
+    // Apply hole count filter (always applied)
+    if (round.course.holeCount !== holeCountFilter) {
+      return false;
+    }
+    
+    // Apply course mode filter (always applied)
+    if (round.course.courseMode !== courseModeFilter) {
+      return false;
+    }
+    
+    return true;
+  });
+
+  const stats = useMemo(() => calculateStats(filteredRounds), [filteredRounds]);
+  const completedRounds = filteredRounds.filter((round) => round.completed);
 
   const getGraphPoints = () => {
     if (completedRounds.length === 0) return [];
@@ -27,7 +46,57 @@ export default function MetricsScreen() {
 
   if (points.length === 0) {
     return (
-      <View style={[styles.container, { paddingTop: Math.max(insets.top, 20) }]}>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        {/* Header with Performance title and toggle */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Performance</Text>
+          <TouchableOpacity
+            style={styles.toggleButton}
+            onPress={() => setShowDifferential(!showDifferential)}
+          >
+            <Text style={styles.toggleButtonText}>
+              Show {showDifferential ? 'Total Score' : 'Differential'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        
+        {/* Fixed filter section */}
+        <View style={styles.filterSection}>
+          {/* Hole Count Toggle */}
+          <Text style={styles.toggleLabel}>Holes</Text>
+          <View style={styles.toggleContainer}>
+            <TouchableOpacity 
+              style={[styles.filterToggleButton, holeCountFilter === 9 && styles.filterToggleButtonSelected]} 
+              onPress={() => setHoleCountFilter(9)}
+            >
+              <Text style={[styles.filterToggleText, holeCountFilter === 9 && styles.filterToggleTextSelected]}>9 Holes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.filterToggleButton, holeCountFilter === 18 && styles.filterToggleButtonSelected]} 
+              onPress={() => setHoleCountFilter(18)}
+            >
+              <Text style={[styles.filterToggleText, holeCountFilter === 18 && styles.filterToggleTextSelected]}>18 Holes</Text>
+            </TouchableOpacity>
+          </View>
+          
+          {/* Course Mode Toggle */}
+          <Text style={styles.toggleLabel}>Course Mode</Text>
+          <View style={styles.toggleContainer}>
+            <TouchableOpacity 
+              style={[styles.filterToggleButton, courseModeFilter === "Indoor" && styles.filterToggleButtonSelected]} 
+              onPress={() => setCourseModeFilter("Indoor")}
+            >
+              <Text style={[styles.filterToggleText, courseModeFilter === "Indoor" && styles.filterToggleTextSelected]}>Indoor</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.filterToggleButton, courseModeFilter === "Outdoor" && styles.filterToggleButtonSelected]} 
+              onPress={() => setCourseModeFilter("Outdoor")}
+            >
+              <Text style={[styles.filterToggleText, courseModeFilter === "Outdoor" && styles.filterToggleTextSelected]}>Outdoor</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>
             No rounds played yet
@@ -59,7 +128,8 @@ export default function MetricsScreen() {
     : '';
 
   return (
-    <View style={[styles.container, { paddingTop: Math.max(insets.top, 20) }]}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      {/* Header with Performance title and toggle */}
       <View style={styles.header}>
         <Text style={styles.title}>Performance</Text>
         <TouchableOpacity
@@ -70,6 +140,43 @@ export default function MetricsScreen() {
             Show {showDifferential ? 'Total Score' : 'Differential'}
           </Text>
         </TouchableOpacity>
+      </View>
+
+      {/* Fixed filter section */}
+      <View style={styles.filterSection}>
+        {/* Hole Count Toggle */}
+        <Text style={styles.toggleLabel}>Holes</Text>
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity 
+            style={[styles.filterToggleButton, holeCountFilter === 9 && styles.filterToggleButtonSelected]} 
+            onPress={() => setHoleCountFilter(9)}
+          >
+            <Text style={[styles.filterToggleText, holeCountFilter === 9 && styles.filterToggleTextSelected]}>9 Holes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.filterToggleButton, holeCountFilter === 18 && styles.filterToggleButtonSelected]} 
+            onPress={() => setHoleCountFilter(18)}
+          >
+            <Text style={[styles.filterToggleText, holeCountFilter === 18 && styles.filterToggleTextSelected]}>18 Holes</Text>
+          </TouchableOpacity>
+        </View>
+        
+        {/* Course Mode Toggle */}
+        <Text style={styles.toggleLabel}>Course Mode</Text>
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity 
+            style={[styles.filterToggleButton, courseModeFilter === "Indoor" && styles.filterToggleButtonSelected]} 
+            onPress={() => setCourseModeFilter("Indoor")}
+          >
+            <Text style={[styles.filterToggleText, courseModeFilter === "Indoor" && styles.filterToggleTextSelected]}>Indoor</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.filterToggleButton, courseModeFilter === "Outdoor" && styles.filterToggleButtonSelected]} 
+            onPress={() => setCourseModeFilter("Outdoor")}
+          >
+            <Text style={[styles.filterToggleText, courseModeFilter === "Outdoor" && styles.filterToggleTextSelected]}>Outdoor</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.statsContainer}>
@@ -160,7 +267,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginBottom: 20,
+    paddingTop: 10,
+    paddingBottom: 15,
+    backgroundColor: '#292929',
+    zIndex: 10,
   },
   title: {
     fontSize: 24,
@@ -229,5 +339,47 @@ const styles = StyleSheet.create({
   axisLabel: {
     fontSize: 12,
     color: '#B0B0B0',
+  },
+  // Add new styles for filter section
+  filterSection: {
+    paddingTop: 5,
+    paddingBottom: 10,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3D3D3D',
+    backgroundColor: '#292929',
+    zIndex: 10,
+  },
+  toggleLabel: {
+    color: '#B0B0B0',
+    fontSize: 14,
+    marginBottom: 6,
+    textAlign: 'left',
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    marginBottom: 15,
+    backgroundColor: '#3D3D3D',
+    borderRadius: 12,
+    padding: 4,
+  },
+  filterToggleButton: {
+    flex: 1,
+    paddingVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  filterToggleButtonSelected: {
+    backgroundColor: '#93C757',
+  },
+  filterToggleText: {
+    color: '#B0B0B0',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  filterToggleTextSelected: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
 }); 
