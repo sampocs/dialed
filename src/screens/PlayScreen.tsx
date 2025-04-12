@@ -271,23 +271,78 @@ export default function PlayScreen() {
       <View style={styles.navigation}>
         <View style={styles.scoreButtons}>
           {Array.from({ length: currentHoleData.par === 1 ? 3 : 4 }).map(
-            (_, index) => (
-              <TouchableOpacity
-                key={index + 1}
-                style={[
+            (_, index) => {
+              const score = index + 1;
+              const relativeToPar = score - currentHoleData.par;
+              
+              // Determine which style to use based on relation to par
+              let buttonStyle;
+              
+              if (relativeToPar === 0) {
+                // Par - transparent outline
+                buttonStyle = [
                   styles.scoreButton,
-                  currentHoleData.score === index + 1 && styles.scoreButtonSelected,
-                ]}
-                onPress={() => handleScoreSelect(index + 1)}
-              >
-                <Text style={[
-                  styles.scoreButtonText,
-                  currentHoleData.score === index + 1 && styles.scoreButtonTextSelected,
-                ]}>
-                  {index + 1}
-                </Text>
-              </TouchableOpacity>
-            )
+                  styles.parButtonBase,
+                  currentHoleData.score === score && styles.scoreButtonSelected,
+                ];
+              } else if (relativeToPar === -1) {
+                // Birdie (1 under par) - circle
+                buttonStyle = [
+                  styles.scoreButton,
+                  currentHoleData.score === score && styles.scoreButtonSelected,
+                ];
+              } else if (relativeToPar === -2) {
+                // Eagle (2 under par) - circle with inner circle
+                buttonStyle = [
+                  styles.scoreButton,
+                  currentHoleData.score === score && styles.scoreButtonSelected,
+                ];
+              } else if (relativeToPar === 1) {
+                // Bogey (1 over par) - square
+                buttonStyle = [
+                  styles.scoreButton,
+                  styles.bogeyButton,
+                  currentHoleData.score === score && styles.scoreButtonSelected,
+                ];
+              } else if (relativeToPar === 2) {
+                // Double Bogey (2 over par) - square with inner square
+                buttonStyle = [
+                  styles.scoreButton,
+                  styles.bogeyButton,
+                  currentHoleData.score === score && styles.scoreButtonSelected,
+                ];
+              }
+              
+              return (
+                <TouchableOpacity
+                  key={score}
+                  style={buttonStyle}
+                  onPress={() => handleScoreSelect(score)}
+                >
+                  {/* Transparent border for par when not selected */}
+                  {relativeToPar === 0 && currentHoleData.score !== score && (
+                    <View style={styles.transparentBorder} />
+                  )}
+                  
+                  {/* Inner circle for eagle when not selected */}
+                  {relativeToPar === -2 && currentHoleData.score !== score && (
+                    <View style={styles.eagleInnerCircle} />
+                  )}
+                  
+                  {/* Inner square for double bogey when not selected */}
+                  {relativeToPar === 2 && currentHoleData.score !== score && (
+                    <View style={styles.doubleBogeyInnerSquare} />
+                  )}
+                  
+                  <Text style={[
+                    styles.scoreButtonText,
+                    currentHoleData.score === score && styles.scoreButtonTextSelected,
+                  ]}>
+                    {score}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }
           )}
         </View>
       </View>
@@ -471,9 +526,46 @@ const styles = StyleSheet.create({
     borderColor: '#93C757',
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
+  },
+  parButtonBase: {
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+  },
+  transparentBorder: {
+    position: 'absolute',
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 2,
+    borderColor: '#93C757',
+    opacity: 0.4,
+  },
+  bogeyButton: {
+    borderRadius: 18,
   },
   scoreButtonSelected: {
     backgroundColor: '#93C757',
+    borderWidth: 2,
+    borderColor: '#93C757',
+  },
+  eagleInnerCircle: {
+    position: 'absolute',
+    width: 55,
+    height: 55,
+    borderRadius: 27.5,
+    borderWidth: 2,
+    borderColor: '#93C757',
+    opacity: 0.4,
+  },
+  doubleBogeyInnerSquare: {
+    position: 'absolute',
+    width: 55,
+    height: 55,
+    borderWidth: 2,
+    borderColor: '#93C757',
+    borderRadius: 14,
+    opacity: 0.4,
   },
   scoreButtonText: {
     fontSize: 28,
