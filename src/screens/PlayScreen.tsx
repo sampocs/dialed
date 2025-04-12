@@ -169,6 +169,7 @@ export default function PlayScreen() {
         </View>
         
         <Text style={styles.titleSmall}>{currentRound.courseName}</Text>
+        <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
         
         <View style={styles.scorecardContainer}>
           <Scorecard course={currentRound.course} />
@@ -199,6 +200,7 @@ export default function PlayScreen() {
         
         <View style={styles.roundSummary}>
           <Text style={styles.courseName}>{currentRound.courseName}</Text>
+          <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
           <Text style={styles.scoreText}>
             Final Score: {totalScore} ({differential >= 0 ? '+' : ''}{differential})
           </Text>
@@ -620,7 +622,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 10,
+    marginBottom: 5,
+  },
+  courseTypeText: {
+    fontSize: 16,
+    color: '#B0B0B0',
+    marginBottom: 12,
   },
   scoreText: {
     fontSize: 18,
