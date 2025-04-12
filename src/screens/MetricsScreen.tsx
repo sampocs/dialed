@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, StatusBar, ScrollView } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { calculateStats } from '../utils/gameLogic';
@@ -9,10 +9,29 @@ export default function MetricsScreen() {
   const { rounds } = useApp();
   const [showDifferential, setShowDifferential] = useState(true);
   const insets = useSafeAreaInsets();
+  const [graphHeight, setGraphHeight] = useState(200);
   
   // Filter state - initialize with defaults so one is always selected
   const [holeCountFilter, setHoleCountFilter] = useState<9 | 18>(9);
   const [courseModeFilter, setCourseModeFilter] = useState<"Indoor" | "Outdoor">("Indoor");
+
+  // Calculate available space for the graph
+  useEffect(() => {
+    // Get window height and subtract estimated space for other components
+    const windowHeight = Dimensions.get('window').height;
+    const headerHeight = 50; // Approximate
+    const filterSectionHeight = 150; // Approximate
+    const statsHeight = 80; // Approximate
+    const tabBarHeight = 80; // Increased to account for tab bar
+    const bottomInset = insets.bottom;
+    
+    // Add more buffer space (60px)
+    const availableHeight = windowHeight - headerHeight - filterSectionHeight - 
+                            statsHeight - tabBarHeight - bottomInset - insets.top - 60;
+    
+    // Ensure minimum height
+    setGraphHeight(Math.max(availableHeight, 150));
+  }, [insets]);
 
   // Filter rounds based on selected filters
   const filteredRounds = rounds.filter(round => {
@@ -109,23 +128,24 @@ export default function MetricsScreen() {
   const minY = Math.min(...points.map((p) => p.y));
   const maxY = Math.max(...points.map((p) => p.y));
   const yRange = maxY === minY ? 1 : maxY - minY;
-  const graphHeight = 200;
-  const graphWidth = Dimensions.get('window').width - 60;
+  const graphWidth = Dimensions.get('window').width - 80;
   
   const xStep = points.length > 1 ? graphWidth / (points.length - 1) : graphWidth;
 
-  const normalizeY = (y: number) => {
-    return graphHeight - ((y - minY) / yRange) * graphHeight;
+  const normalizeY = (y: number, height: number) => {
+    return height - ((y - minY) / yRange) * height;
   };
 
-  const pathData = points.length > 1 
-    ? points
-        .map(
-          (point, index) =>
-            `${index === 0 ? 'M' : 'L'} ${index * xStep} ${normalizeY(point.y)}`
-        )
-        .join(' ')
-    : '';
+  const getPathData = (height: number) => {
+    if (points.length <= 1) return '';
+    
+    return points
+      .map(
+        (point, index) =>
+          `${index === 0 ? 'M' : 'L'} ${index * xStep} ${normalizeY(point.y, height)}`
+      )
+      .join(' ');
+  };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -228,7 +248,7 @@ export default function MetricsScreen() {
           <Svg width={graphWidth} height={graphHeight}>
             {points.length > 1 && (
               <Path
-                d={pathData}
+                d={getPathData(graphHeight)}
                 stroke="#93C757"
                 strokeWidth="2"
                 fill="none"
@@ -238,7 +258,7 @@ export default function MetricsScreen() {
               <Circle
                 key={index}
                 cx={index * xStep}
-                cy={normalizeY(point.y)}
+                cy={normalizeY(point.y, graphHeight)}
                 r="4"
                 fill="#93C757"
               />
@@ -322,22 +342,26 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   graphContainer: {
+    flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 20,
-    height: 250,
+    paddingBottom: 50,
   },
   yAxis: {
     width: 40,
     justifyContent: 'space-between',
     paddingVertical: 10,
+    paddingRight: 5,
   },
   graph: {
     flex: 1,
+    paddingRight: 20,
   },
   xAxis: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingTop: 10,
+    paddingHorizontal: 5,
   },
   axisLabel: {
     fontSize: 12,
