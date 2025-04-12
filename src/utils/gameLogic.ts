@@ -51,8 +51,8 @@ export function generateCourse(): Course {
   // Generate hole distribution for front nine and back nine
   const frontNineTemplate = [
     ...Array(2).fill(1), // 2 par 1s
-    ...Array(2).fill(2), // 2 par 2s
-    ...Array(5).fill(3), // 5 par 3s
+    ...Array(5).fill(2), // 5 par 2s
+    ...Array(2).fill(3), // 2 par 3s
   ];
   const backNineTemplate = [...frontNineTemplate];
 

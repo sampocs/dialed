@@ -38,9 +38,9 @@ Upon first launch, the app will prompt the user to enter their name. This name w
 - Displays a generated course with 18 holes
 - Course generation rules:
   - 18 holes total
-  - 4 par 1s, 4 par 2s, and 10 par 3s
-  - Front nine: 2 par 1s, 2 par 2s, 5 par 3s
-  - Back nine: 2 par 1s, 2 par 2s, 5 par 3s
+  - 4 par 1s, 10 par 2s, and 4 par 3s
+  - Front nine: 2 par 1s, 5 par 2s, 2 par 3s
+  - Back nine: 2 par 1s, 5 par 2s, 2 par 3s
   - Par 1s and par 2s placed randomly throughout the course
 - Distance generation rules:
   - Par 1s: Randomly selected from 2.5, 3, 3.5, or 4 ft
