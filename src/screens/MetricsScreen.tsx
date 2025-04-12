@@ -50,12 +50,15 @@ export default function MetricsScreen() {
 
   const stats = useMemo(() => calculateStats(filteredRounds), [filteredRounds]);
   const completedRounds = filteredRounds.filter((round) => round.completed);
+  const sortedCompletedRounds = useMemo(() => 
+    [...completedRounds].sort((a, b) => a.date - b.date), 
+    [completedRounds]
+  );
 
   const getGraphPoints = () => {
-    if (completedRounds.length === 0) return [];
+    if (sortedCompletedRounds.length === 0) return [];
 
-    const sortedRounds = [...completedRounds].sort((a, b) => a.date - b.date);
-    return sortedRounds.map((round, index) => ({
+    return sortedCompletedRounds.map((round, index) => ({
       x: index,
       y: showDifferential ? round.differential : round.totalScore,
     }));
@@ -315,25 +318,15 @@ export default function MetricsScreen() {
           </View>
         )}
 
-        <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Recent Trend</Text>
-          <Text
-            style={[
-              styles.statValue,
-              {
-                color:
-                  stats.recentTrend === 0
-                    ? '#666666'
-                    : stats.recentTrend < 0
-                    ? '#34C759'
-                    : '#FF3B30',
-              },
-            ]}
-          >
-            {stats.recentTrend > 0 ? '+' : ''}
-            {stats.recentTrend.toFixed(1)}
-          </Text>
-        </View>
+        {sortedCompletedRounds.length > 0 && (
+          <View style={styles.statItem}>
+            <Text style={styles.statLabel}>Last Round</Text>
+            <Text style={styles.statValue}>
+              {sortedCompletedRounds[sortedCompletedRounds.length - 1].differential > 0 ? '+' : ''}
+              {sortedCompletedRounds[sortedCompletedRounds.length - 1].differential}
+            </Text>
+          </View>
+        )}
       </View>
 
       <View style={styles.graphContainer}>
