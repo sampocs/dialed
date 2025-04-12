@@ -12,6 +12,7 @@ import { BlurView } from 'expo-blur';
 import { useApp } from '../context/AppContext';
 import { isValidScore } from '../utils/gameLogic';
 import Scorecard from '../components/Scorecard';
+import HoleEditor from '../components/HoleEditor';
 import { 
   useFonts,
   BebasNeue_400Regular 
@@ -27,7 +28,6 @@ export default function PlayScreen() {
     completeRound,
     quitGame,
   } = useApp();
-  const [currentHole, setCurrentHole] = useState(1);
   const [showScorecard, setShowScorecard] = useState(false);
   const [courseMode, setCourseMode] = useState<"Indoor" | "Outdoor">("Indoor");
   const [holeCount, setHoleCount] = useState<9 | 18>(18);
@@ -45,72 +45,17 @@ export default function PlayScreen() {
     startRound();
   };
 
-  const handleScoreSelect = (score: number) => {
-    if (!currentRound) return;
-    const hole = currentRound.course.holes[currentHole - 1];
-    
-    // If the current score is already set to this value, unselect it
-    if (hole.score === score) {
-      updateHoleScore(currentHole, undefined);
-      return;
-    }
-    
-    if (!isValidScore(hole.par, score)) return;
-    updateHoleScore(currentHole, score);
-  };
-
-  const handleNavigateHole = (direction: 'prev' | 'next') => {
-    if (!currentRound) return;
-    
-    const maxHole = currentRound.course.holeCount;
-    
-    if (direction === 'prev' && currentHole > 1) {
-      setCurrentHole(currentHole - 1);
-    } else if (direction === 'next' && currentHole < maxHole) {
-      setCurrentHole(currentHole + 1);
-    }
-  };
-
-  const handleQuit = () => {
-    // For 'game-ready' or 'game-complete' state, quit immediately without confirmation
-    if (gameState === 'game-ready' || gameState === 'game-complete') {
-      quitGame();
-      return;
-    }
-    
-    // For 'game-in-progress' state, show confirmation dialog
-    Alert.alert(
-      'Quit the game?',
-      'Your progress will be lost.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Quit', style: 'destructive', onPress: quitGame },
-      ]
+  // The game in progress screen is now handled by the HoleEditor component
+  if (gameState === 'game-in-progress' && currentRound) {
+    return (
+      <HoleEditor
+        round={currentRound}
+        onUpdateScore={updateHoleScore}
+        onQuit={quitGame}
+        onComplete={completeRound}
+      />
     );
-  };
-
-  const handleComplete = () => {
-    completeRound();
-  };
-
-  // Function to calculate the current score details
-  const calculateScoreDetails = () => {
-    if (!currentRound) return { totalScore: 0, differential: 0 };
-    
-    // Get completed holes (holes with a score)
-    const completedHoles = currentRound.course.holes.filter(hole => hole.score !== undefined);
-    
-    // Calculate total par for completed holes only
-    const completedHolesPar = completedHoles.reduce((sum, hole) => sum + hole.par, 0);
-    
-    // Calculate total score for completed holes only
-    const completedHolesScore = completedHoles.reduce((sum, hole) => sum + (hole.score || 0), 0);
-    
-    // Calculate differential based on completed holes only
-    const differential = completedHolesScore - completedHolesPar;
-    
-    return { totalScore: completedHolesScore, differential };
-  };
+  }
 
   if (gameState === 'no-game') {
     return (
@@ -163,7 +108,7 @@ export default function PlayScreen() {
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.spacer} />
-          <TouchableOpacity onPress={handleQuit} style={styles.quitButton}>
+          <TouchableOpacity onPress={quitGame} style={styles.quitButton}>
             <Text style={styles.quitButtonText}>✕</Text>
           </TouchableOpacity>
         </View>
@@ -191,7 +136,7 @@ export default function PlayScreen() {
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.spacer} />
-          <TouchableOpacity onPress={handleQuit} style={styles.quitButton}>
+          <TouchableOpacity onPress={quitGame} style={styles.quitButton}>
             <Text style={styles.quitButtonText}>✕</Text>
           </TouchableOpacity>
         </View>
@@ -213,129 +158,7 @@ export default function PlayScreen() {
     );
   }
 
-  if (!currentRound) return null;
-
-  const currentHoleData = currentRound.course.holes[currentHole - 1];
-  const hasScore = currentHoleData.score !== undefined;
-  const { totalScore, differential } = calculateScoreDetails();
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.spacer} />
-        <TouchableOpacity onPress={handleQuit} style={styles.quitButton}>
-          <Text style={styles.quitButtonText}>✕</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.mainContentWrapper}>
-        <View style={styles.scoreInfo}>
-          <Text style={styles.holeNumber}>Hole #{currentHole}</Text>
-          
-          {/* Total Score Display - moved here */}
-          <View style={styles.totalScoreContainer}>
-            <Text style={styles.totalScoreText}>
-              Total Score: {totalScore} ({differential >= 0 ? '+' : ''}{differential})
-            </Text>
-          </View>
-          
-          <Text style={styles.parText}>Par {currentHoleData.par}</Text>
-          <Text style={styles.distanceText}>
-            {currentHoleData.distance} {currentRound.course.courseMode === "Indoor" ? "ft" : "yd"}
-          </Text>
-        </View>
-
-        {currentHole > 1 && (
-          <TouchableOpacity
-            onPress={() => handleNavigateHole('prev')}
-            style={[styles.overlayNavButton, styles.leftNavButton]}
-          >
-            <View style={[styles.navButtonIcon, styles.leftNavIcon]}>
-              <Text style={styles.navButtonText}>←</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-        
-        {currentHole < (currentRound.course.holeCount) && (
-          <TouchableOpacity
-            onPress={() => handleNavigateHole('next')}
-            style={[styles.overlayNavButton, styles.rightNavButton]}
-          >
-            <View style={[styles.navButtonIcon, styles.rightNavIcon]}>
-              <Text style={styles.navButtonText}>→</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      <View style={styles.navigation}>
-        <View style={styles.scoreButtons}>
-          {Array.from({ length: currentHoleData.par === 1 ? 3 : 4 }).map(
-            (_, index) => (
-              <TouchableOpacity
-                key={index + 1}
-                style={[
-                  styles.scoreButton,
-                  currentHoleData.score === index + 1 && styles.scoreButtonSelected,
-                ]}
-                onPress={() => handleScoreSelect(index + 1)}
-              >
-                <Text style={[
-                  styles.scoreButtonText,
-                  currentHoleData.score === index + 1 && styles.scoreButtonTextSelected,
-                ]}>
-                  {index + 1}
-                </Text>
-              </TouchableOpacity>
-            )
-          )}
-        </View>
-      </View>
-
-      {currentHole === currentRound.course.holeCount && hasScore && (
-        <TouchableOpacity style={styles.submitButton} onPress={handleComplete}>
-          <Text style={styles.submitButtonText}>Complete Round</Text>
-        </TouchableOpacity>
-      )}
-
-      <TouchableOpacity
-        style={styles.scorecardButton}
-        onPress={() => setShowScorecard(!showScorecard)}
-      >
-        <Text style={styles.scorecardButtonText}>
-          {showScorecard ? 'Hide Scorecard' : 'View Scorecard'}
-        </Text>
-      </TouchableOpacity>
-
-      {/* Scorecard Modal with BlurView */}
-      <Modal
-        visible={showScorecard}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowScorecard(false)}
-      >
-        <View style={styles.modalContainer}>
-          <BlurView intensity={80} style={StyleSheet.absoluteFill} tint="dark" />
-          
-          <View style={styles.scorecardModalContent}>
-            <View style={styles.scorecardHeader}>
-              <Text style={styles.scorecardTitle}>Scorecard</Text>
-              <TouchableOpacity 
-                onPress={() => setShowScorecard(false)}
-                style={styles.closeButton}
-              >
-                <Text style={styles.closeButtonText}>✕</Text>
-              </TouchableOpacity>
-            </View>
-            
-            <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent}>
-              {currentRound && <Scorecard course={currentRound.course} showCourseMode={false} />}
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
-    </View>
-  );
+  return null;
 }
 
 const styles = StyleSheet.create({

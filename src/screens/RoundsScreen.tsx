@@ -14,6 +14,7 @@ import { BlurView } from 'expo-blur';
 import { useApp } from '../context/AppContext';
 import { Round } from '../types';
 import Scorecard from '../components/Scorecard';
+import HoleEditor from '../components/HoleEditor';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -29,7 +30,17 @@ type RootTabParamList = {
 type RootTabNavigationProp = BottomTabNavigationProp<RootTabParamList>;
 
 export default function RoundsScreen() {
-  const { rounds, deleteRound, startNewGame, startRound } = useApp();
+  const { 
+    rounds, 
+    deleteRound, 
+    startEditMode, 
+    gameState, 
+    currentRound,
+    updateHoleScore,
+    saveRoundEdit,
+    cancelRoundEdit,
+    hasEditChanges 
+  } = useApp();
   const [expandedRoundId, setExpandedRoundId] = useState<string | null>(null);
   const [selectedRound, setSelectedRound] = useState<Round | null>(null);
   const [showScorecardModal, setShowScorecardModal] = useState(false);
@@ -61,14 +72,10 @@ export default function RoundsScreen() {
   };
 
   const handleEditRound = async (round: Round) => {
-    // Start a new game with the selected round's course details
-    await startNewGame(round.course.courseMode, round.course.holeCount);
-    // Start the round (puts the game into 'game-in-progress' state)
-    await startRound();
-    // Close the modal
+    // Start edit mode for the selected round
+    await startEditMode(round.id);
+    // Close the modal if it's open
     setShowScorecardModal(false);
-    // Navigate to the Play tab
-    navigation.navigate('Play');
   };
 
   const handleViewScorecard = (round: Round) => {
@@ -158,6 +165,21 @@ export default function RoundsScreen() {
     const key = `${round.course.holeCount}-${round.course.courseMode}` as keyof typeof bestRoundsByCategory;
     return bestRoundsByCategory[key]?.best?.id === round.id;
   };
+
+  // Show the edit screen when in edit mode
+  if (gameState === 'edit-mode' && currentRound) {
+    return (
+      <HoleEditor
+        round={currentRound}
+        isEditMode={true}
+        onUpdateScore={updateHoleScore}
+        onQuit={cancelRoundEdit}
+        onSave={saveRoundEdit}
+        onCancel={cancelRoundEdit}
+        hasChanges={hasEditChanges()}
+      />
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -340,7 +362,8 @@ export default function RoundsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#292929',
+    backgroundColor: '#1E1E1E',
+    padding: 16,
   },
   filterSection: {
     paddingTop: 60,
