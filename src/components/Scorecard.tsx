@@ -29,7 +29,7 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
         <View style={styles.table}>
           {/* Header Row */}
           <View style={styles.row}>
-            <View style={styles.headerCell}>
+            <View style={styles.headerLabelCell}>
               <Text style={styles.headerText}>#</Text>
             </View>
             {holes.map((hole) => {
@@ -40,7 +40,7 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
                 </View>
               );
             })}
-            <View style={styles.headerCell}>
+            <View style={styles.headerLastCell}>
               <Text style={styles.headerText}>{totalLabel}</Text>
             </View>
           </View>
@@ -158,6 +158,22 @@ const styles = StyleSheet.create({
   },
   headerCell: {
     width: 30,
+    padding: 5,
+    alignItems: 'center',
+    borderRightWidth: 1,
+    borderRightColor: '#3D3D3D',
+    backgroundColor: '#3D3D3D',
+  },
+  headerLabelCell: {
+    width: 55,
+    padding: 5,
+    alignItems: 'center',
+    borderRightWidth: 1,
+    borderRightColor: '#3D3D3D',
+    backgroundColor: '#3D3D3D',
+  },
+  headerLastCell: {
+    width: 40,
     padding: 5,
     alignItems: 'center',
     borderRightWidth: 1,
