@@ -7,7 +7,7 @@ interface AppContextType extends AppState {
   setPlayer: (player: Player) => Promise<void>;
   startNewGame: () => Promise<void>;
   startRound: () => Promise<void>;
-  updateHoleScore: (holeNumber: number, score: number) => Promise<void>;
+  updateHoleScore: (holeNumber: number, score: number | undefined) => Promise<void>;
   completeRound: () => Promise<void>;
   quitGame: () => Promise<void>;
   deleteRound: (roundId: string) => Promise<void>;
@@ -57,7 +57,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
-  const updateHoleScore = async (holeNumber: number, score: number) => {
+  const updateHoleScore = async (holeNumber: number, score: number | undefined) => {
     if (!state.currentRound) return;
 
     const updatedRound = updateScore(state.currentRound, holeNumber, score);
