@@ -15,14 +15,28 @@ import { BlurView } from 'expo-blur';
 import { useApp } from '../context/AppContext';
 import { Round } from '../types';
 import Scorecard from '../components/Scorecard';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+
+// Define the navigation param list type
+type RootTabParamList = {
+  Play: undefined;
+  Rounds: undefined;
+  Metrics: undefined;
+};
+
+// Define the navigation prop type
+type RootTabNavigationProp = BottomTabNavigationProp<RootTabParamList>;
 
 export default function RoundsScreen() {
-  const { rounds, deleteRound } = useApp();
+  const { rounds, deleteRound, startNewGame, startRound } = useApp();
   const [expandedRoundId, setExpandedRoundId] = useState<string | null>(null);
   const [selectedRound, setSelectedRound] = useState<Round | null>(null);
   const [showScorecardModal, setShowScorecardModal] = useState(false);
   const highlightAnim = useRef(new Animated.Value(0)).current;
   const [hasShowTip, setHasShowTip] = useState(false);
+  const navigation = useNavigation<RootTabNavigationProp>();
   
   // Filter state
   const [holeCountFilter, setHoleCountFilter] = useState<9 | 18 | null>(null);
@@ -55,10 +69,26 @@ export default function RoundsScreen() {
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: () => deleteRound(roundId),
+          onPress: () => {
+            deleteRound(roundId);
+            if (selectedRound?.id === roundId) {
+              setShowScorecardModal(false);
+            }
+          },
         },
       ]
     );
+  };
+
+  const handleEditRound = async (round: Round) => {
+    // Start a new game with the selected round's course details
+    await startNewGame(round.course.courseMode, round.course.holeCount);
+    // Start the round (puts the game into 'game-in-progress' state)
+    await startRound();
+    // Close the modal
+    setShowScorecardModal(false);
+    // Navigate to the Play tab
+    navigation.navigate('Play');
   };
 
   const handleViewScorecard = (round: Round) => {
@@ -273,24 +303,50 @@ export default function RoundsScreen() {
           <View style={styles.scorecardModalContent}>
             <View style={styles.scorecardHeader}>
               <View style={styles.scorecardTitleContainer}>
-                <Text style={styles.scorecardTitle}>Scorecard</Text>
                 {selectedRound && (
-                  <Text style={styles.scorecardSubtitle}>
-                    {selectedRound.course.courseMode}-{selectedRound.course.holeCount} • {selectedRound.courseName} • {formatDate(selectedRound.date)}
-                  </Text>
+                  <>
+                    <Text style={styles.scorecardDate}>
+                      {formatDate(selectedRound.date)}
+                    </Text>
+                    <Text style={styles.scorecardSubtitle}>
+                      {selectedRound.course.courseMode}-{selectedRound.course.holeCount} • {selectedRound.courseName}
+                    </Text>
+                  </>
                 )}
               </View>
-              <TouchableOpacity 
-                onPress={() => setShowScorecardModal(false)}
-                style={styles.closeButton}
-              >
-                <Text style={styles.closeButtonText}>✕</Text>
-              </TouchableOpacity>
+              
+              <View style={styles.scorecardActions}>
+                {selectedRound && (
+                  <TouchableOpacity 
+                    onPress={() => handleEditRound(selectedRound)}
+                    style={styles.actionButton}
+                  >
+                    <MaterialCommunityIcons name="pencil" size={22} color="#93C757" />
+                  </TouchableOpacity>
+                )}
+                
+                <TouchableOpacity 
+                  onPress={() => setShowScorecardModal(false)}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.closeButtonText}>✕</Text>
+                </TouchableOpacity>
+              </View>
             </View>
             
             <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent}>
-              {selectedRound && <Scorecard course={selectedRound.course} />}
+              {selectedRound && <Scorecard course={selectedRound.course} showCourseMode={false} />}
             </ScrollView>
+            
+            {/* Trash button in bottom right corner */}
+            {selectedRound && (
+              <TouchableOpacity 
+                onPress={() => handleDeleteRound(selectedRound.id)}
+                style={styles.deleteFloatingButton}
+              >
+                <MaterialCommunityIcons name="trash-can-outline" size={24} color="#B0B0B0" />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </Modal>
@@ -426,6 +482,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#3D3D3D',
+    position: 'relative',
   },
   scorecardHeader: {
     flexDirection: 'row',
@@ -444,12 +501,27 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginBottom: 4,
   },
+  scorecardDate: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 10,
+  },
   scorecardSubtitle: {
     fontSize: 14,
     color: '#B0B0B0',
   },
+  scorecardActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionButton: {
+    padding: 8,
+    marginLeft: 8,
+  },
   closeButton: {
-    padding: 5,
+    padding: 8,
+    marginLeft: 8,
   },
   closeButtonText: {
     fontSize: 18,
@@ -490,5 +562,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#B0B0B0',
     fontStyle: 'italic',
+  },
+  deleteFloatingButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: 'rgba(41, 41, 41, 0.8)',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5,
+    zIndex: 10,
   },
 }); 
