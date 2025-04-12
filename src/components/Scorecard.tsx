@@ -74,7 +74,7 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
               console.log(`Rendering distance for hole ${hole.number}:`, hole.distance);
               return (
                 <View key={`distance-${hole.number}`} style={styles.cell}>
-                  <Text style={styles.cellText}>{hole.distance}ft</Text>
+                  <Text style={styles.cellText}>{hole.distance}</Text>
                 </View>
               );
             })}
@@ -122,9 +122,9 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 0,
     width: '100%',
-    backgroundColor: '#1A1A1A',
+    backgroundColor: 'transparent',
   },
   totalScore: {
     fontSize: 20,
@@ -142,6 +142,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
     marginBottom: 8,
+    paddingHorizontal: 16,
   },
   table: {
     borderWidth: 1,

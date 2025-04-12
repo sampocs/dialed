@@ -153,7 +153,7 @@ export default function PlayScreen() {
       {showScorecard && currentRound && (
         <>
           {console.log('Current round being passed to Scorecard:', currentRound)}
-          <ScrollView style={styles.scorecard}>
+          <ScrollView style={styles.scorecard} contentContainerStyle={styles.scorecardContent}>
             <Scorecard course={currentRound.course} />
           </ScrollView>
         </>
@@ -282,5 +282,9 @@ const styles = StyleSheet.create({
   scorecard: {
     flex: 1,
     marginTop: 20,
+    width: '100%',
+  },
+  scorecardContent: {
+    width: '100%',
   },
 }); 
