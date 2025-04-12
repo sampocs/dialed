@@ -16,7 +16,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "io.github.sampocs.dialed",
-      "buildNumber": "1"
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -29,8 +32,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "sampocs-dialed" 
+        "projectId": "759df481-88e1-498d-945b-1e271b96bb13"
       }
-    }
+    },
+    "owner": "sampochyly"
   }
 }
