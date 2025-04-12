@@ -237,7 +237,7 @@ export default function HoleEditor({
               </TouchableOpacity>
             </View>
             
-            <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent}>
+            <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent} scrollEnabled={false}>
               <Scorecard course={round.course} showCourseMode={false} />
             </ScrollView>
           </View>

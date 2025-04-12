@@ -327,7 +327,7 @@ export default function RoundsScreen() {
               </View>
             </View>
             
-            <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent}>
+            <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent} scrollEnabled={false}>
               {/* Apply custom styling to reduce space between table and summary */}
               <View style={styles.scorecardWrapper}>
                 {selectedRound && <Scorecard course={selectedRound.course} showCourseMode={false} />}
