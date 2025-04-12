@@ -229,7 +229,7 @@ export default function MetricsScreen() {
             {points.length > 1 && (
               <Path
                 d={pathData}
-                stroke="#007AFF"
+                stroke="#93C757"
                 strokeWidth="2"
                 fill="none"
               />
@@ -240,7 +240,7 @@ export default function MetricsScreen() {
                 cx={index * xStep}
                 cy={normalizeY(point.y)}
                 r="4"
-                fill="#007AFF"
+                fill="#93C757"
               />
             ))}
           </Svg>
@@ -282,6 +282,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#93C757',
   },
   toggleButtonText: {
     fontSize: 14,
@@ -303,6 +305,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingHorizontal: 20,
+    marginTop: 20,
     marginBottom: 30,
   },
   statItem: {
