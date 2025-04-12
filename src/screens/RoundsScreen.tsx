@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,13 +6,20 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Modal,
+  Animated,
 } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { useApp } from '../context/AppContext';
 import { Round } from '../types';
+import Scorecard from '../components/Scorecard';
 
 export default function RoundsScreen() {
   const { rounds, deleteRound } = useApp();
   const [expandedRoundId, setExpandedRoundId] = useState<string | null>(null);
+  const [selectedRound, setSelectedRound] = useState<Round | null>(null);
+  const [showScorecardModal, setShowScorecardModal] = useState(false);
+  const highlightAnim = useRef(new Animated.Value(0)).current;
 
   const handleDeleteRound = (roundId: string) => {
     Alert.alert(
@@ -27,6 +34,19 @@ export default function RoundsScreen() {
         },
       ]
     );
+  };
+
+  const handleViewScorecard = (round: Round) => {
+    setSelectedRound(round);
+    setShowScorecardModal(true);
+    
+    // Animate highlight effect
+    highlightAnim.setValue(0);
+    Animated.timing(highlightAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
   };
 
   const getBestRound = () => {
@@ -48,6 +68,18 @@ export default function RoundsScreen() {
     });
   };
 
+  const getHighlightStyle = (roundId: string) => {
+    if (selectedRound?.id === roundId && showScorecardModal) {
+      return {
+        opacity: highlightAnim.interpolate({
+          inputRange: [0, 0.3, 0.7, 1],
+          outputRange: [0, 0.6, 0.3, 0]
+        })
+      };
+    }
+    return { opacity: 0 };
+  };
+
   return (
     <View style={styles.container}>
       {rounds.length === 0 ? (
@@ -61,11 +93,7 @@ export default function RoundsScreen() {
             .map((round) => (
               <View key={round.id} style={styles.roundItem}>
                 <TouchableOpacity
-                  onPress={() =>
-                    setExpandedRoundId(
-                      expandedRoundId === round.id ? null : round.id
-                    )
-                  }
+                  onPress={() => handleViewScorecard(round)}
                 >
                   <View style={styles.roundHeader}>
                     <View>
@@ -93,39 +121,51 @@ export default function RoundsScreen() {
                     </View>
                   </View>
                 </TouchableOpacity>
-
-                {expandedRoundId === round.id && (
-                  <View style={styles.scorecard}>
-                    <View style={styles.scorecardHeader}>
-                      <Text style={styles.scorecardHeaderText}>Hole</Text>
-                      <Text style={styles.scorecardHeaderText}>Par</Text>
-                      <Text style={styles.scorecardHeaderText}>Distance</Text>
-                      <Text style={styles.scorecardHeaderText}>Score</Text>
-                    </View>
-                    {round.course.holes.map((hole) => (
-                      <View key={hole.number} style={styles.scorecardRow}>
-                        <Text style={styles.scorecardText}>{hole.number}</Text>
-                        <Text style={styles.scorecardText}>{hole.par}</Text>
-                        <Text style={styles.scorecardText}>
-                          {hole.distance} ft
-                        </Text>
-                        <Text style={styles.scorecardText}>{hole.score || '-'}</Text>
-                      </View>
-                    ))}
-                    <View style={styles.scorecardSummary}>
-                      <Text style={styles.summaryText}>
-                        Total Par: {round.course.totalPar}
-                      </Text>
-                      <Text style={styles.summaryText}>
-                        Total Distance: {round.course.totalDistance.toFixed(1)} ft
-                      </Text>
-                    </View>
-                  </View>
-                )}
+                <Animated.View 
+                  style={[
+                    styles.highlightOverlay,
+                    getHighlightStyle(round.id)
+                  ]}
+                />
               </View>
             ))}
         </ScrollView>
       )}
+
+      {/* Scorecard Modal with BlurView */}
+      <Modal
+        visible={showScorecardModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowScorecardModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <BlurView intensity={80} style={StyleSheet.absoluteFill} tint="dark" />
+          
+          <View style={styles.scorecardModalContent}>
+            <View style={styles.scorecardHeader}>
+              <View style={styles.scorecardTitleContainer}>
+                <Text style={styles.scorecardTitle}>Scorecard</Text>
+                {selectedRound && (
+                  <Text style={styles.scorecardSubtitle}>
+                    {selectedRound.courseName} • {formatDate(selectedRound.date)}
+                  </Text>
+                )}
+              </View>
+              <TouchableOpacity 
+                onPress={() => setShowScorecardModal(false)}
+                style={styles.closeButton}
+              >
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent}>
+              {selectedRound && <Scorecard course={selectedRound.course} />}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -162,6 +202,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     padding: 16,
+    position: 'relative',
   },
   roundHeader: {
     flexDirection: 'row',
@@ -199,48 +240,64 @@ const styles = StyleSheet.create({
     color: '#FF3B30',
     fontSize: 14,
   },
-  scorecard: {
-    marginTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#3D3D3D',
-    paddingTop: 16,
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scorecardModalContent: {
+    width: '95%',
+    maxHeight: '80%',
+    backgroundColor: '#292929',
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#3D3D3D',
   },
   scorecardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingBottom: 8,
+    alignItems: 'center',
+    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#3D3D3D',
   },
-  scorecardHeaderText: {
-    fontSize: 14,
-    fontWeight: '600',
+  scorecardTitleContainer: {
     flex: 1,
-    textAlign: 'center',
+  },
+  scorecardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
     color: '#FFFFFF',
+    marginBottom: 4,
   },
-  scorecardRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#3D3D3D',
-  },
-  scorecardText: {
-    fontSize: 14,
-    flex: 1,
-    textAlign: 'center',
-    color: '#FFFFFF',
-  },
-  scorecardSummary: {
-    marginTop: 16,
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#3D3D3D',
-  },
-  summaryText: {
+  scorecardSubtitle: {
     fontSize: 14,
     color: '#B0B0B0',
-    marginBottom: 4,
+  },
+  closeButton: {
+    padding: 5,
+  },
+  closeButtonText: {
+    fontSize: 18,
+    color: '#93C757',
+  },
+  scorecardScrollView: {
+    width: '100%',
+  },
+  scorecardContent: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+  highlightOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#93C757',
+    borderRadius: 8,
+    zIndex: -1,
   },
 }); 
