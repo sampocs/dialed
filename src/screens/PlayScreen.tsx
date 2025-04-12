@@ -242,12 +242,12 @@ const styles = StyleSheet.create({
   },
   scoreButtons: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 15,
   },
   scoreButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     borderWidth: 2,
     borderColor: '#93C757',
     justifyContent: 'center',
@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#93C757',
   },
   scoreButtonText: {
-    fontSize: 24,
+    fontSize: 28,
     color: '#93C757',
   },
   scoreButtonTextSelected: {
