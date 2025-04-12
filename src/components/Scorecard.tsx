@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     borderColor: '#3D3D3D',
     borderRadius: 8,
     overflow: 'hidden',
-    width: '100%',
+    width: 365,
   },
   row: {
     flexDirection: 'row',
