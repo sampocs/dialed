@@ -1,12 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, StatusBar } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { calculateStats } from '../utils/gameLogic';
 import Svg, { Path, Circle } from 'react-native-svg';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function MetricsScreen() {
   const { rounds } = useApp();
   const [showDifferential, setShowDifferential] = useState(true);
+  const insets = useSafeAreaInsets();
 
   const stats = useMemo(() => calculateStats(rounds), [rounds]);
   const completedRounds = rounds.filter((round) => round.completed);
@@ -25,7 +27,7 @@ export default function MetricsScreen() {
 
   if (points.length === 0) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { paddingTop: Math.max(insets.top, 20) }]}>
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>
             No rounds played yet
@@ -57,7 +59,7 @@ export default function MetricsScreen() {
     : '';
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: Math.max(insets.top, 20) }]}>
       <View style={styles.header}>
         <Text style={styles.title}>Performance</Text>
         <TouchableOpacity
@@ -152,7 +154,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292929',
-    paddingTop: 20,
   },
   header: {
     flexDirection: 'row',
