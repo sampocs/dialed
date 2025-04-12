@@ -42,35 +42,6 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
   // Calculate differential based on completed holes only
   const differential = completedHolesScore - completedHolesPar;
 
-  const totalDistance = course.totalDistance || frontNine.reduce((sum: number, hole: Hole) => sum + hole.distance, 0) + backNine.reduce((sum: number, hole: Hole) => sum + hole.distance, 0);
-  const totalPar = course.totalPar || frontNine.reduce((sum: number, hole: Hole) => sum + hole.par, 0) + backNine.reduce((sum: number, hole: Hole) => sum + hole.par, 0);
-
-  // Format the differential with a + or - sign
-  const formatDifferential = (diff: number) => {
-    if (diff === 0) return 'E';
-    return diff > 0 ? `+${diff}` : `${diff}`;
-  };
-
-  // Create summary text based on completed score
-  const renderSummary = () => {
-    // Only show score information if there's at least one completed hole
-    if (completedHoles.length === 0) {
-      return (
-        <View style={styles.summaryContainer}>
-          <Text style={styles.summaryText}>Length: {totalDistance} ft</Text>
-        </View>
-      );
-    }
-
-    return (
-      <View style={styles.summaryContainer}>
-        <Text style={styles.summaryText}>
-          Length: {totalDistance} ft         Score: {completedHolesScore}/{totalPar} ({formatDifferential(differential)})
-        </Text>
-      </View>
-    );
-  };
-
   const renderTable = (holes: Hole[], title: string, totalLabel: string) => {
     return (
       <View style={styles.tableContainer}>
@@ -150,7 +121,6 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
     <View style={styles.container}>
       {renderTable(frontNine, 'Front Nine', 'F')}
       {renderTable(backNine, 'Back Nine', 'B')}
-      {renderSummary()}
     </View>
   );
 };
@@ -257,19 +227,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     padding: 20,
-  },
-  summaryContainer: {
-    paddingHorizontal: 16,
-    marginTop: 16,
-    alignItems: 'center',
-    width: '100%',
-  },
-  summaryText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#FFFFFF',
-    textAlign: 'center',
-  },
+  }
 });
 
 export default Scorecard; 
