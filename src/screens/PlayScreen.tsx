@@ -95,21 +95,33 @@ export default function PlayScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.scoreInfo}>
-        <Text style={styles.holeNumber}>Hole {currentHole}/18</Text>
-        <Text style={styles.parText}>Par {currentHoleData.par}</Text>
-        <Text style={styles.distanceText}>{currentHoleData.distance} ft</Text>
-      </View>
+      <View style={styles.mainContentWrapper}>
+        <View style={styles.scoreInfo}>
+          <Text style={styles.holeNumber}>Hole {currentHole}/18</Text>
+          <Text style={styles.parText}>Par {currentHoleData.par}</Text>
+          <Text style={styles.distanceText}>{currentHoleData.distance} ft</Text>
+        </View>
 
-      <View style={styles.navigation}>
         {currentHole > 1 && (
           <TouchableOpacity
             onPress={() => handleNavigateHole('prev')}
-            style={styles.navButton}
+            style={[styles.overlayNavButton, styles.leftNavButton]}
           >
             <Text style={styles.navButtonText}>←</Text>
           </TouchableOpacity>
         )}
+        
+        {currentHole < 18 && (
+          <TouchableOpacity
+            onPress={() => handleNavigateHole('next')}
+            style={[styles.overlayNavButton, styles.rightNavButton]}
+          >
+            <Text style={styles.navButtonText}>→</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      <View style={styles.navigation}>
         <View style={styles.scoreButtons}>
           {Array.from({ length: currentHoleData.par === 3 ? 4 : 3 }).map(
             (_, index) => (
@@ -131,14 +143,6 @@ export default function PlayScreen() {
             )
           )}
         </View>
-        {currentHole < 18 && (
-          <TouchableOpacity
-            onPress={() => handleNavigateHole('next')}
-            style={styles.navButton}
-          >
-            <Text style={styles.navButtonText}>→</Text>
-          </TouchableOpacity>
-        )}
       </View>
 
       {isLastHole && hasScore && (
@@ -196,10 +200,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   holeNumber: {
-    fontSize: 42,
+    fontSize: 54,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 30,
+    marginBottom: 40,
   },
   quitButton: {
     padding: 10,
@@ -208,33 +212,33 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#B0B0B0',
   },
+  mainContentWrapper: {
+    position: 'relative',
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 100,
+    marginBottom: 30,
+  },
   scoreInfo: {
     alignItems: 'center',
-    marginBottom: 40,
-    marginTop: 100,
+    marginBottom: 50,
   },
   parText: {
-    fontSize: 32,
-    marginBottom: 15,
+    fontSize: 42,
+    marginBottom: 20,
     color: '#FFFFFF',
   },
   distanceText: {
-    fontSize: 28,
+    fontSize: 36,
     color: '#B0B0B0',
   },
   navigation: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
     marginBottom: 30,
-  },
-  navButton: {
-    padding: 10,
-  },
-  navButtonText: {
-    fontSize: 24,
-    color: '#93C757',
+    width: '100%',
   },
   scoreButtons: {
     flexDirection: 'row',
@@ -305,5 +309,24 @@ const styles = StyleSheet.create({
   scorecardContent: {
     width: '100%',
     paddingHorizontal: 16,
+  },
+  overlayNavButton: {
+    position: 'absolute',
+    top: '50%',
+    marginTop: -30,
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  leftNavButton: {
+    left: 10,
+  },
+  rightNavButton: {
+    right: 10,
+  },
+  navButtonText: {
+    fontSize: 42,
+    color: '#93C757',
   },
 }); 
