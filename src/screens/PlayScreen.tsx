@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Modal,
 } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { useApp } from '../context/AppContext';
 import { isValidScore } from '../utils/gameLogic';
 import Scorecard from '../components/Scorecard';
@@ -184,14 +186,34 @@ export default function PlayScreen() {
         </Text>
       </TouchableOpacity>
 
-      {showScorecard && currentRound && (
-        <>
-          {console.log('Current round being passed to Scorecard:', currentRound)}
-          <ScrollView style={styles.scorecard} contentContainerStyle={styles.scorecardContent}>
-            <Scorecard course={currentRound.course} />
-          </ScrollView>
-        </>
-      )}
+      {/* Scorecard Modal with BlurView */}
+      <Modal
+        visible={showScorecard}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowScorecard(false)}
+      >
+        <View style={styles.modalContainer}>
+          <BlurView intensity={80} style={StyleSheet.absoluteFill} tint="dark" />
+          
+          <View style={styles.scorecardModalContent}>
+            <View style={styles.scorecardHeader}>
+              <Text style={styles.scorecardTitle}>Scorecard</Text>
+              <TouchableOpacity 
+                onPress={() => setShowScorecard(false)}
+                style={styles.closeButton}
+              >
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent}>
+              {console.log('Current round in modal:', currentRound)}
+              {currentRound && <Scorecard course={currentRound.course} />}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -338,14 +360,47 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
-  scorecard: {
+  modalContainer: {
     flex: 1,
-    marginTop: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scorecardModalContent: {
+    width: '95%',
+    maxHeight: '80%',
+    backgroundColor: '#292929',
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#3D3D3D',
+  },
+  scorecardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3D3D3D',
+  },
+  scorecardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  closeButton: {
+    padding: 5,
+  },
+  closeButtonText: {
+    fontSize: 18,
+    color: '#93C757',
+  },
+  scorecardScrollView: {
     width: '100%',
   },
   scorecardContent: {
-    width: '100%',
+    paddingVertical: 16,
     paddingHorizontal: 16,
+    alignItems: 'center',
   },
   overlayNavButton: {
     position: 'absolute',

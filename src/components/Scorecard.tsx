@@ -7,11 +7,20 @@ interface ScorecardProps {
 }
 
 const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
-  console.log('Course data:', course);
+  console.log('Course data received in Scorecard:', course);
+  
+  // Safety check for course data
+  if (!course || !course.holes || !Array.isArray(course.holes)) {
+    console.error('Invalid course data:', course);
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Unable to display scorecard</Text>
+      </View>
+    );
+  }
+  
   const frontNine = course.holes.slice(0, 9);
-  console.log('Front nine:', frontNine);
   const backNine = course.holes.slice(9);
-  console.log('Back nine:', backNine);
   
   const calculateCumulativeScore = (holes: Hole[]) => {
     return holes.reduce((sum, hole) => sum + (hole.score || 0), 0);
@@ -34,7 +43,6 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
   const differential = completedHolesScore - completedHolesPar;
 
   const renderTable = (holes: Hole[], title: string, totalLabel: string) => {
-    console.log(`Rendering ${title} table with holes:`, holes);
     return (
       <View style={styles.tableContainer}>
         <Text style={styles.tableTitle}>{title}</Text>
@@ -44,14 +52,11 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
             <View style={styles.headerLabelCell}>
               <Text style={styles.headerText}>#</Text>
             </View>
-            {holes.map((hole) => {
-              console.log(`Rendering hole ${hole.number} with score:`, hole.score);
-              return (
-                <View key={`header-${hole.number}`} style={styles.headerCell}>
-                  <Text style={styles.headerText}>{hole.number}</Text>
-                </View>
-              );
-            })}
+            {holes.map((hole) => (
+              <View key={`header-${hole.number}`} style={styles.headerCell}>
+                <Text style={styles.headerText}>{hole.number}</Text>
+              </View>
+            ))}
             <View style={styles.headerLastCell}>
               <Text style={styles.headerText}>{totalLabel}</Text>
             </View>
@@ -62,14 +67,11 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
             <View style={styles.labelCell}>
               <Text style={styles.labelText}>Par</Text>
             </View>
-            {holes.map((hole) => {
-              console.log(`Rendering par for hole ${hole.number}:`, hole.par);
-              return (
-                <View key={`par-${hole.number}`} style={styles.cell}>
-                  <Text style={styles.cellText}>{hole.par}</Text>
-                </View>
-              );
-            })}
+            {holes.map((hole) => (
+              <View key={`par-${hole.number}`} style={styles.cell}>
+                <Text style={styles.cellText}>{hole.par}</Text>
+              </View>
+            ))}
             <View style={styles.lastCell}>
               <Text style={styles.cellText}>
                 {holes.reduce((sum, hole) => sum + hole.par, 0)}
@@ -82,14 +84,11 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
             <View style={styles.labelCell}>
               <Text style={styles.labelText}>Length</Text>
             </View>
-            {holes.map((hole) => {
-              console.log(`Rendering distance for hole ${hole.number}:`, hole.distance);
-              return (
-                <View key={`distance-${hole.number}`} style={styles.cell}>
-                  <Text style={styles.cellText}>{hole.distance}</Text>
-                </View>
-              );
-            })}
+            {holes.map((hole) => (
+              <View key={`distance-${hole.number}`} style={styles.cell}>
+                <Text style={styles.cellText}>{hole.distance}</Text>
+              </View>
+            ))}
             <View style={styles.lastCell}>
               <Text style={styles.cellText}>
                 {holes.reduce((sum, hole) => sum + hole.distance, 0)}
@@ -102,14 +101,11 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
             <View style={styles.labelCell}>
               <Text style={styles.labelText}>Score</Text>
             </View>
-            {holes.map((hole) => {
-              console.log(`Rendering score for hole ${hole.number}:`, hole.score);
-              return (
-                <View key={`score-${hole.number}`} style={styles.cell}>
-                  <Text style={styles.cellText}>{hole.score || '-'}</Text>
-                </View>
-              );
-            })}
+            {holes.map((hole) => (
+              <View key={`score-${hole.number}`} style={styles.cell}>
+                <Text style={styles.cellText}>{hole.score || '-'}</Text>
+              </View>
+            ))}
             <View style={styles.lastCell}>
               <Text style={styles.cellText}>
                 {holes.reduce((sum, hole) => sum + (hole.score || 0), 0)}
@@ -123,9 +119,6 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.totalScore}>
-        Total Score: {completedHolesScore} ({differential >= 0 ? '+' : ''}{differential})
-      </Text>
       {renderTable(frontNine, 'Front Nine', 'F')}
       {renderTable(backNine, 'Back Nine', 'B')}
     </View>
@@ -137,13 +130,6 @@ const styles = StyleSheet.create({
     padding: 0,
     width: '100%',
     backgroundColor: 'transparent',
-  },
-  totalScore: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    textAlign: 'center',
-    marginBottom: 16,
   },
   tableContainer: {
     marginBottom: 24,
@@ -161,7 +147,7 @@ const styles = StyleSheet.create({
     borderColor: '#3D3D3D',
     borderRadius: 8,
     overflow: 'hidden',
-    width: 365,
+    width: '100%', // Changed from fixed width to responsive
   },
   row: {
     flexDirection: 'row',
@@ -169,7 +155,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#3D3D3D',
   },
   headerCell: {
-    width: 30,
+    flex: 1,
     padding: 5,
     alignItems: 'center',
     borderRightWidth: 1,
@@ -201,7 +187,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3D3D3D',
   },
   cell: {
-    width: 30,
+    flex: 1,
     padding: 5,
     alignItems: 'center',
     borderRightWidth: 1,
@@ -230,6 +216,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 13,
   },
+  errorText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    textAlign: 'center',
+    padding: 20,
+  }
 });
 
 export default Scorecard; 
