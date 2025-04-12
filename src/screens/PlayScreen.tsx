@@ -12,6 +12,10 @@ import { BlurView } from 'expo-blur';
 import { useApp } from '../context/AppContext';
 import { isValidScore } from '../utils/gameLogic';
 import Scorecard from '../components/Scorecard';
+import { 
+  useFonts,
+  BebasNeue_400Regular 
+} from '@expo-google-fonts/bebas-neue';
 
 export default function PlayScreen() {
   const {
@@ -25,6 +29,11 @@ export default function PlayScreen() {
   } = useApp();
   const [currentHole, setCurrentHole] = useState(1);
   const [showScorecard, setShowScorecard] = useState(false);
+  
+  // Load the Bebas Neue font
+  const [fontsLoaded] = useFonts({
+    BebasNeue_400Regular,
+  });
 
   const handleStartNewGame = () => {
     startNewGame();
@@ -100,7 +109,7 @@ export default function PlayScreen() {
   if (gameState === 'no-game') {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Dialed</Text>
+        <Text style={[styles.title, fontsLoaded && styles.titleWithCustomFont]}>DIALED</Text>
         <TouchableOpacity style={styles.button} onPress={handleStartNewGame}>
           <Text style={styles.buttonText}>New Game</Text>
         </TouchableOpacity>
@@ -242,7 +251,6 @@ export default function PlayScreen() {
             </View>
             
             <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent}>
-              {console.log('Current round in modal:', currentRound)}
               {currentRound && <Scorecard course={currentRound.course} />}
             </ScrollView>
           </View>
@@ -278,6 +286,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 300,
     color: '#FFFFFF',
+  },
+  titleWithCustomFont: {
+    fontFamily: 'BebasNeue_400Regular',
+    fontSize: 84,
+    letterSpacing: 6,
+    marginBottom: 280,
   },
   holeNumber: {
     fontSize: 54,

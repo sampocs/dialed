@@ -30,6 +30,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const loadInitialState = async () => {
     const initialState = await storage.loadInitialState();
+    
+    // Set a default player if one doesn't exist
+    if (!initialState.player) {
+      const defaultPlayer = { name: "Player" };
+      await storage.savePlayer(defaultPlayer);
+      initialState.player = defaultPlayer;
+    }
+    
     setState(current => ({ ...current, ...initialState }));
   };
 
