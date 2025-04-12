@@ -6,6 +6,7 @@ import { createNewRound, updateScore } from '../utils/gameLogic';
 interface AppContextType extends AppState {
   setPlayer: (player: Player) => Promise<void>;
   startNewGame: () => Promise<void>;
+  startRound: () => Promise<void>;
   updateHoleScore: (holeNumber: number, score: number) => Promise<void>;
   completeRound: () => Promise<void>;
   quitGame: () => Promise<void>;
@@ -43,6 +44,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState(current => ({
       ...current,
       currentRound: newRound,
+      gameState: 'game-ready',
+    }));
+  };
+
+  const startRound = async () => {
+    if (!state.currentRound) return;
+    
+    setState(current => ({
+      ...current,
       gameState: 'game-in-progress',
     }));
   };
@@ -103,6 +113,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         ...state,
         setPlayer,
         startNewGame,
+        startRound,
         updateHoleScore,
         completeRound,
         quitGame,

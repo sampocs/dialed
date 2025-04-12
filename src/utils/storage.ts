@@ -81,11 +81,22 @@ export async function loadInitialState(): Promise<Partial<AppState>> {
     getCurrentRound(),
   ]);
 
+  let gameState: "no-game" | "game-ready" | "game-in-progress" = "no-game";
+
+  if (currentRound) {
+    // Determine if this is a saved game in progress or a new game ready to start
+    // If there are any scores recorded, it's a game in progress
+    const hasScores = currentRound.course.holes.some(
+      (hole) => hole.score !== undefined
+    );
+    gameState = hasScores ? "game-in-progress" : "game-ready";
+  }
+
   return {
     player: player || undefined,
     rounds: rounds || [],
     currentRound: currentRound || null,
-    gameState: currentRound ? "game-in-progress" : "no-game",
+    gameState,
   };
 }
 
