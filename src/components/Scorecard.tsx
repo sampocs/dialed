@@ -32,11 +32,14 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
             <View style={styles.headerCell}>
               <Text style={styles.headerText}>#</Text>
             </View>
-            {holes.map((hole) => (
-              <View key={`header-${hole.number}`} style={styles.headerCell}>
-                <Text style={styles.headerText}>{hole.number}</Text>
-              </View>
-            ))}
+            {holes.map((hole) => {
+              console.log(`Rendering hole ${hole.number} with score:`, hole.score);
+              return (
+                <View key={`header-${hole.number}`} style={styles.headerCell}>
+                  <Text style={styles.headerText}>{hole.number}</Text>
+                </View>
+              );
+            })}
             <View style={styles.headerCell}>
               <Text style={styles.headerText}>{totalLabel}</Text>
             </View>
@@ -47,11 +50,14 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
             <View style={styles.labelCell}>
               <Text style={styles.labelText}>Par</Text>
             </View>
-            {holes.map((hole) => (
-              <View key={`par-${hole.number}`} style={styles.cell}>
-                <Text style={styles.cellText}>{hole.par}</Text>
-              </View>
-            ))}
+            {holes.map((hole) => {
+              console.log(`Rendering par for hole ${hole.number}:`, hole.par);
+              return (
+                <View key={`par-${hole.number}`} style={styles.cell}>
+                  <Text style={styles.cellText}>{hole.par}</Text>
+                </View>
+              );
+            })}
             <View style={styles.cell}>
               <Text style={styles.cellText}>
                 {holes.reduce((sum, hole) => sum + hole.par, 0)}
@@ -64,11 +70,14 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
             <View style={styles.labelCell}>
               <Text style={styles.labelText}>Distance</Text>
             </View>
-            {holes.map((hole) => (
-              <View key={`distance-${hole.number}`} style={styles.cell}>
-                <Text style={styles.cellText}>{hole.distance}ft</Text>
-              </View>
-            ))}
+            {holes.map((hole) => {
+              console.log(`Rendering distance for hole ${hole.number}:`, hole.distance);
+              return (
+                <View key={`distance-${hole.number}`} style={styles.cell}>
+                  <Text style={styles.cellText}>{hole.distance}ft</Text>
+                </View>
+              );
+            })}
             <View style={styles.cell}>
               <Text style={styles.cellText}>
                 {holes.reduce((sum, hole) => sum + hole.distance, 0)}ft
@@ -81,11 +90,14 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
             <View style={styles.labelCell}>
               <Text style={styles.labelText}>Score</Text>
             </View>
-            {holes.map((hole) => (
-              <View key={`score-${hole.number}`} style={styles.cell}>
-                <Text style={styles.cellText}>{hole.score || '-'}</Text>
-              </View>
-            ))}
+            {holes.map((hole) => {
+              console.log(`Rendering score for hole ${hole.number}:`, hole.score);
+              return (
+                <View key={`score-${hole.number}`} style={styles.cell}>
+                  <Text style={styles.cellText}>{hole.score || '-'}</Text>
+                </View>
+              );
+            })}
             <View style={styles.cell}>
               <Text style={styles.cellText}>
                 {holes.reduce((sum, hole) => sum + (hole.score || 0), 0)}
@@ -110,8 +122,9 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 0,
+    padding: 16,
     width: '100%',
+    backgroundColor: '#1A1A1A',
   },
   totalScore: {
     fontSize: 20,
@@ -119,19 +132,16 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
     marginBottom: 16,
-    paddingHorizontal: 16,
   },
   tableContainer: {
     marginBottom: 24,
     width: '100%',
-    paddingHorizontal: 0,
   },
   tableTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#B0B0B0',
+    color: '#FFFFFF',
     marginBottom: 8,
-    paddingHorizontal: 16,
   },
   table: {
     borderWidth: 1,
@@ -139,7 +149,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     width: '100%',
-    marginHorizontal: 0,
   },
   row: {
     flexDirection: 'row',
@@ -148,8 +157,8 @@ const styles = StyleSheet.create({
   },
   headerCell: {
     flex: 1,
-    minWidth: 0,
-    padding: 12,
+    minWidth: 40,
+    padding: 8,
     alignItems: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
@@ -157,8 +166,8 @@ const styles = StyleSheet.create({
   },
   labelCell: {
     flex: 1,
-    minWidth: 0,
-    padding: 12,
+    minWidth: 60,
+    padding: 8,
     alignItems: 'flex-start',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
@@ -166,8 +175,8 @@ const styles = StyleSheet.create({
   },
   cell: {
     flex: 1,
-    minWidth: 0,
-    padding: 12,
+    minWidth: 40,
+    padding: 8,
     alignItems: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
