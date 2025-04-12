@@ -151,8 +151,16 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
 
   return (
     <View style={styles.container}>
-      {renderTable(frontNine, 'Front Nine', 'F')}
-      {renderTable(backNine, 'Back Nine', 'B')}
+      {course.holeCount === 9 ? (
+        // For 9-hole courses, use a simple "Scorecard" title
+        renderTable(frontNine, 'Scorecard', 'T')
+      ) : (
+        // For 18-hole courses, use "Front Nine" and "Back Nine"
+        <>
+          {renderTable(frontNine, 'Front Nine', 'F')}
+          {renderTable(backNine, 'Back Nine', 'B')}
+        </>
+      )}
       {renderSummary()}
     </View>
   );

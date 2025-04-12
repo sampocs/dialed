@@ -60,9 +60,13 @@ export default function PlayScreen() {
   };
 
   const handleNavigateHole = (direction: 'prev' | 'next') => {
+    if (!currentRound) return;
+    
+    const maxHole = currentRound.course.holeCount;
+    
     if (direction === 'prev' && currentHole > 1) {
       setCurrentHole(currentHole - 1);
-    } else if (direction === 'next' && currentHole < 18) {
+    } else if (direction === 'next' && currentHole < maxHole) {
       setCurrentHole(currentHole + 1);
     }
   };
@@ -180,7 +184,6 @@ export default function PlayScreen() {
   if (!currentRound) return null;
 
   const currentHoleData = currentRound.course.holes[currentHole - 1];
-  const isLastHole = currentHole === 18;
   const hasScore = currentHoleData.score !== undefined;
   const { totalScore, differential } = calculateScoreDetails();
 
@@ -217,7 +220,7 @@ export default function PlayScreen() {
           </TouchableOpacity>
         )}
         
-        {currentHole < 18 && (
+        {currentHole < (currentRound.course.holeCount) && (
           <TouchableOpacity
             onPress={() => handleNavigateHole('next')}
             style={[styles.overlayNavButton, styles.rightNavButton]}
@@ -251,7 +254,7 @@ export default function PlayScreen() {
         </View>
       </View>
 
-      {isLastHole && hasScore && (
+      {currentHole === currentRound.course.holeCount && hasScore && (
         <TouchableOpacity style={styles.submitButton} onPress={handleComplete}>
           <Text style={styles.submitButtonText}>Complete Round</Text>
         </TouchableOpacity>
