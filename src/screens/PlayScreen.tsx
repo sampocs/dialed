@@ -114,6 +114,14 @@ export default function PlayScreen() {
       <View style={styles.mainContentWrapper}>
         <View style={styles.scoreInfo}>
           <Text style={styles.holeNumber}>Hole #{currentHole}</Text>
+          
+          {/* Total Score Display - moved here */}
+          <View style={styles.totalScoreContainer}>
+            <Text style={styles.totalScoreText}>
+              Total Score: {totalScore} ({differential >= 0 ? '+' : ''}{differential})
+            </Text>
+          </View>
+          
           <Text style={styles.parText}>Par {currentHoleData.par}</Text>
           <Text style={styles.distanceText}>{currentHoleData.distance} ft</Text>
         </View>
@@ -135,13 +143,6 @@ export default function PlayScreen() {
             <Text style={styles.navButtonText}>→</Text>
           </TouchableOpacity>
         )}
-      </View>
-
-      {/* Total Score Display */}
-      <View style={styles.totalScoreContainer}>
-        <Text style={styles.totalScoreText}>
-          Total Score: {totalScore} ({differential >= 0 ? '+' : ''}{differential})
-        </Text>
       </View>
 
       <View style={styles.navigation}>
@@ -226,7 +227,7 @@ const styles = StyleSheet.create({
     fontSize: 54,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 40,
+    marginBottom: 10,
   },
   quitButton: {
     padding: 10,
@@ -246,18 +247,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 50,
   },
-  parText: {
-    fontSize: 42,
-    marginBottom: 20,
-    color: '#FFFFFF',
-  },
-  distanceText: {
-    fontSize: 36,
-    color: '#B0B0B0',
-  },
   totalScoreContainer: {
-    marginBottom: 20,
-    paddingVertical: 10,
+    marginBottom: 60,
+    paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 10,
     backgroundColor: '#3D3D3D',
@@ -267,6 +259,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
+  },
+  parText: {
+    fontSize: 42,
+    marginBottom: 20,
+    color: '#FFFFFF',
+  },
+  distanceText: {
+    fontSize: 36,
+    color: '#B0B0B0',
   },
   navigation: {
     flexDirection: 'row',
@@ -348,7 +349,7 @@ const styles = StyleSheet.create({
   },
   overlayNavButton: {
     position: 'absolute',
-    top: '55%',
+    top: '65%',
     marginTop: -30,
     padding: 20,
     justifyContent: 'center',
