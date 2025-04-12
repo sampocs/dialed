@@ -99,7 +99,7 @@ export default function RoundsScreen() {
                       </Text>
                       <Text style={styles.scoreText}>
                         Score: {round.totalScore > 0 ? round.totalScore : '-'} ({round.differential > 0 ? '+' : ''}
-                        {round.differential !== 0 ? round.differential : '-'})
+                        {round.differential})
                       </Text>
                     </View>
                     <View style={styles.roundHeaderRight}>
