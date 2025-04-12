@@ -29,6 +29,8 @@ export default function PlayScreen() {
   } = useApp();
   const [currentHole, setCurrentHole] = useState(1);
   const [showScorecard, setShowScorecard] = useState(false);
+  const [courseMode, setCourseMode] = useState<"Indoor" | "Outdoor">("Indoor");
+  const [holeCount, setHoleCount] = useState<9 | 18>(18);
   
   // Load the Bebas Neue font
   const [fontsLoaded] = useFonts({
@@ -36,7 +38,7 @@ export default function PlayScreen() {
   });
 
   const handleStartNewGame = () => {
-    startNewGame();
+    startNewGame(courseMode, holeCount);
   };
 
   const handleStartRound = () => {
@@ -58,17 +60,28 @@ export default function PlayScreen() {
   };
 
   const handleNavigateHole = (direction: 'prev' | 'next') => {
+    if (!currentRound) return;
+    
+    const maxHole = currentRound.course.holeCount;
+    
     if (direction === 'prev' && currentHole > 1) {
       setCurrentHole(currentHole - 1);
-    } else if (direction === 'next' && currentHole < 18) {
+    } else if (direction === 'next' && currentHole < maxHole) {
       setCurrentHole(currentHole + 1);
     }
   };
 
   const handleQuit = () => {
+    // For 'game-ready' or 'game-complete' state, quit immediately without confirmation
+    if (gameState === 'game-ready' || gameState === 'game-complete') {
+      quitGame();
+      return;
+    }
+    
+    // For 'game-in-progress' state, show confirmation dialog
     Alert.alert(
       'Quit the game?',
-      'Are you sure you want to quit? Your progress will be lost.',
+      'Your progress will be lost.',
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Quit', style: 'destructive', onPress: quitGame },
@@ -77,14 +90,7 @@ export default function PlayScreen() {
   };
 
   const handleComplete = () => {
-    Alert.alert(
-      'Complete Round',
-      'Are you sure you want to complete this round?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Complete', onPress: completeRound },
-      ]
-    );
+    completeRound();
   };
 
   // Function to calculate the current score details
@@ -110,8 +116,43 @@ export default function PlayScreen() {
     return (
       <View style={styles.container}>
         <Text style={[styles.title, fontsLoaded && styles.titleWithCustomFont]}>DIALED</Text>
-        <TouchableOpacity style={styles.button} onPress={handleStartNewGame}>
-          <Text style={styles.buttonText}>New Game</Text>
+        
+        {/* Mode Toggle */}
+        <Text style={styles.toggleLabel}>Course Mode</Text>
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity 
+            style={[styles.toggleButton, courseMode === "Indoor" && styles.toggleButtonSelected]} 
+            onPress={() => setCourseMode("Indoor")}
+          >
+            <Text style={[styles.toggleText, courseMode === "Indoor" && styles.toggleTextSelected]}>Indoor</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.toggleButton, courseMode === "Outdoor" && styles.toggleButtonSelected]} 
+            onPress={() => setCourseMode("Outdoor")}
+          >
+            <Text style={[styles.toggleText, courseMode === "Outdoor" && styles.toggleTextSelected]}>Outdoor</Text>
+          </TouchableOpacity>
+        </View>
+        
+        {/* Hole Count Toggle */}
+        <Text style={styles.toggleLabel}>Round Length</Text>
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity 
+            style={[styles.toggleButton, holeCount === 9 && styles.toggleButtonSelected]} 
+            onPress={() => setHoleCount(9)}
+          >
+            <Text style={[styles.toggleText, holeCount === 9 && styles.toggleTextSelected]}>9 Holes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.toggleButton, holeCount === 18 && styles.toggleButtonSelected]} 
+            onPress={() => setHoleCount(18)}
+          >
+            <Text style={[styles.toggleText, holeCount === 18 && styles.toggleTextSelected]}>18 Holes</Text>
+          </TouchableOpacity>
+        </View>
+        
+        <TouchableOpacity style={styles.newGameButton} onPress={handleStartNewGame}>
+          <Text style={styles.newGameButtonText}>New Game</Text>
         </TouchableOpacity>
       </View>
     );
@@ -128,9 +169,10 @@ export default function PlayScreen() {
         </View>
         
         <Text style={styles.titleSmall}>{currentRound.courseName}</Text>
+        <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
         
         <View style={styles.scorecardContainer}>
-          <Scorecard course={currentRound.course} />
+          <Scorecard course={currentRound.course} showCourseMode={false} />
         </View>
         
         <TouchableOpacity style={[styles.button, styles.startRoundButton]} onPress={handleStartRound}>
@@ -140,10 +182,40 @@ export default function PlayScreen() {
     );
   }
 
+  if (gameState === 'game-complete' && currentRound) {
+    // Calculate the total score and differential
+    const totalScore = currentRound.totalScore;
+    const differential = currentRound.differential;
+    
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.spacer} />
+          <TouchableOpacity onPress={handleQuit} style={styles.quitButton}>
+            <Text style={styles.quitButtonText}>✕</Text>
+          </TouchableOpacity>
+        </View>
+        
+        <Text style={styles.titleSmall}>Round Complete!</Text>
+        
+        <View style={styles.roundSummary}>
+          <Text style={styles.courseName}>{currentRound.courseName}</Text>
+          <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
+          <Text style={styles.scoreText}>
+            Final Score: {totalScore} ({differential >= 0 ? '+' : ''}{differential})
+          </Text>
+        </View>
+        
+        <View style={styles.scorecardContainer}>
+          <Scorecard course={currentRound.course} showCourseMode={false} />
+        </View>
+      </View>
+    );
+  }
+
   if (!currentRound) return null;
 
   const currentHoleData = currentRound.course.holes[currentHole - 1];
-  const isLastHole = currentHole === 18;
   const hasScore = currentHoleData.score !== undefined;
   const { totalScore, differential } = calculateScoreDetails();
 
@@ -168,7 +240,9 @@ export default function PlayScreen() {
           </View>
           
           <Text style={styles.parText}>Par {currentHoleData.par}</Text>
-          <Text style={styles.distanceText}>{currentHoleData.distance} ft</Text>
+          <Text style={styles.distanceText}>
+            {currentHoleData.distance} {currentRound.course.courseMode === "Indoor" ? "ft" : "yd"}
+          </Text>
         </View>
 
         {currentHole > 1 && (
@@ -176,23 +250,27 @@ export default function PlayScreen() {
             onPress={() => handleNavigateHole('prev')}
             style={[styles.overlayNavButton, styles.leftNavButton]}
           >
-            <Text style={styles.navButtonText}>←</Text>
+            <View style={[styles.navButtonIcon, styles.leftNavIcon]}>
+              <Text style={styles.navButtonText}>←</Text>
+            </View>
           </TouchableOpacity>
         )}
         
-        {currentHole < 18 && (
+        {currentHole < (currentRound.course.holeCount) && (
           <TouchableOpacity
             onPress={() => handleNavigateHole('next')}
             style={[styles.overlayNavButton, styles.rightNavButton]}
           >
-            <Text style={styles.navButtonText}>→</Text>
+            <View style={[styles.navButtonIcon, styles.rightNavIcon]}>
+              <Text style={styles.navButtonText}>→</Text>
+            </View>
           </TouchableOpacity>
         )}
       </View>
 
       <View style={styles.navigation}>
         <View style={styles.scoreButtons}>
-          {Array.from({ length: currentHoleData.par === 3 ? 4 : 3 }).map(
+          {Array.from({ length: currentHoleData.par === 1 ? 3 : 4 }).map(
             (_, index) => (
               <TouchableOpacity
                 key={index + 1}
@@ -214,7 +292,7 @@ export default function PlayScreen() {
         </View>
       </View>
 
-      {isLastHole && hasScore && (
+      {currentHole === currentRound.course.holeCount && hasScore && (
         <TouchableOpacity style={styles.submitButton} onPress={handleComplete}>
           <Text style={styles.submitButtonText}>Complete Round</Text>
         </TouchableOpacity>
@@ -251,7 +329,7 @@ export default function PlayScreen() {
             </View>
             
             <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent}>
-              {currentRound && <Scorecard course={currentRound.course} />}
+              {currentRound && <Scorecard course={currentRound.course} showCourseMode={false} />}
             </ScrollView>
           </View>
         </View>
@@ -284,14 +362,48 @@ const styles = StyleSheet.create({
     fontSize: 48,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 300,
+    marginBottom: 60,
     color: '#FFFFFF',
   },
   titleWithCustomFont: {
     fontFamily: 'BebasNeue_400Regular',
     fontSize: 84,
     letterSpacing: 6,
-    marginBottom: 280,
+    marginBottom: 80,
+  },
+  toggleLabel: {
+    color: '#B0B0B0',
+    fontSize: 14,
+    marginBottom: 6,
+    width: '80%',
+    textAlign: 'left',
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    marginBottom: 25,
+    width: '80%',
+    backgroundColor: '#3D3D3D',
+    borderRadius: 12,
+    padding: 4,
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  toggleButtonSelected: {
+    backgroundColor: '#93C757',
+  },
+  toggleText: {
+    color: '#B0B0B0',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  toggleTextSelected: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
   holeNumber: {
     fontSize: 54,
@@ -391,9 +503,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     borderRadius: 16,
     marginHorizontal: 20,
+    marginTop: 20,
   },
   startRoundButton: {
     marginTop: 40,
+  },
+  newGameButton: {
+    backgroundColor: '#93C757',
+    paddingVertical: 20,
+    paddingHorizontal: 40,
+    borderRadius: 16,
+    marginHorizontal: 20,
+    marginTop: 40,
+    width: '80%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+  },
+  newGameButtonText: {
+    color: '#FFFFFF',
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   buttonText: {
     color: '#FFFFFF',
@@ -455,18 +588,34 @@ const styles = StyleSheet.create({
   },
   overlayNavButton: {
     position: 'absolute',
-    top: '65%',
-    marginTop: -30,
-    padding: 20,
+    top: 0,
+    bottom: 0,
+    width: '25%',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
   },
   leftNavButton: {
-    left: 10,
+    left: 0,
   },
   rightNavButton: {
-    right: 10,
+    right: 0,
+  },
+  navButtonIcon: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  leftNavIcon: {
+    position: 'absolute',
+    left: 40,
+    top: '71%',
+    marginTop: -30,
+  },
+  rightNavIcon: {
+    position: 'absolute',
+    right: 40,
+    top: '71%',
+    marginTop: -30,
   },
   navButtonText: {
     fontSize: 42,
@@ -484,5 +633,24 @@ const styles = StyleSheet.create({
     width: '90%',
     maxHeight: '70%',
     marginVertical: 20,
+  },
+  roundSummary: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  courseName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+  courseTypeText: {
+    fontSize: 16,
+    color: '#B0B0B0',
+    marginBottom: 12,
+  },
+  scoreText: {
+    fontSize: 18,
+    color: '#FFFFFF',
   },
 }); 

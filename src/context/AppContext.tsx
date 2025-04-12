@@ -5,7 +5,7 @@ import { createNewRound, updateScore } from '../utils/gameLogic';
 
 interface AppContextType extends AppState {
   setPlayer: (player: Player) => Promise<void>;
-  startNewGame: () => Promise<void>;
+  startNewGame: (courseMode?: "Indoor" | "Outdoor", holeCount?: 9 | 18) => Promise<void>;
   startRound: () => Promise<void>;
   updateHoleScore: (holeNumber: number, score: number | undefined) => Promise<void>;
   completeRound: () => Promise<void>;
@@ -46,8 +46,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState(current => ({ ...current, player }));
   };
 
-  const startNewGame = async () => {
-    const newRound = createNewRound();
+  const startNewGame = async (courseMode: "Indoor" | "Outdoor" = "Indoor", holeCount: 9 | 18 = 18) => {
+    const newRound = createNewRound(courseMode, holeCount);
     await storage.saveCurrentRound(newRound);
     setState(current => ({
       ...current,
@@ -79,16 +79,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const completedRound = { ...state.currentRound, completed: true };
     const updatedRounds = [...state.rounds, completedRound];
     
+    // Save the completed round to storage
     await Promise.all([
       storage.saveRounds(updatedRounds),
-      storage.saveCurrentRound(null),
+      storage.saveCurrentRound(completedRound),
     ]);
 
+    // Update state to show the completed round
     setState(current => ({
       ...current,
       rounds: updatedRounds,
-      currentRound: null,
-      gameState: 'no-game',
+      currentRound: completedRound,
+      gameState: 'game-complete',
     }));
   };
 

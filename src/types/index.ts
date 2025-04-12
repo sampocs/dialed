@@ -17,6 +17,8 @@ export interface Course {
   frontNineDistance: number;
   backNinePar: number;
   backNineDistance: number;
+  courseMode: "Indoor" | "Outdoor";
+  holeCount: 9 | 18;
 }
 
 export interface Round {
