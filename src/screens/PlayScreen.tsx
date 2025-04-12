@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   },
   overlayNavButton: {
     position: 'absolute',
-    top: '50%',
+    top: '55%',
     marginTop: -30,
     padding: 20,
     justifyContent: 'center',
