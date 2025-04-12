@@ -157,8 +157,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#3D3D3D',
   },
   headerCell: {
-    flex: 1,
-    minWidth: 30,
+    width: 30,
     padding: 5,
     alignItems: 'center',
     borderRightWidth: 1,
@@ -166,8 +165,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3D3D3D',
   },
   labelCell: {
-    flex: 1,
-    minWidth: 55,
+    width: 55,
     padding: 5,
     alignItems: 'flex-start',
     borderRightWidth: 1,
@@ -175,8 +173,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3D3D3D',
   },
   cell: {
-    flex: 1,
-    minWidth: 30,
+    width: 30,
     padding: 5,
     alignItems: 'center',
     borderRightWidth: 1,
@@ -184,8 +181,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#292929',
   },
   lastCell: {
-    flex: 1,
-    minWidth: 40,
+    width: 40,
     padding: 5,
     alignItems: 'center',
     borderRightWidth: 1,
