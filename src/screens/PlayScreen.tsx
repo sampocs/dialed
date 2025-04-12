@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { isValidScore } from '../utils/gameLogic';
+import Scorecard from '../components/Scorecard';
 
 export default function PlayScreen() {
   const {
@@ -149,19 +150,13 @@ export default function PlayScreen() {
         </Text>
       </TouchableOpacity>
 
-      {showScorecard && (
-        <ScrollView style={styles.scorecard}>
-          {currentRound.course.holes.map((hole) => (
-            <View key={hole.number} style={styles.scorecardRow}>
-              <Text style={styles.scorecardText}>Hole {hole.number}</Text>
-              <Text style={styles.scorecardText}>Par {hole.par}</Text>
-              <Text style={styles.scorecardText}>{hole.distance} ft</Text>
-              <Text style={styles.scorecardText}>
-                {hole.score || '-'}
-              </Text>
-            </View>
-          ))}
-        </ScrollView>
+      {showScorecard && currentRound && (
+        <>
+          {console.log('Current round being passed to Scorecard:', currentRound)}
+          <ScrollView style={styles.scorecard}>
+            <Scorecard course={currentRound.course} />
+          </ScrollView>
+        </>
       )}
     </View>
   );
@@ -171,7 +166,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292929',
-    paddingTop: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -181,10 +177,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 32,
+    fontSize: 48,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 40,
+    marginBottom: 300,
     color: '#FFFFFF',
   },
   holeNumber: {
@@ -262,14 +258,14 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#93C757',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    paddingVertical: 20,
+    paddingHorizontal: 40,
+    borderRadius: 16,
     marginHorizontal: 20,
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -286,17 +282,5 @@ const styles = StyleSheet.create({
   scorecard: {
     flex: 1,
     marginTop: 20,
-    paddingHorizontal: 20,
-  },
-  scorecardRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#3D3D3D',
-  },
-  scorecardText: {
-    fontSize: 14,
-    color: '#FFFFFF',
   },
 }); 
