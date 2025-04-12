@@ -32,14 +32,8 @@ export default function PlayScreen() {
   const handleScoreSelect = (score: number) => {
     if (!currentRound) return;
     const hole = currentRound.course.holes[currentHole - 1];
-    
-    // If the current score is already set to this value, unselect it
-    if (hole.score === score) {
-      updateHoleScore(currentHole, undefined);
-      return;
-    }
-    
     if (!isValidScore(hole.par, score)) return;
+
     updateHoleScore(currentHole, score);
   };
 
