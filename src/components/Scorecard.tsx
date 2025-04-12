@@ -4,9 +4,10 @@ import { Course, Hole } from '../types';
 
 interface ScorecardProps {
   course: Course;
+  showCourseMode?: boolean;
 }
 
-const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
+const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true }) => {
   console.log('Course data received in Scorecard:', course);
   
   // Safety check for course data
@@ -57,6 +58,9 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
     if (completedHoles.length === 0) {
       return (
         <View style={styles.summaryContainer}>
+          {showCourseMode && (
+            <Text style={styles.courseMode}>{course.courseMode}</Text>
+          )}
           <Text style={styles.summaryText}>
             Length: {totalDistance} {course.courseMode === "Indoor" ? "ft" : "yd"}
           </Text>
@@ -66,21 +70,24 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
 
     return (
       <View style={styles.summaryContainer}>
+        {showCourseMode && (
+          <Text style={styles.courseMode}>{course.courseMode}</Text>
+        )}
         <Text style={styles.summaryText}>
           Length: {totalDistance} {course.courseMode === "Indoor" ? "ft" : "yd"}
-          {'         '}Score: {completedHolesScore}/{totalPar} ({formatDifferential(differential)})
+          {'         '}Score: {completedHolesScore} ({formatDifferential(differential)})
         </Text>
       </View>
     );
   };
 
-  const renderTable = (holes: Hole[], title: string, totalLabel: string) => {
+  const renderTable = (holes: Hole[], totalLabel: string, title?: string) => {
     // Calculate total score for this set of holes
     const totalScore = holes.reduce((sum, hole) => sum + (hole.score || 0), 0);
     
     return (
       <View style={styles.tableContainer}>
-        <Text style={styles.tableTitle}>{title}</Text>
+        {title && <Text style={styles.tableTitle}>{title}</Text>}
         <View style={styles.table}>
           {/* Header Row */}
           <View style={styles.row}>
@@ -155,13 +162,13 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
   return (
     <View style={styles.container}>
       {course.holeCount === 9 ? (
-        // For 9-hole courses, use a simple "Scorecard" title
-        renderTable(frontNine, 'Scorecard', 'T')
+        // For 9-hole courses, don't show a title
+        renderTable(frontNine, 'T')
       ) : (
         // For 18-hole courses, use "Front Nine" and "Back Nine"
         <>
-          {renderTable(frontNine, 'Front Nine', 'F')}
-          {renderTable(backNine, 'Back Nine', 'B')}
+          {renderTable(frontNine, 'F', 'Front Nine')}
+          {renderTable(backNine, 'B', 'Back Nine')}
         </>
       )}
       {renderSummary()}
@@ -283,6 +290,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#FFFFFF',
     textAlign: 'center',
+  },
+  courseMode: {
+    fontSize: 14,
+    color: '#B0B0B0',
+    textAlign: 'center',
+    marginBottom: 8,
   },
 });
 

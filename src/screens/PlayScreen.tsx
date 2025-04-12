@@ -169,10 +169,9 @@ export default function PlayScreen() {
         </View>
         
         <Text style={styles.titleSmall}>{currentRound.courseName}</Text>
-        <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
         
         <View style={styles.scorecardContainer}>
-          <Scorecard course={currentRound.course} />
+          <Scorecard course={currentRound.course} showCourseMode={true} />
         </View>
         
         <TouchableOpacity style={[styles.button, styles.startRoundButton]} onPress={handleStartRound}>
@@ -200,14 +199,13 @@ export default function PlayScreen() {
         
         <View style={styles.roundSummary}>
           <Text style={styles.courseName}>{currentRound.courseName}</Text>
-          <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
           <Text style={styles.scoreText}>
             Final Score: {totalScore} ({differential >= 0 ? '+' : ''}{differential})
           </Text>
         </View>
         
         <View style={styles.scorecardContainer}>
-          <Scorecard course={currentRound.course} />
+          <Scorecard course={currentRound.course} showCourseMode={true} />
         </View>
       </View>
     );
@@ -325,7 +323,7 @@ export default function PlayScreen() {
             </View>
             
             <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent}>
-              {currentRound && <Scorecard course={currentRound.course} />}
+              {currentRound && <Scorecard course={currentRound.course} showCourseMode={false} />}
             </ScrollView>
           </View>
         </View>
@@ -623,11 +621,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFFFFF',
     marginBottom: 5,
-  },
-  courseTypeText: {
-    fontSize: 14,
-    color: '#B0B0B0',
-    marginBottom: 12,
   },
   scoreText: {
     fontSize: 18,
