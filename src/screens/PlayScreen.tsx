@@ -89,13 +89,14 @@ export default function PlayScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.holeNumber}>Hole {currentHole}/18</Text>
+        <View style={styles.spacer} />
         <TouchableOpacity onPress={handleQuit} style={styles.quitButton}>
           <Text style={styles.quitButtonText}>✕</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.scoreInfo}>
+        <Text style={styles.holeNumber}>Hole {currentHole}/18</Text>
         <Text style={styles.parText}>Par {currentHoleData.par}</Text>
         <Text style={styles.distanceText}>{currentHoleData.distance} ft</Text>
       </View>
@@ -184,6 +185,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 50,
   },
+  spacer: {
+    width: 40,
+  },
   title: {
     fontSize: 48,
     fontWeight: 'bold',
@@ -195,6 +199,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
+    marginBottom: 10,
   },
   quitButton: {
     padding: 10,
@@ -206,6 +211,7 @@ const styles = StyleSheet.create({
   scoreInfo: {
     alignItems: 'center',
     marginBottom: 30,
+    marginTop: 100,
   },
   parText: {
     fontSize: 20,
