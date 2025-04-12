@@ -625,7 +625,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   courseTypeText: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#B0B0B0',
     marginBottom: 12,
   },
