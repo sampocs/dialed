@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -120,6 +120,35 @@ export default function RoundsScreen() {
     return true;
   });
 
+  // Find best rounds for each category
+  const bestRoundsByCategory = useMemo(() => {
+    const categories = {
+      '9-Indoor': { best: null as Round | null, differential: Infinity },
+      '9-Outdoor': { best: null as Round | null, differential: Infinity },
+      '18-Indoor': { best: null as Round | null, differential: Infinity },
+      '18-Outdoor': { best: null as Round | null, differential: Infinity }
+    };
+
+    rounds.forEach(round => {
+      const holeCount = round.course.holeCount;
+      const courseMode = round.course.courseMode;
+      const key = `${holeCount}-${courseMode}` as keyof typeof categories;
+      
+      if (categories[key] && round.differential < categories[key].differential) {
+        categories[key].best = round;
+        categories[key].differential = round.differential;
+      }
+    });
+
+    return categories;
+  }, [rounds]);
+
+  // Check if a round is the best in its category
+  const isBestInCategory = (round: Round) => {
+    const key = `${round.course.holeCount}-${round.course.courseMode}` as keyof typeof bestRoundsByCategory;
+    return bestRoundsByCategory[key]?.best?.id === round.id;
+  };
+
   return (
     <View style={styles.container}>
       {/* Fixed filter section */}
@@ -169,6 +198,12 @@ export default function RoundsScreen() {
             <Text style={[styles.toggleText, courseModeFilter === "Outdoor" && styles.toggleTextSelected]}>Outdoor</Text>
           </TouchableOpacity>
         </View>
+        
+        {/* Best round indicator */}
+        <View style={styles.bestRoundIndicator}>
+          <View style={styles.bestRoundIndicatorDot}></View>
+          <Text style={styles.bestRoundIndicatorText}>Green border indicates best round in each category</Text>
+        </View>
       </View>
 
       {/* Scrollable content section */}
@@ -184,7 +219,13 @@ export default function RoundsScreen() {
             {filteredRounds
               .sort((a, b) => b.date - a.date)
               .map((round) => (
-                <View key={round.id} style={styles.roundItem}>
+                <View 
+                  key={round.id} 
+                  style={[
+                    styles.roundItem,
+                    isBestInCategory(round) && styles.bestRoundItem
+                  ]}
+                >
                   <TouchableOpacity
                     onPress={() => handleViewScorecard(round)}
                     onLongPress={() => handleDeleteRound(round.id)}
@@ -196,13 +237,10 @@ export default function RoundsScreen() {
                           {formatDate(round.date)}
                         </Text>
                         <Text style={styles.courseNameText}>
-                          {round.courseName} • {round.course.courseMode} • {round.course.holeCount} holes
+                          {round.course.courseMode}-{round.course.holeCount} • {round.courseName}
                         </Text>
                       </View>
                       <View style={styles.roundHeaderRight}>
-                        {bestRound?.id === round.id && (
-                          <Text style={styles.starIcon}>⭐</Text>
-                        )}
                         <Text style={styles.scoreText}>
                           {round.totalScore > 0 ? round.totalScore : '-'} ({round.differential > 0 ? '+' : ''}
                           {round.differential})
@@ -238,7 +276,7 @@ export default function RoundsScreen() {
                 <Text style={styles.scorecardTitle}>Scorecard</Text>
                 {selectedRound && (
                   <Text style={styles.scorecardSubtitle}>
-                    {selectedRound.courseName} • {formatDate(selectedRound.date)}
+                    {selectedRound.course.courseMode}-{selectedRound.course.holeCount} • {selectedRound.courseName} • {formatDate(selectedRound.date)}
                   </Text>
                 )}
               </View>
@@ -336,6 +374,11 @@ const styles = StyleSheet.create({
     elevation: 2,
     padding: 16,
     position: 'relative',
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  bestRoundItem: {
+    borderColor: '#93C757',
   },
   roundHeader: {
     flexDirection: 'row',
@@ -362,10 +405,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
     padding: 8,
-  },
-  starIcon: {
-    fontSize: 20,
-    marginRight: 10,
   },
   deleteButton: {
     padding: 8,
@@ -433,5 +472,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#93C757',
     borderRadius: 8,
     zIndex: -1,
+  },
+  bestRoundIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 5,
+  },
+  bestRoundIndicatorDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#93C757',
+    marginRight: 8,
+  },
+  bestRoundIndicatorText: {
+    fontSize: 12,
+    color: '#B0B0B0',
+    fontStyle: 'italic',
   },
 }); 
