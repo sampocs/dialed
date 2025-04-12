@@ -156,7 +156,8 @@ const styles = StyleSheet.create({
   },
   headerCell: {
     flex: 1,
-    padding: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 2,
     alignItems: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
@@ -164,7 +165,8 @@ const styles = StyleSheet.create({
   },
   headerLabelCell: {
     width: 55,
-    padding: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 2,
     alignItems: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
@@ -172,7 +174,8 @@ const styles = StyleSheet.create({
   },
   headerLastCell: {
     width: 40,
-    padding: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 2,
     alignItems: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
@@ -180,7 +183,8 @@ const styles = StyleSheet.create({
   },
   labelCell: {
     width: 55,
-    padding: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 2,
     alignItems: 'flex-start',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
@@ -188,7 +192,8 @@ const styles = StyleSheet.create({
   },
   cell: {
     flex: 1,
-    padding: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 2,
     alignItems: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
@@ -196,7 +201,8 @@ const styles = StyleSheet.create({
   },
   lastCell: {
     width: 40,
-    padding: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 2,
     alignItems: 'center',
     borderRightWidth: 1,
     borderRightColor: '#3D3D3D',
