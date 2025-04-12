@@ -120,7 +120,12 @@ export default function PlayScreen() {
                 ]}
                 onPress={() => handleScoreSelect(index + 1)}
               >
-                <Text style={styles.scoreButtonText}>{index + 1}</Text>
+                <Text style={[
+                  styles.scoreButtonText,
+                  currentHoleData.score === index + 1 && styles.scoreButtonTextSelected,
+                ]}>
+                  {index + 1}
+                </Text>
               </TouchableOpacity>
             )
           )}
@@ -241,6 +246,10 @@ const styles = StyleSheet.create({
   scoreButtonText: {
     fontSize: 24,
     color: '#93C757',
+  },
+  scoreButtonTextSelected: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
   submitButton: {
     backgroundColor: '#93C757',
