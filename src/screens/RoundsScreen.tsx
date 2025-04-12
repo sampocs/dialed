@@ -8,6 +8,8 @@ import {
   Alert,
   Modal,
   Animated,
+  ToastAndroid,
+  Platform,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useApp } from '../context/AppContext';
@@ -20,6 +22,29 @@ export default function RoundsScreen() {
   const [selectedRound, setSelectedRound] = useState<Round | null>(null);
   const [showScorecardModal, setShowScorecardModal] = useState(false);
   const highlightAnim = useRef(new Animated.Value(0)).current;
+  const [hasShowTip, setHasShowTip] = useState(false);
+  
+  // Filter state
+  const [holeCountFilter, setHoleCountFilter] = useState<9 | 18 | null>(null);
+  const [courseModeFilter, setCourseModeFilter] = useState<"Indoor" | "Outdoor" | null>(null);
+
+  useEffect(() => {
+    // Show tip about long press to delete on first render if there are rounds
+    if (rounds.length > 0 && !hasShowTip) {
+      setHasShowTip(true);
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Tip: Long press a round to delete it', ToastAndroid.SHORT);
+      } else {
+        // For iOS we'll just add a tip at the top
+        Alert.alert(
+          'Tip',
+          'Long press a round to delete it',
+          [{ text: 'Got it' }],
+          { cancelable: true }
+        );
+      }
+    }
+  }, [rounds.length, hasShowTip]);
 
   const handleDeleteRound = (roundId: string) => {
     Alert.alert(
@@ -80,57 +105,122 @@ export default function RoundsScreen() {
     return { opacity: 0 };
   };
 
+  // Filter rounds based on selected filters
+  const filteredRounds = rounds.filter(round => {
+    // Apply hole count filter
+    if (holeCountFilter !== null && round.course.holeCount !== holeCountFilter) {
+      return false;
+    }
+    
+    // Apply course mode filter
+    if (courseModeFilter !== null && round.course.courseMode !== courseModeFilter) {
+      return false;
+    }
+    
+    return true;
+  });
+
   return (
     <View style={styles.container}>
-      {rounds.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No rounds played yet</Text>
+      {/* Fixed filter section */}
+      <View style={styles.filterSection}>
+        {/* Hole Count Toggle */}
+        <Text style={styles.toggleLabel}>Holes</Text>
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity 
+            style={[styles.toggleButton, holeCountFilter === null && styles.toggleButtonSelected]} 
+            onPress={() => setHoleCountFilter(null)}
+          >
+            <Text style={[styles.toggleText, holeCountFilter === null && styles.toggleTextSelected]}>All</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.toggleButton, holeCountFilter === 9 && styles.toggleButtonSelected]} 
+            onPress={() => setHoleCountFilter(9)}
+          >
+            <Text style={[styles.toggleText, holeCountFilter === 9 && styles.toggleTextSelected]}>9 Holes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.toggleButton, holeCountFilter === 18 && styles.toggleButtonSelected]} 
+            onPress={() => setHoleCountFilter(18)}
+          >
+            <Text style={[styles.toggleText, holeCountFilter === 18 && styles.toggleTextSelected]}>18 Holes</Text>
+          </TouchableOpacity>
         </View>
-      ) : (
-        <ScrollView style={styles.roundsList}>
-          {rounds
-            .sort((a, b) => b.date - a.date)
-            .map((round) => (
-              <View key={round.id} style={styles.roundItem}>
-                <TouchableOpacity
-                  onPress={() => handleViewScorecard(round)}
-                >
-                  <View style={styles.roundHeader}>
-                    <View>
-                      <Text style={styles.dateText}>
-                        {formatDate(round.date)}
-                      </Text>
-                      <Text style={styles.courseNameText}>
-                        {round.courseName}
-                      </Text>
-                      <Text style={styles.scoreText}>
-                        Score: {round.totalScore > 0 ? round.totalScore : '-'} ({round.differential > 0 ? '+' : ''}
-                        {round.differential})
-                      </Text>
+        
+        {/* Course Mode Toggle */}
+        <Text style={styles.toggleLabel}>Course Mode</Text>
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity 
+            style={[styles.toggleButton, courseModeFilter === null && styles.toggleButtonSelected]} 
+            onPress={() => setCourseModeFilter(null)}
+          >
+            <Text style={[styles.toggleText, courseModeFilter === null && styles.toggleTextSelected]}>All</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.toggleButton, courseModeFilter === "Indoor" && styles.toggleButtonSelected]} 
+            onPress={() => setCourseModeFilter("Indoor")}
+          >
+            <Text style={[styles.toggleText, courseModeFilter === "Indoor" && styles.toggleTextSelected]}>Indoor</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.toggleButton, courseModeFilter === "Outdoor" && styles.toggleButtonSelected]} 
+            onPress={() => setCourseModeFilter("Outdoor")}
+          >
+            <Text style={[styles.toggleText, courseModeFilter === "Outdoor" && styles.toggleTextSelected]}>Outdoor</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Scrollable content section */}
+      <View style={styles.contentSection}>
+        {filteredRounds.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+              {rounds.length === 0 ? 'No rounds played yet' : 'No rounds match the selected filters'}
+            </Text>
+          </View>
+        ) : (
+          <ScrollView style={styles.roundsList}>
+            {filteredRounds
+              .sort((a, b) => b.date - a.date)
+              .map((round) => (
+                <View key={round.id} style={styles.roundItem}>
+                  <TouchableOpacity
+                    onPress={() => handleViewScorecard(round)}
+                    onLongPress={() => handleDeleteRound(round.id)}
+                    delayLongPress={500}
+                  >
+                    <View style={styles.roundHeader}>
+                      <View>
+                        <Text style={styles.dateText}>
+                          {formatDate(round.date)}
+                        </Text>
+                        <Text style={styles.courseNameText}>
+                          {round.courseName} • {round.course.courseMode} • {round.course.holeCount} holes
+                        </Text>
+                      </View>
+                      <View style={styles.roundHeaderRight}>
+                        {bestRound?.id === round.id && (
+                          <Text style={styles.starIcon}>⭐</Text>
+                        )}
+                        <Text style={styles.scoreText}>
+                          {round.totalScore > 0 ? round.totalScore : '-'} ({round.differential > 0 ? '+' : ''}
+                          {round.differential})
+                        </Text>
+                      </View>
                     </View>
-                    <View style={styles.roundHeaderRight}>
-                      {bestRound?.id === round.id && (
-                        <Text style={styles.starIcon}>⭐</Text>
-                      )}
-                      <TouchableOpacity
-                        onPress={() => handleDeleteRound(round.id)}
-                        style={styles.deleteButton}
-                      >
-                        <Text style={styles.deleteButtonText}>Delete</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-                <Animated.View 
-                  style={[
-                    styles.highlightOverlay,
-                    getHighlightStyle(round.id)
-                  ]}
-                />
-              </View>
-            ))}
-        </ScrollView>
-      )}
+                  </TouchableOpacity>
+                  <Animated.View 
+                    style={[
+                      styles.highlightOverlay,
+                      getHighlightStyle(round.id)
+                    ]}
+                  />
+                </View>
+              ))}
+          </ScrollView>
+        )}
+      </View>
 
       {/* Scorecard Modal with BlurView */}
       <Modal
@@ -174,17 +264,60 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#292929',
-    paddingTop: 20,
+  },
+  filterSection: {
+    paddingTop: 60,
+    paddingBottom: 10,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3D3D3D',
+    backgroundColor: '#292929',
+    zIndex: 10,
+  },
+  contentSection: {
+    flex: 1,
+  },
+  toggleLabel: {
+    color: '#B0B0B0',
+    fontSize: 14,
+    marginBottom: 6,
+    textAlign: 'left',
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    marginBottom: 15,
+    backgroundColor: '#3D3D3D',
+    borderRadius: 12,
+    padding: 4,
+  },
+  toggleButton: {
+    flex: 1,
+    paddingVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  toggleButtonSelected: {
+    backgroundColor: '#93C757',
+  },
+  toggleText: {
+    color: '#B0B0B0',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  toggleTextSelected: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
   },
   roundsList: {
     flex: 1,
     paddingHorizontal: 20,
+    paddingTop: 15,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -20,
   },
   emptyText: {
     textAlign: 'center',
@@ -225,9 +358,10 @@ const styles = StyleSheet.create({
     color: '#B0B0B0',
   },
   scoreText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
     color: '#FFFFFF',
+    padding: 8,
   },
   starIcon: {
     fontSize: 20,
