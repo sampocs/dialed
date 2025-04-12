@@ -43,9 +43,6 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
   const differential = completedHolesScore - completedHolesPar;
 
   const renderTable = (holes: Hole[], title: string, totalLabel: string) => {
-    // Calculate total score for this set of holes
-    const totalScore = holes.reduce((sum, hole) => sum + (hole.score || 0), 0);
-    
     return (
       <View style={styles.tableContainer}>
         <Text style={styles.tableTitle}>{title}</Text>
@@ -111,7 +108,7 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
             ))}
             <View style={styles.lastCell}>
               <Text style={styles.cellText}>
-                {totalScore > 0 ? totalScore : '-'}
+                {holes.reduce((sum, hole) => sum + (hole.score || 0), 0)}
               </Text>
             </View>
           </View>

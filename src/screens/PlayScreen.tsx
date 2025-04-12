@@ -18,7 +18,6 @@ export default function PlayScreen() {
     gameState,
     currentRound,
     startNewGame,
-    startRound,
     updateHoleScore,
     completeRound,
     quitGame,
@@ -28,10 +27,6 @@ export default function PlayScreen() {
 
   const handleStartNewGame = () => {
     startNewGame();
-  };
-
-  const handleStartRound = () => {
-    startRound();
   };
 
   const handleScoreSelect = (score: number) => {
@@ -97,29 +92,6 @@ export default function PlayScreen() {
         <Text style={styles.title}>Dialed</Text>
         <TouchableOpacity style={styles.button} onPress={handleStartNewGame}>
           <Text style={styles.buttonText}>New Game</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  if (gameState === 'game-ready' && currentRound) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.spacer} />
-          <TouchableOpacity onPress={handleQuit} style={styles.quitButton}>
-            <Text style={styles.quitButtonText}>✕</Text>
-          </TouchableOpacity>
-        </View>
-        
-        <Text style={styles.titleSmall}>{currentRound.courseName}</Text>
-        
-        <View style={styles.scorecardContainer}>
-          <Scorecard course={currentRound.course} />
-        </View>
-        
-        <TouchableOpacity style={styles.button} onPress={handleStartRound}>
-          <Text style={styles.buttonText}>Start Round</Text>
         </TouchableOpacity>
       </View>
     );
@@ -448,18 +420,5 @@ const styles = StyleSheet.create({
   navButtonText: {
     fontSize: 42,
     color: '#93C757',
-  },
-  titleSmall: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-    color: '#FFFFFF',
-  },
-  scorecardContainer: {
-    width: '90%',
-    maxHeight: '70%',
-    marginVertical: 20,
   },
 }); 

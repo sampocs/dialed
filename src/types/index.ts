@@ -26,7 +26,6 @@ export interface Round {
   totalScore: number;
   differential: number;
   completed: boolean;
-  courseName: string;
 }
 
 export type GameState =
