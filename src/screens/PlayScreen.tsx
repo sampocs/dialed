@@ -238,7 +238,9 @@ export default function PlayScreen() {
           </View>
           
           <Text style={styles.parText}>Par {currentHoleData.par}</Text>
-          <Text style={styles.distanceText}>{currentHoleData.distance} ft</Text>
+          <Text style={styles.distanceText}>
+            {currentHoleData.distance} {currentRound.course.courseMode === "Indoor" ? "ft" : "yd"}
+          </Text>
         </View>
 
         {currentHole > 1 && (

@@ -57,7 +57,9 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
     if (completedHoles.length === 0) {
       return (
         <View style={styles.summaryContainer}>
-          <Text style={styles.summaryText}>Length: {totalDistance} ft</Text>
+          <Text style={styles.summaryText}>
+            Length: {totalDistance} {course.courseMode === "Indoor" ? "ft" : "yd"}
+          </Text>
         </View>
       );
     }
@@ -65,7 +67,8 @@ const Scorecard: React.FC<ScorecardProps> = ({ course }) => {
     return (
       <View style={styles.summaryContainer}>
         <Text style={styles.summaryText}>
-          Length: {totalDistance} ft         Score: {completedHolesScore}/{totalPar} ({formatDifferential(differential)})
+          Length: {totalDistance} {course.courseMode === "Indoor" ? "ft" : "yd"}
+          {'         '}Score: {completedHolesScore}/{totalPar} ({formatDifferential(differential)})
         </Text>
       </View>
     );

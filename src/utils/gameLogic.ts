@@ -1,8 +1,13 @@
 import { Course, Hole, Round } from "../types";
 
-const PAR_1_DISTANCES = [2.5, 3, 3.5, 4];
-const PAR_2_DISTANCES = [4.5, 5, 5.5, 6, 6.5, 7, 7.5];
-const PAR_3_DISTANCE = 10;
+// Indoor distances (in feet)
+const INDOOR_PAR_1_DISTANCES = [2.5, 3, 3.5, 4];
+const INDOOR_PAR_2_DISTANCES = [4.5, 5, 5.5, 6, 6.5, 7, 7.5];
+const INDOOR_PAR_3_DISTANCE = 10;
+
+// Outdoor distances (in yards)
+const OUTDOOR_PAR_2_DISTANCES = [10, 15];
+const OUTDOOR_PAR_3_DISTANCES = [20, 30, 40];
 
 export const COURSES = [
   "Moonlight Basin",
@@ -41,19 +46,42 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
-function getRandomDistance(par: number): number {
-  if (par === 3) return PAR_3_DISTANCE;
-  const distances = par === 1 ? PAR_1_DISTANCES : PAR_2_DISTANCES;
+function getRandomIndoorDistance(par: number): number {
+  if (par === 3) return INDOOR_PAR_3_DISTANCE;
+  const distances = par === 1 ? INDOOR_PAR_1_DISTANCES : INDOOR_PAR_2_DISTANCES;
   return distances[Math.floor(Math.random() * distances.length)];
 }
 
-export function generateCourse(holeCount: 9 | 18 = 18): Course {
-  // Generate hole distribution for front nine
-  const frontNineTemplate = [
+function getRandomOutdoorDistance(par: number): number {
+  const distances =
+    par === 2 ? OUTDOOR_PAR_2_DISTANCES : OUTDOOR_PAR_3_DISTANCES;
+  return distances[Math.floor(Math.random() * distances.length)];
+}
+
+function generateIndoorNineTemplate(): number[] {
+  return [
     ...Array(2).fill(1), // 2 par 1s
     ...Array(5).fill(2), // 5 par 2s
     ...Array(2).fill(3), // 2 par 3s
   ];
+}
+
+function generateOutdoorNineTemplate(): number[] {
+  return [
+    ...Array(2).fill(2), // 2 par 2s
+    ...Array(7).fill(3), // 7 par 3s
+  ];
+}
+
+export function generateCourse(
+  holeCount: 9 | 18 = 18,
+  courseMode: "Indoor" | "Outdoor" = "Indoor"
+): Course {
+  // Generate hole distribution for front nine based on course mode
+  const frontNineTemplate =
+    courseMode === "Indoor"
+      ? generateIndoorNineTemplate()
+      : generateOutdoorNineTemplate();
 
   // For 18 holes we need the back nine, otherwise just use front nine
   const backNineTemplate = holeCount === 18 ? [...frontNineTemplate] : [];
@@ -62,11 +90,17 @@ export function generateCourse(holeCount: 9 | 18 = 18): Course {
   const frontNine = shuffleArray(frontNineTemplate);
   const backNine = holeCount === 18 ? shuffleArray(backNineTemplate) : [];
 
+  // Generate holes with distances based on course mode
+  const getDistance =
+    courseMode === "Indoor"
+      ? getRandomIndoorDistance
+      : getRandomOutdoorDistance;
+
   // Generate holes with distances
   const holes: Hole[] = [...frontNine, ...backNine].map((par, index) => ({
     number: index + 1,
     par: par as 1 | 2 | 3,
-    distance: getRandomDistance(par),
+    distance: getDistance(par),
   }));
 
   // Calculate totals
@@ -97,8 +131,8 @@ export function generateCourse(holeCount: 9 | 18 = 18): Course {
     frontNineDistance,
     backNinePar,
     backNineDistance,
-    courseMode: "Indoor", // Default to Indoor
-    holeCount: holeCount, // Set based on parameter
+    courseMode: courseMode,
+    holeCount: holeCount,
   };
 }
 
@@ -110,9 +144,7 @@ export function createNewRound(
   const randomIndex = Math.floor(Math.random() * COURSES.length);
   const courseName = COURSES[randomIndex];
 
-  const course = generateCourse(holeCount);
-  // Update the course with the provided mode
-  course.courseMode = courseMode;
+  const course = generateCourse(holeCount, courseMode);
 
   return {
     id: Date.now().toString(),
