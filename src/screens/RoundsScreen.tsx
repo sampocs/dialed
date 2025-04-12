@@ -94,9 +94,12 @@ export default function RoundsScreen() {
                       <Text style={styles.dateText}>
                         {formatDate(round.date)}
                       </Text>
+                      <Text style={styles.courseNameText}>
+                        {round.courseName}
+                      </Text>
                       <Text style={styles.scoreText}>
-                        Score: {round.totalScore} ({round.differential > 0 ? '+' : ''}
-                        {round.differential})
+                        Score: {round.totalScore > 0 ? round.totalScore : '-'} ({round.differential > 0 ? '+' : ''}
+                        {round.differential !== 0 ? round.differential : '-'})
                       </Text>
                     </View>
                     <View style={styles.roundHeaderRight}>
@@ -128,7 +131,7 @@ export default function RoundsScreen() {
                         <Text style={styles.scorecardText}>
                           {hole.distance} ft
                         </Text>
-                        <Text style={styles.scorecardText}>{hole.score}</Text>
+                        <Text style={styles.scorecardText}>{hole.score || '-'}</Text>
                       </View>
                     ))}
                     <View style={styles.scorecardSummary}>
@@ -195,6 +198,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 4,
     color: '#FFFFFF',
+  },
+  courseNameText: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    marginBottom: 4,
+    color: '#B0B0B0',
   },
   scoreText: {
     fontSize: 18,

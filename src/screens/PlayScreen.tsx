@@ -112,7 +112,7 @@ export default function PlayScreen() {
           </TouchableOpacity>
         </View>
         
-        <Text style={styles.titleSmall}>New Round</Text>
+        <Text style={styles.titleSmall}>{currentRound.courseName}</Text>
         
         <View style={styles.scorecardContainer}>
           <Scorecard course={currentRound.course} />
@@ -148,7 +148,7 @@ export default function PlayScreen() {
           {/* Total Score Display - moved here */}
           <View style={styles.totalScoreContainer}>
             <Text style={styles.totalScoreText}>
-              Total Score: {totalScore} ({differential >= 0 ? '+' : ''}{differential})
+              Total Score: {totalScore > 0 ? totalScore : '-'} ({differential >= 0 ? '+' : ''}{differential !== 0 ? differential : '-'})
             </Text>
           </View>
           

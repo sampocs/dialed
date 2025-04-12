@@ -83,19 +83,53 @@ export async function loadInitialState(): Promise<Partial<AppState>> {
 
   let gameState: "no-game" | "game-ready" | "game-in-progress" = "no-game";
 
-  if (currentRound) {
+  // Handle data migration for rounds without courseName
+  const migratedRounds =
+    rounds?.map((round) => {
+      if (!round.courseName) {
+        // Add a random course name from the COURSES array if not present
+        const { COURSES } = require("./gameLogic");
+        const randomIndex = Math.floor(Math.random() * COURSES.length);
+        return { ...round, courseName: COURSES[randomIndex] };
+      }
+      return round;
+    }) || [];
+
+  // Handle data migration for current round without courseName
+  let migratedCurrentRound = currentRound;
+  if (currentRound && !currentRound.courseName) {
+    const { COURSES } = require("./gameLogic");
+    const randomIndex = Math.floor(Math.random() * COURSES.length);
+    migratedCurrentRound = {
+      ...currentRound,
+      courseName: COURSES[randomIndex],
+    };
+    // Save the migrated current round
+    await saveCurrentRound(migratedCurrentRound);
+  }
+
+  if (migratedCurrentRound) {
     // Determine if this is a saved game in progress or a new game ready to start
     // If there are any scores recorded, it's a game in progress
-    const hasScores = currentRound.course.holes.some(
+    const hasScores = migratedCurrentRound.course.holes.some(
       (hole) => hole.score !== undefined
     );
     gameState = hasScores ? "game-in-progress" : "game-ready";
   }
 
+  // Save migrated rounds if we had to update any
+  if (
+    rounds &&
+    migratedRounds.length > 0 &&
+    JSON.stringify(rounds) !== JSON.stringify(migratedRounds)
+  ) {
+    await saveRounds(migratedRounds);
+  }
+
   return {
     player: player || undefined,
-    rounds: rounds || [],
-    currentRound: currentRound || null,
+    rounds: migratedRounds,
+    currentRound: migratedCurrentRound || null,
     gameState,
   };
 }

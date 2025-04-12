@@ -4,6 +4,34 @@ const PAR_1_DISTANCES = [2.5, 3, 3.5, 4];
 const PAR_2_DISTANCES = [4.5, 5, 5.5, 6, 6.5, 7, 7.5];
 const PAR_3_DISTANCE = 10;
 
+export const COURSES = [
+  "Moonlight Basin",
+  "Black Desert Stone",
+  "Augusta National",
+  "Pebble Beach",
+  "TPC Sawgrass",
+  "Torrey Pines",
+  "Pinehurst No. 2",
+  "Royal Troon",
+  "St. Andrews",
+  "Whispering Pines",
+  "Crystal Springs",
+  "Sunset Done",
+  "Diamond Ridge",
+  "Misty Harbor",
+  "Royal Highlands",
+  "Whistling Straights",
+  "Greywalls",
+  "George Dunne",
+  "Coyote Run",
+  "Chevy Chase",
+  "Mount Prospect",
+  "Schaumburg",
+  "Arboretum Club",
+  "Villiage Links",
+  "Oak Meadows",
+];
+
 function shuffleArray<T>(array: T[]): T[] {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
@@ -66,6 +94,10 @@ export function generateCourse(): Course {
 }
 
 export function createNewRound(): Round {
+  // Get a random course name from the COURSES array
+  const randomIndex = Math.floor(Math.random() * COURSES.length);
+  const courseName = COURSES[randomIndex];
+
   return {
     id: Date.now().toString(),
     date: Date.now(),
@@ -73,6 +105,7 @@ export function createNewRound(): Round {
     totalScore: 0,
     differential: 0,
     completed: false,
+    courseName,
   };
 }
 
