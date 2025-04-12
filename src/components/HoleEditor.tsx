@@ -163,9 +163,7 @@ export default function HoleEditor({
             onPress={() => handleNavigateHole('prev')}
             style={[styles.overlayNavButton, styles.leftNavButton]}
           >
-            <View style={[styles.navButtonIcon, styles.leftNavIcon]}>
-              <Text style={styles.navButtonText}>←</Text>
-            </View>
+            <Text style={[styles.navButtonIcon, styles.leftNavIcon, styles.navButtonText]}>←</Text>
           </TouchableOpacity>
         )}
         
@@ -174,9 +172,7 @@ export default function HoleEditor({
             onPress={() => handleNavigateHole('next')}
             style={[styles.overlayNavButton, styles.rightNavButton]}
           >
-            <View style={[styles.navButtonIcon, styles.rightNavIcon]}>
-              <Text style={styles.navButtonText}>→</Text>
-            </View>
+            <Text style={[styles.navButtonIcon, styles.rightNavIcon, styles.navButtonText]}>→</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -437,10 +433,12 @@ const styles = StyleSheet.create({
   },
   overlayNavButton: {
     position: 'absolute',
-    height: '100%',
+    top: 0,
+    bottom: 0,
+    width: '25%',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 60,
+    zIndex: 10,
   },
   leftNavButton: {
     left: 0,
@@ -449,21 +447,23 @@ const styles = StyleSheet.create({
     right: 0,
   },
   navButtonIcon: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
   leftNavIcon: {
-    marginLeft: 16,
+    position: 'absolute',
+    left: 40,
+    top: '71%',
+    marginTop: -30,
   },
   rightNavIcon: {
-    marginRight: 16,
+    position: 'absolute',
+    right: 40,
+    top: '71%',
+    marginTop: -30,
   },
   navButtonText: {
-    fontSize: 18,
-    color: '#FFFFFF',
+    fontSize: 42,
+    color: '#93C757',
   }
 }); 
