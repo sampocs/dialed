@@ -97,7 +97,7 @@ export default function PlayScreen() {
 
       <View style={styles.mainContentWrapper}>
         <View style={styles.scoreInfo}>
-          <Text style={styles.holeNumber}>Hole {currentHole}/18</Text>
+          <Text style={styles.holeNumber}>Hole #{currentHole}</Text>
           <Text style={styles.parText}>Par {currentHoleData.par}</Text>
           <Text style={styles.distanceText}>{currentHoleData.distance} ft</Text>
         </View>
