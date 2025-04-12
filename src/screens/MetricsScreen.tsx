@@ -127,13 +127,95 @@ export default function MetricsScreen() {
 
   const minY = Math.min(...points.map((p) => p.y));
   const maxY = Math.max(...points.map((p) => p.y));
-  const yRange = maxY === minY ? 1 : maxY - minY;
+  const paddedMinY = minY - 2; // 2 strokes below min
+  const paddedMaxY = maxY + 2; // 2 strokes above max
+  const yRange = paddedMaxY - paddedMinY;
   const graphWidth = Dimensions.get('window').width - 80;
   
-  const xStep = points.length > 1 ? graphWidth / (points.length - 1) : graphWidth;
-
+  // Calculate y-axis labels with appropriate increments
+  const getYAxisLabels = () => {
+    // Determine if we need increments of 1 or 2
+    const totalRange = Math.ceil(paddedMaxY) - Math.floor(paddedMinY);
+    const increment = totalRange > 10 ? 2 : 1;
+    
+    // Ensure we start with an even number if increment is 2
+    let start = Math.floor(paddedMinY);
+    if (increment === 2 && start % 2 !== 0) {
+      start = start - 1; // Go one lower to get an even number
+    }
+    
+    // Generate the labels
+    const labels = [];
+    for (let i = start; i <= Math.ceil(paddedMaxY); i += increment) {
+      labels.push(i);
+    }
+    
+    return labels;
+  };
+  
+  const yAxisLabels = getYAxisLabels();
+  
+  // Calculate x-axis spacing and labels
+  const getXAxisConfig = () => {
+    const numberOfRounds = points.length;
+    
+    // Handle special case of a single data point
+    if (numberOfRounds <= 1) {
+      return {
+        xStep: 0,
+        leftBuffer: graphWidth / 2, // Center the single point
+        tickLabels: numberOfRounds === 0 ? [] : [1],
+        visibleTickIndices: numberOfRounds === 0 ? [] : [0]
+      };
+    }
+    
+    // Simple approach: use a fixed percentage of the width as buffer on each side
+    const bufferPercentage = 0.1; // 10% buffer on each side
+    const leftBuffer = graphWidth * bufferPercentage;
+    const rightBuffer = graphWidth * bufferPercentage;
+    const availableWidth = graphWidth - leftBuffer - rightBuffer;
+    const xStep = availableWidth / (numberOfRounds - 1);
+    
+    // Determine tick granularity based on number of rounds
+    let tickIncrement = 1;
+    if (numberOfRounds > 20) {
+      tickIncrement = 5;
+    } else if (numberOfRounds > 10) {
+      tickIncrement = 2;
+    }
+    
+    // Generate x-axis labels
+    const tickLabels = [];
+    const visibleTickIndices = [];
+    
+    for (let i = 1; i <= numberOfRounds; i++) {
+      if (i === 1 || i === numberOfRounds || i % tickIncrement === 0) {
+        tickLabels.push(i);
+        visibleTickIndices.push(i - 1); // 0-based index for the array
+      }
+    }
+    
+    return {
+      xStep,
+      leftBuffer,
+      tickLabels,
+      visibleTickIndices
+    };
+  };
+  
+  const { xStep, leftBuffer, tickLabels, visibleTickIndices } = getXAxisConfig();
+  
+  // Modify normalizeY to still work with our updated x-axis
   const normalizeY = (y: number, height: number) => {
-    return height - ((y - minY) / yRange) * height;
+    return height - ((y - paddedMinY) / yRange) * height;
+  };
+  
+  // Calculate the x position for each data point with the expanded axis
+  const pointX = (index: number) => {
+    if (points.length <= 1) {
+      return graphWidth / 2; // Center the single point
+    }
+    return leftBuffer + (index * xStep);
   };
 
   const getPathData = (height: number) => {
@@ -142,7 +224,7 @@ export default function MetricsScreen() {
     return points
       .map(
         (point, index) =>
-          `${index === 0 ? 'M' : 'L'} ${index * xStep} ${normalizeY(point.y, height)}`
+          `${index === 0 ? 'M' : 'L'} ${pointX(index)} ${normalizeY(point.y, height)}`
       )
       .join(' ');
   };
@@ -241,8 +323,20 @@ export default function MetricsScreen() {
 
       <View style={styles.graphContainer}>
         <View style={styles.yAxis}>
-          <Text style={styles.axisLabel}>{Math.ceil(maxY)}</Text>
-          <Text style={styles.axisLabel}>{Math.floor(minY)}</Text>
+          {yAxisLabels.map((label, index) => {
+            const position = normalizeY(label, graphHeight);
+            return (
+              <Text 
+                key={index} 
+                style={[
+                  styles.axisLabel, 
+                  { position: 'absolute', top: position - 6 }
+                ]}
+              >
+                {label}
+              </Text>
+            );
+          })}
         </View>
         <View style={styles.graph}>
           <Svg width={graphWidth} height={graphHeight}>
@@ -257,7 +351,7 @@ export default function MetricsScreen() {
             {points.map((point, index) => (
               <Circle
                 key={index}
-                cx={index * xStep}
+                cx={pointX(index)}
                 cy={normalizeY(point.y, graphHeight)}
                 r="4"
                 fill="#93C757"
@@ -265,11 +359,26 @@ export default function MetricsScreen() {
             ))}
           </Svg>
           <View style={styles.xAxis}>
-            {points.map((_, index) => (
-              <Text key={index} style={styles.axisLabel}>
-                {index + 1}
-              </Text>
-            ))}
+            {visibleTickIndices.map((originalIndex, index) => {
+              // Calculate x position using the same method as for data points
+              const position = pointX(originalIndex);
+              return (
+                <Text 
+                  key={index} 
+                  style={[
+                    styles.axisLabel,
+                    { 
+                      position: 'absolute',
+                      left: position - 8, // Increase width for better visibility
+                      textAlign: 'center',
+                      width: 16 // Increase width for better visibility
+                    }
+                  ]}
+                >
+                  {tickLabels[index]}
+                </Text>
+              );
+            })}
           </View>
         </View>
       </View>
@@ -349,9 +458,11 @@ const styles = StyleSheet.create({
   },
   yAxis: {
     width: 40,
+    position: 'relative',
     justifyContent: 'space-between',
     paddingVertical: 10,
     paddingRight: 5,
+    alignItems: 'flex-end',
   },
   graph: {
     flex: 1,
@@ -362,6 +473,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: 10,
     paddingHorizontal: 5,
+    position: 'relative',
+    height: 30,
   },
   axisLabel: {
     fontSize: 12,
