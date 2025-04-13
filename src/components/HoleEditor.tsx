@@ -11,6 +11,7 @@ import {
   Easing
 } from 'react-native';
 import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
 import { Round } from '../types';
 import Scorecard from './Scorecard';
 
@@ -110,6 +111,9 @@ export default function HoleEditor({
     // Check for skipped holes
     const skippedHole = checkForSkippedHoles(currentHole);
     if (skippedHole !== null) {
+      // Error haptic feedback for skipped hole alert
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      
       Alert.alert(
         'Skipped Hole',
         `You need to score hole #${skippedHole} before continuing.`,
@@ -124,6 +128,9 @@ export default function HoleEditor({
     
     // If the current score is already set to this value, unselect it
     if (hole.score === score) {
+      // Light haptic feedback for deselection
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      
       onUpdateScore(currentHole, undefined);
       // Remove from scored holes
       const newScoredHoles = new Set(scoredHoles);
@@ -151,6 +158,18 @@ export default function HoleEditor({
     else if (scoreDiff === -1) resultText = 'Birdie';
     else if (scoreDiff === -2) resultText = 'Eagle';
     else if (scoreDiff < -2) resultText = 'Albatross';
+    
+    // Provide appropriate haptic feedback based on score
+    if (scoreDiff < 0) {
+      // Success feedback for under par
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } else if (scoreDiff === 0) {
+      // Medium impact for par
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    } else {
+      // Light impact for over par
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
     
     // Display score result
     setScoreResult(resultText);
