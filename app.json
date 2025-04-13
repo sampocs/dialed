@@ -9,7 +9,7 @@
     "newArchEnabled": true,
     "sdkVersion": "52.0.0",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#292929"
     },
