@@ -8,10 +8,12 @@ import {
   Modal,
   Alert,
   Animated,
-  Easing
+  Easing,
+  Dimensions
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
+import ConfettiCannon from 'react-native-confetti-cannon';
 import { Round } from '../types';
 import Scorecard from './Scorecard';
 
@@ -42,6 +44,12 @@ export default function HoleEditor({
   const [scoredHoles, setScoredHoles] = useState<Set<number>>(
     new Set(round.course.holes.filter(hole => hole.score !== undefined).map((_, idx) => idx + 1))
   );
+  const [fireBirdieConfetti, setFireBirdieConfetti] = useState(false);
+  const [fireHoleInOneConfetti, setFireHoleInOneConfetti] = useState(false);
+  
+  // References for confetti cannons
+  const birdieConfettiRef = useRef<ConfettiCannon>(null);
+  const holeInOneConfettiRef = useRef<ConfettiCannon>(null);
   
   // Animation values
   const popupOpacity = useRef(new Animated.Value(0)).current;
@@ -155,12 +163,26 @@ export default function HoleEditor({
     else if (scoreDiff === 1) resultText = 'Bogey';
     else if (scoreDiff === 2) resultText = 'Double Bogey';
     else if (scoreDiff > 2) resultText = 'Triple+';
-    else if (scoreDiff === -1) resultText = 'Birdie';
-    else if (scoreDiff === -2) resultText = 'Eagle';
-    else if (scoreDiff < -2) resultText = 'Albatross';
+    else if (scoreDiff === -1) resultText = 'Birdie!';
+    else if (scoreDiff === -2) resultText = 'Eagle!';
+    else if (scoreDiff < -2) resultText = 'Albatross!';
+    
+    // Check for special achievements
+    const isHoleInOne = score === 1 && hole.par > 1;
+    const isBirdie = scoreDiff < 0 && !isHoleInOne;
+    
+    // Set confetti flags
+    if (isHoleInOne) {
+      // Extra intense haptic feedback for hole in one
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setTimeout(() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success), 300);
+      setFireHoleInOneConfetti(true);
+    } else if (isBirdie) {
+      setFireBirdieConfetti(true);
+    }
     
     // Provide appropriate haptic feedback based on score
-    if (scoreDiff < 0) {
+    if (scoreDiff < 0 && !isHoleInOne) {
       // Success feedback for under par
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } else if (scoreDiff === 0) {
@@ -173,6 +195,12 @@ export default function HoleEditor({
     
     // Display score result
     setScoreResult(resultText);
+    
+    // Reset confetti flags after a delay
+    setTimeout(() => {
+      setFireBirdieConfetti(false);
+      setFireHoleInOneConfetti(false);
+    }, 2000);
     
     // Start animations - fade out par and distance text, fade in popup
     popupOpacity.setValue(0);
@@ -223,7 +251,7 @@ export default function HoleEditor({
           handleNavigateHole('next');
         }
       });
-    }, 1200);
+    }, isHoleInOne ? 2000 : 1200); // Longer display for hole in one
   };
 
   const handleNavigateHole = (direction: 'prev' | 'next') => {
@@ -442,6 +470,33 @@ export default function HoleEditor({
           {showScorecard ? 'Hide Scorecard' : 'View Scorecard'}
         </Text>
       </TouchableOpacity>
+
+      {/* Birdie Confetti */}
+      {fireBirdieConfetti && (
+        <ConfettiCannon
+          ref={birdieConfettiRef}
+          count={100}
+          origin={{ x: Dimensions.get('window').width / 2, y: 0 }}
+          autoStart={true}
+          fadeOut={true}
+          fallSpeed={2500}
+          colors={['#93C757', '#FFFFFF', '#303030', '#4A8114', '#354F24']}
+        />
+      )}
+      
+      {/* Hole in One Confetti - more intense! */}
+      {fireHoleInOneConfetti && (
+        <ConfettiCannon
+          ref={holeInOneConfettiRef}
+          count={200}
+          origin={{ x: Dimensions.get('window').width / 2, y: 0 }}
+          autoStart={true}
+          explosionSpeed={350}
+          fallSpeed={3000}
+          fadeOut={true}
+          colors={['#93C757', '#A6D77B', '#FFFFFF', '#303030', '#4D4D4D']}
+        />
+      )}
 
       {/* Scorecard Modal with BlurView */}
       <Modal
