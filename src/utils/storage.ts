@@ -1,6 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Player, Round, AppState } from "../types";
 
+// Flag to control whether dummy data should be generated
+export const USE_DUMMY_DATA = false;
+
 const STORAGE_KEYS = {
   PLAYER: "@dialed:player",
   ROUNDS: "@dialed:rounds",
@@ -95,6 +98,16 @@ export async function loadInitialState(): Promise<Partial<AppState>> {
       return round;
     }) || [];
 
+  // Only generate dummy rounds if there are no rounds AND the flag is enabled
+  let finalRounds = migratedRounds;
+  if (migratedRounds.length === 0 && USE_DUMMY_DATA) {
+    const { generateDummyRounds } = require("./gameLogic");
+    finalRounds = generateDummyRounds();
+
+    // Save the generated dummy rounds
+    await saveRounds(finalRounds);
+  }
+
   // Handle data migration for current round without courseName
   let migratedCurrentRound = currentRound;
   if (currentRound && !currentRound.courseName) {
@@ -121,14 +134,15 @@ export async function loadInitialState(): Promise<Partial<AppState>> {
   if (
     rounds &&
     migratedRounds.length > 0 &&
-    JSON.stringify(rounds) !== JSON.stringify(migratedRounds)
+    JSON.stringify(rounds) !== JSON.stringify(migratedRounds) &&
+    finalRounds === migratedRounds // Only save if we didn't already save dummy rounds
   ) {
     await saveRounds(migratedRounds);
   }
 
   return {
     player: player || undefined,
-    rounds: migratedRounds,
+    rounds: finalRounds,
     currentRound: migratedCurrentRound || null,
     gameState,
   };

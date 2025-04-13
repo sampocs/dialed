@@ -43,6 +43,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       initialState.player = defaultPlayer;
     }
     
+    // TIP: To use dummy data for testing or demos, change USE_DUMMY_DATA to true in src/utils/storage.ts
+    
     setState(current => ({ ...current, ...initialState }));
   };
 

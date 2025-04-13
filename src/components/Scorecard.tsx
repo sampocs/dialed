@@ -5,9 +5,10 @@ import { Course, Hole } from '../types';
 interface ScorecardProps {
   course: Course;
   showCourseMode?: boolean;
+  showScores?: boolean;
 }
 
-const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true }) => {
+const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true, showScores = true }) => {
   console.log('Course data received in Scorecard:', course);
   
   // Safety check for course data
@@ -51,6 +52,9 @@ const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true }) 
     if (diff === 0) return 'E';
     return diff > 0 ? `+${diff}` : `${diff}`;
   };
+  
+  // Check if there are any scores recorded
+  const hasScores = completedHoles.length > 0;
 
   // Create summary text based on completed score
   const renderSummary = () => {
@@ -61,6 +65,12 @@ const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true }) 
         )}
         <Text style={styles.summaryText}>
           Length: {totalDistance} {course.courseMode === "Indoor" ? "ft" : "yd"}
+          {/* Show score & differential only if there are scores and showScores is true */}
+          {hasScores && showScores && completedHolesScore > 0 && (
+            <>
+              {'     '}Score: {completedHolesScore} ({formatDifferential(differential)})
+            </>
+          )}
         </Text>
       </View>
     );

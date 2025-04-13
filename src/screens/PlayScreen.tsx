@@ -117,7 +117,7 @@ export default function PlayScreen() {
         <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
         
         <View style={styles.scorecardContainer}>
-          <Scorecard course={currentRound.course} showCourseMode={false} />
+          <Scorecard course={currentRound.course} showCourseMode={false} showScores={false} />
         </View>
         
         <TouchableOpacity style={[styles.button, styles.startRoundButton]} onPress={handleStartRound}>
@@ -150,7 +150,7 @@ export default function PlayScreen() {
         </View>
         
         <View style={styles.scorecardContainer}>
-          <Scorecard course={currentRound.course} showCourseMode={false} />
+          <Scorecard course={currentRound.course} showCourseMode={false} showScores={true} />
         </View>
       </View>
     );

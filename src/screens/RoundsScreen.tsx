@@ -139,6 +139,7 @@ export default function RoundsScreen() {
 
   // Find best rounds for each category
   const bestRoundsByCategory = useMemo(() => {
+    // Create an object to track the best round for each category
     const categories = {
       '9-Indoor': { best: null as Round | null, differential: Infinity },
       '9-Outdoor': { best: null as Round | null, differential: Infinity },
@@ -146,14 +147,24 @@ export default function RoundsScreen() {
       '18-Outdoor': { best: null as Round | null, differential: Infinity }
     };
 
-    rounds.forEach(round => {
+    // First collect only completed rounds
+    const completedRounds = rounds.filter(r => r.completed);
+    
+    // Find the best round for each category based on lowest differential
+    completedRounds.forEach(round => {
       const holeCount = round.course.holeCount;
       const courseMode = round.course.courseMode;
       const key = `${holeCount}-${courseMode}` as keyof typeof categories;
       
-      if (categories[key] && round.differential < categories[key].differential) {
-        categories[key].best = round;
-        categories[key].differential = round.differential;
+      // A round is better if it has a lower differential, or if differentials are equal,
+      // take the more recent one (higher timestamp)
+      if (categories[key]) {
+        if (round.differential < categories[key].differential || 
+            (round.differential === categories[key].differential && 
+             round.date > (categories[key].best?.date || 0))) {
+          categories[key].best = round;
+          categories[key].differential = round.differential;
+        }
       }
     });
 
@@ -162,6 +173,8 @@ export default function RoundsScreen() {
 
   // Check if a round is the best in its category
   const isBestInCategory = (round: Round) => {
+    if (!round.completed) return false;
+    
     const key = `${round.course.holeCount}-${round.course.courseMode}` as keyof typeof bestRoundsByCategory;
     return bestRoundsByCategory[key]?.best?.id === round.id;
   };
@@ -234,7 +247,7 @@ export default function RoundsScreen() {
         {/* Best round indicator */}
         <View style={styles.bestRoundIndicator}>
           <View style={styles.bestRoundIndicatorDot}></View>
-          <Text style={styles.bestRoundIndicatorText}>Green border indicates best round in each category</Text>
+          <Text style={styles.bestRoundIndicatorText}>Green border indicates best completed round in each category</Text>
         </View>
       </View>
 
@@ -330,7 +343,7 @@ export default function RoundsScreen() {
             <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent} scrollEnabled={false}>
               {/* Apply custom styling to reduce space between table and summary */}
               <View style={styles.scorecardWrapper}>
-                {selectedRound && <Scorecard course={selectedRound.course} showCourseMode={false} />}
+                {selectedRound && <Scorecard course={selectedRound.course} showCourseMode={false} showScores={true} />}
               </View>
             </ScrollView>
           </View>

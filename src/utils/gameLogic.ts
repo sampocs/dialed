@@ -146,8 +146,13 @@ export function createNewRound(
 
   const course = generateCourse(holeCount, courseMode);
 
+  // Create a unique ID by combining timestamp with a random string
+  const uniqueId = `${Date.now()}_${Math.random()
+    .toString(36)
+    .substring(2, 10)}`;
+
   return {
-    id: Date.now().toString(),
+    id: uniqueId,
     date: Date.now(),
     course,
     totalScore: 0,
@@ -239,4 +244,130 @@ export function calculateStats(rounds: Round[]) {
     bestRound,
     recentTrend,
   };
+}
+
+/**
+ * Generates a set of dummy rounds for testing and demo purposes.
+ *
+ * IMPORTANT: This function will only be used when the USE_DUMMY_DATA flag
+ * in src/utils/storage.ts is set to true. By default, it's set to false.
+ *
+ * To enable dummy data generation:
+ * 1. Open src/utils/storage.ts
+ * 2. Change USE_DUMMY_DATA from false to true
+ * 3. Restart the app
+ *
+ * This will generate 40 rounds total:
+ * - 10 Indoor 9-hole rounds
+ * - 10 Indoor 18-hole rounds
+ * - 10 Outdoor 9-hole rounds
+ * - 10 Outdoor 18-hole rounds
+ *
+ * @returns {Round[]} An array of generated dummy rounds
+ */
+export function generateDummyRounds(): Round[] {
+  const rounds: Round[] = [];
+
+  // Generate 10 rounds for each of the 4 combinations (40 total)
+  // 1. Indoor 9 holes - 10 rounds
+  const indoor9Rounds = generateRoundsWithConfig(
+    "Indoor",
+    9,
+    10,
+    Date.now() - 40 * 24 * 60 * 60 * 1000
+  );
+
+  // 2. Indoor 18 holes - 10 rounds
+  const indoor18Rounds = generateRoundsWithConfig(
+    "Indoor",
+    18,
+    10,
+    Date.now() - 30 * 24 * 60 * 60 * 1000
+  );
+
+  // 3. Outdoor 9 holes - 10 rounds
+  const outdoor9Rounds = generateRoundsWithConfig(
+    "Outdoor",
+    9,
+    10,
+    Date.now() - 20 * 24 * 60 * 60 * 1000
+  );
+
+  // 4. Outdoor 18 holes - 10 rounds
+  const outdoor18Rounds = generateRoundsWithConfig(
+    "Outdoor",
+    18,
+    10,
+    Date.now() - 10 * 24 * 60 * 60 * 1000
+  );
+
+  // Combine all rounds
+  rounds.push(
+    ...indoor9Rounds,
+    ...indoor18Rounds,
+    ...outdoor9Rounds,
+    ...outdoor18Rounds
+  );
+
+  // Sort rounds by date (newest first)
+  return rounds.sort((a, b) => b.date - a.date);
+}
+
+// Helper function to generate a weighted random score difference from par
+// Using the exact percentages: 55% par, 20% birdie, 15% bogey, 5% albatross, 5% double bogey
+function getWeightedRandomScoreDiff(courseMode: "Indoor" | "Outdoor"): number {
+  const rand = Math.random();
+
+  // Use the same distribution for both Indoor and Outdoor now
+  if (rand < 0.05) return -2; // 5% chance of albatross (2 under par)
+  if (rand < 0.25) return -1; // 20% chance of birdie (1 under par)
+  if (rand < 0.8) return 0; // 55% chance of par
+  if (rand < 0.95) return 1; // 15% chance of bogey (1 over par)
+  return 2; // 5% chance of double bogey (2 over par)
+}
+
+function generateRoundsWithConfig(
+  courseMode: "Indoor" | "Outdoor",
+  holeCount: 9 | 18,
+  count: number,
+  startDate: number
+): Round[] {
+  const rounds: Round[] = [];
+
+  for (let i = 0; i < count; i++) {
+    // Space rounds out by 1 day each to prevent bunching
+    const dayOffset = i;
+    const date = startDate + dayOffset * 24 * 60 * 60 * 1000;
+
+    // Create a new round
+    const round = createNewRound(courseMode, holeCount);
+
+    // Set the date
+    round.date = date;
+
+    // If we're using a historical date for the round, make sure the ID is still unique
+    // by keeping the random part but using the historical date
+    round.id = `${date}_${round.id.split("_")[1]}`;
+
+    // Add realistic scores to each hole
+    let totalScore = 0;
+    round.course.holes.forEach((hole) => {
+      // Generate a score based on hole par and course mode
+      const scoreDiff = getWeightedRandomScoreDiff(courseMode);
+      const score = Math.max(1, hole.par + scoreDiff);
+
+      // Update the hole score
+      hole.score = score;
+      totalScore += score;
+    });
+
+    // Update round totals
+    round.totalScore = totalScore;
+    round.differential = totalScore - round.course.totalPar;
+    round.completed = true;
+
+    rounds.push(round);
+  }
+
+  return rounds;
 }

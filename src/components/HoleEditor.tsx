@@ -238,7 +238,7 @@ export default function HoleEditor({
             </View>
             
             <ScrollView style={styles.scorecardScrollView} contentContainerStyle={styles.scorecardContent} scrollEnabled={false}>
-              <Scorecard course={round.course} showCourseMode={false} />
+              <Scorecard course={round.course} showCourseMode={false} showScores={true} />
             </ScrollView>
           </View>
         </View>
