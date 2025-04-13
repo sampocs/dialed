@@ -41,6 +41,7 @@ Indoor rules:
 
 - Track scores for 9 or 18-hole putting courses
 - Automatically generated courses with varying par and distance, depending on whether playing indoor or out
+- Interactive animations and haptic feedback when scoring
 - View round history with detailed scorecards
 - Performance metrics and trend visualization
 

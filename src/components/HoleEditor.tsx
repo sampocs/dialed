@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,14 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
-  Alert
+  Alert,
+  Animated,
+  Easing,
+  Dimensions
 } from 'react-native';
 import { BlurView } from 'expo-blur';
+import * as Haptics from 'expo-haptics';
+import ConfettiCannon from 'react-native-confetti-cannon';
 import { Round } from '../types';
 import Scorecard from './Scorecard';
 
@@ -35,27 +40,248 @@ export default function HoleEditor({
 }: HoleEditorProps) {
   const [currentHole, setCurrentHole] = useState(1);
   const [showScorecard, setShowScorecard] = useState(false);
+  const [scoreResult, setScoreResult] = useState<string | null>(null);
+  const [scoredHoles, setScoredHoles] = useState<Set<number>>(
+    new Set(round.course.holes.filter(hole => hole.score !== undefined).map((_, idx) => idx + 1))
+  );
+  const [fireBirdieConfetti, setFireBirdieConfetti] = useState(false);
+  const [fireHoleInOneConfetti, setFireHoleInOneConfetti] = useState(false);
+  
+  // References for confetti cannons
+  const birdieConfettiRef = useRef<ConfettiCannon>(null);
+  const holeInOneConfettiRef = useRef<ConfettiCannon>(null);
+  
+  // Animation values
+  const popupOpacity = useRef(new Animated.Value(0)).current;
+  const popupScale = useRef(new Animated.Value(0.5)).current;
+  const parDistanceOpacity = useRef(new Animated.Value(1)).current;
+  const holeNumberOpacity = useRef(new Animated.Value(1)).current;
+  const holeNumberScale = useRef(new Animated.Value(1)).current;
+  const holeNumberTranslateY = useRef(new Animated.Value(0)).current;
+  
+  // For tracking previous hole to determine animation direction
+  const prevHoleRef = useRef(currentHole);
+  
+  // Animate hole number change when currentHole changes
+  useEffect(() => {
+    if (prevHoleRef.current === currentHole) return;
+    
+    const isForward = currentHole > prevHoleRef.current;
+    const startValue = isForward ? 50 : -50;
+    
+    // Set starting values for animation
+    holeNumberOpacity.setValue(0);
+    holeNumberScale.setValue(0.7);
+    holeNumberTranslateY.setValue(startValue);
+    
+    // Run entrance animation
+    Animated.parallel([
+      Animated.timing(holeNumberOpacity, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(holeNumberScale, {
+        toValue: 1,
+        duration: 400,
+        easing: Easing.out(Easing.back(1.5)),
+        useNativeDriver: true,
+      }),
+      Animated.timing(holeNumberTranslateY, {
+        toValue: 0,
+        duration: 400,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      })
+    ]).start();
+    
+    prevHoleRef.current = currentHole;
+  }, [currentHole]);
+
+  // Check for skipped holes
+  const checkForSkippedHoles = (holeNumber: number): number | null => {
+    // Don't check in edit mode
+    if (isEditMode) return null;
+    
+    // Check all previous holes to see if any were skipped
+    for (let i = 1; i < holeNumber; i++) {
+      if (!scoredHoles.has(i)) {
+        return i;
+      }
+    }
+    
+    return null;
+  };
 
   const handleScoreSelect = (score: number) => {
     const hole = round.course.holes[currentHole - 1];
     
-    // If the current score is already set to this value, unselect it
-    if (hole.score === score) {
-      onUpdateScore(currentHole, undefined);
+    // Check for skipped holes
+    const skippedHole = checkForSkippedHoles(currentHole);
+    if (skippedHole !== null) {
+      // Error haptic feedback for skipped hole alert
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      
+      Alert.alert(
+        'Skipped Hole',
+        `You need to score hole #${skippedHole} before continuing.`,
+        [{ text: 'OK' }]
+      );
+      setCurrentHole(skippedHole);
       return;
     }
     
+    // Check if this is the first time scoring this hole
+    const isFirstTimeScoring = !scoredHoles.has(currentHole);
+    
+    // If the current score is already set to this value, unselect it
+    if (hole.score === score) {
+      // Light haptic feedback for deselection
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      
+      onUpdateScore(currentHole, undefined);
+      // Remove from scored holes
+      const newScoredHoles = new Set(scoredHoles);
+      newScoredHoles.delete(currentHole);
+      setScoredHoles(newScoredHoles);
+      return;
+    }
+    
+    // Set the score
     onUpdateScore(currentHole, score);
+    
+    // Add to scored holes
+    const newScoredHoles = new Set(scoredHoles);
+    newScoredHoles.add(currentHole);
+    setScoredHoles(newScoredHoles);
+    
+    // Determine the score result text
+    const scoreDiff = score - hole.par;
+    let resultText = '';
+    
+    if (scoreDiff === 0) resultText = 'Par';
+    else if (scoreDiff === 1) resultText = 'Bogey';
+    else if (scoreDiff === 2) resultText = 'Double Bogey';
+    else if (scoreDiff > 2) resultText = 'Triple+';
+    else if (scoreDiff === -1) resultText = 'Birdie!';
+    else if (scoreDiff === -2) resultText = 'Eagle!';
+    else if (scoreDiff < -2) resultText = 'Albatross!';
+    
+    // Check for special achievements
+    const isHoleInOne = score === 1 && hole.par > 1;
+    const isBirdie = scoreDiff < 0 && !isHoleInOne;
+    
+    // Set confetti flags
+    if (isHoleInOne) {
+      // Extra intense haptic feedback for hole in one
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setTimeout(() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success), 300);
+      setFireHoleInOneConfetti(true);
+    } else if (isBirdie) {
+      setFireBirdieConfetti(true);
+    }
+    
+    // Provide appropriate haptic feedback based on score
+    if (scoreDiff < 0 && !isHoleInOne) {
+      // Success feedback for under par
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } else if (scoreDiff === 0) {
+      // Medium impact for par
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    } else {
+      // Light impact for over par
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    
+    // Display score result
+    setScoreResult(resultText);
+    
+    // Reset confetti flags after a delay
+    setTimeout(() => {
+      setFireBirdieConfetti(false);
+      setFireHoleInOneConfetti(false);
+    }, 2000);
+    
+    // Start animations - fade out par and distance text, fade in popup
+    popupOpacity.setValue(0);
+    popupScale.setValue(0.5);
+    
+    Animated.parallel([
+      // Fade out par and distance
+      Animated.timing(parDistanceOpacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      // Fade in and scale up popup
+      Animated.timing(popupOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(popupScale, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.elastic(1.2),
+        useNativeDriver: true,
+      })
+    ]).start();
+    
+    // Fade out animation after 1 second
+    setTimeout(() => {
+      Animated.parallel([
+        // Fade out popup
+        Animated.timing(popupOpacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        // Fade in par and distance
+        Animated.timing(parDistanceOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        })
+      ]).start(() => {
+        setScoreResult(null);
+        
+        // Auto-navigate to next hole ONLY if this is the first time scoring this hole
+        // and we're not in edit mode and we're not on the last hole
+        if (isFirstTimeScoring && !isEditMode && currentHole < round.course.holeCount) {
+          handleNavigateHole('next');
+        }
+      });
+    }, isHoleInOne ? 2000 : 1200); // Longer display for hole in one
   };
 
   const handleNavigateHole = (direction: 'prev' | 'next') => {
     const maxHole = round.course.holeCount;
     
-    if (direction === 'prev' && currentHole > 1) {
-      setCurrentHole(currentHole - 1);
-    } else if (direction === 'next' && currentHole < maxHole) {
-      setCurrentHole(currentHole + 1);
-    }
+    // First animate current hole number out
+    Animated.parallel([
+      Animated.timing(holeNumberOpacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(holeNumberScale, {
+        toValue: 0.8,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(holeNumberTranslateY, {
+        toValue: direction === 'next' ? -50 : 50,
+        duration: 200,
+        useNativeDriver: true,
+      })
+    ]).start(() => {
+      // Then update the hole number state
+      if (direction === 'prev' && currentHole > 1) {
+        setCurrentHole(currentHole - 1);
+      } else if (direction === 'next' && currentHole < maxHole) {
+        setCurrentHole(currentHole + 1);
+      }
+    });
   };
 
   const handleQuit = () => {
@@ -143,7 +369,18 @@ export default function HoleEditor({
 
       <View style={styles.mainContentWrapper}>
         <View style={styles.scoreInfo}>
-          <Text style={styles.holeNumber}>Hole #{currentHole}</Text>
+          {/* Animated Hole Number */}
+          <Animated.View
+            style={{
+              opacity: holeNumberOpacity,
+              transform: [
+                { scale: holeNumberScale },
+                { translateY: holeNumberTranslateY }
+              ]
+            }}
+          >
+            <Text style={styles.holeNumber}>Hole #{currentHole}</Text>
+          </Animated.View>
           
           {/* Total Score Display */}
           <View style={styles.totalScoreContainer}>
@@ -152,11 +389,29 @@ export default function HoleEditor({
             </Text>
           </View>
           
-          <Text style={styles.parText}>Par {currentHoleData.par}</Text>
-          <Text style={styles.distanceText}>
-            {currentHoleData.distance} {round.course.courseMode === "Indoor" ? "ft" : "yd"}
-          </Text>
+          {/* Par and distance text that fades out during animation */}
+          <Animated.View style={{ opacity: parDistanceOpacity, alignItems: 'center' }}>
+            <Text style={styles.parText}>Par {currentHoleData.par}</Text>
+            <Text style={styles.distanceText}>
+              {currentHoleData.distance} {round.course.courseMode === "Indoor" ? "ft" : "yd"}
+            </Text>
+          </Animated.View>
         </View>
+
+        {/* Score Result Popup Animation */}
+        {scoreResult && (
+          <Animated.View 
+            style={[
+              styles.scoreResultPopup,
+              {
+                opacity: popupOpacity,
+                transform: [{ scale: popupScale }]
+              }
+            ]}
+          >
+            <Text style={styles.scoreResultText}>{scoreResult}</Text>
+          </Animated.View>
+        )}
 
         {currentHole > 1 && (
           <TouchableOpacity
@@ -215,6 +470,33 @@ export default function HoleEditor({
           {showScorecard ? 'Hide Scorecard' : 'View Scorecard'}
         </Text>
       </TouchableOpacity>
+
+      {/* Birdie Confetti */}
+      {fireBirdieConfetti && (
+        <ConfettiCannon
+          ref={birdieConfettiRef}
+          count={100}
+          origin={{ x: Dimensions.get('window').width / 2, y: 0 }}
+          autoStart={true}
+          fadeOut={true}
+          fallSpeed={2500}
+          colors={['#93C757', '#FFFFFF', '#303030', '#4A8114', '#354F24']}
+        />
+      )}
+      
+      {/* Hole in One Confetti - more intense! */}
+      {fireHoleInOneConfetti && (
+        <ConfettiCannon
+          ref={holeInOneConfettiRef}
+          count={200}
+          origin={{ x: Dimensions.get('window').width / 2, y: 0 }}
+          autoStart={true}
+          explosionSpeed={350}
+          fallSpeed={3000}
+          fadeOut={true}
+          colors={['#93C757', '#A6D77B', '#FFFFFF', '#303030', '#4D4D4D']}
+        />
+      )}
 
       {/* Scorecard Modal with BlurView */}
       <Modal
@@ -465,5 +747,27 @@ const styles = StyleSheet.create({
   navButtonText: {
     fontSize: 42,
     color: '#93C757',
-  }
+  },
+  scoreResultPopup: {
+    position: 'absolute',
+    top: '59%',  // Fine-tuned position
+    backgroundColor: 'rgba(147, 199, 87, 0.9)',
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+    zIndex: 100,
+  },
+  scoreResultText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
 }); 
