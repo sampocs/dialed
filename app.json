@@ -8,10 +8,11 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "sdkVersion": "52.0.0",
+    "backgroundColor": "#2D2D2E",
     "splash": {
       "image": "./assets/icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#292929"
+      "backgroundColor": "#2B2D2E"
     },
     "ios": {
       "supportsTablet": true,
