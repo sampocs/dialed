@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   ScrollView,
   Modal,
-  Alert
+  Alert,
+  Animated,
+  Easing
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Round } from '../types';
@@ -35,6 +37,12 @@ export default function HoleEditor({
 }: HoleEditorProps) {
   const [currentHole, setCurrentHole] = useState(1);
   const [showScorecard, setShowScorecard] = useState(false);
+  const [scoreResult, setScoreResult] = useState<string | null>(null);
+  
+  // Animation values
+  const popupOpacity = useRef(new Animated.Value(0)).current;
+  const popupScale = useRef(new Animated.Value(0.5)).current;
+  const parDistanceOpacity = useRef(new Animated.Value(1)).current;
 
   const handleScoreSelect = (score: number) => {
     const hole = round.course.holes[currentHole - 1];
@@ -45,7 +53,73 @@ export default function HoleEditor({
       return;
     }
     
+    // Set the score
     onUpdateScore(currentHole, score);
+    
+    // Determine the score result text
+    const scoreDiff = score - hole.par;
+    let resultText = '';
+    
+    if (scoreDiff === 0) resultText = 'Par';
+    else if (scoreDiff === 1) resultText = 'Bogey';
+    else if (scoreDiff === 2) resultText = 'Double Bogey';
+    else if (scoreDiff > 2) resultText = 'Triple+';
+    else if (scoreDiff === -1) resultText = 'Birdie';
+    else if (scoreDiff === -2) resultText = 'Eagle';
+    else if (scoreDiff < -2) resultText = 'Albatross';
+    
+    // Display score result
+    setScoreResult(resultText);
+    
+    // Start animations - fade out par and distance text, fade in popup
+    popupOpacity.setValue(0);
+    popupScale.setValue(0.5);
+    
+    Animated.parallel([
+      // Fade out par and distance
+      Animated.timing(parDistanceOpacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      // Fade in and scale up popup
+      Animated.timing(popupOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(popupScale, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.elastic(1.2),
+        useNativeDriver: true,
+      })
+    ]).start();
+    
+    // Fade out animation after 1 second
+    setTimeout(() => {
+      Animated.parallel([
+        // Fade out popup
+        Animated.timing(popupOpacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        // Fade in par and distance
+        Animated.timing(parDistanceOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        })
+      ]).start(() => {
+        setScoreResult(null);
+        
+        // Auto-navigate to next hole if not on the last hole
+        if (!isEditMode && currentHole < round.course.holeCount) {
+          handleNavigateHole('next');
+        }
+      });
+    }, 1200);
   };
 
   const handleNavigateHole = (direction: 'prev' | 'next') => {
@@ -152,11 +226,29 @@ export default function HoleEditor({
             </Text>
           </View>
           
-          <Text style={styles.parText}>Par {currentHoleData.par}</Text>
-          <Text style={styles.distanceText}>
-            {currentHoleData.distance} {round.course.courseMode === "Indoor" ? "ft" : "yd"}
-          </Text>
+          {/* Par and distance text that fades out during animation */}
+          <Animated.View style={{ opacity: parDistanceOpacity, alignItems: 'center' }}>
+            <Text style={styles.parText}>Par {currentHoleData.par}</Text>
+            <Text style={styles.distanceText}>
+              {currentHoleData.distance} {round.course.courseMode === "Indoor" ? "ft" : "yd"}
+            </Text>
+          </Animated.View>
         </View>
+
+        {/* Score Result Popup Animation */}
+        {scoreResult && (
+          <Animated.View 
+            style={[
+              styles.scoreResultPopup,
+              {
+                opacity: popupOpacity,
+                transform: [{ scale: popupScale }]
+              }
+            ]}
+          >
+            <Text style={styles.scoreResultText}>{scoreResult}</Text>
+          </Animated.View>
+        )}
 
         {currentHole > 1 && (
           <TouchableOpacity
@@ -465,5 +557,27 @@ const styles = StyleSheet.create({
   navButtonText: {
     fontSize: 42,
     color: '#93C757',
-  }
+  },
+  scoreResultPopup: {
+    position: 'absolute',
+    top: '59%',  // Fine-tuned position
+    backgroundColor: 'rgba(147, 199, 87, 0.9)',
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+    zIndex: 100,
+  },
+  scoreResultText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
 }); 
