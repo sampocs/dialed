@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import PlayScreen from '../screens/PlayScreen';
 import RoundsScreen from '../screens/RoundsScreen';
-import MetricsScreen from '../screens/MetricsScreen';
+import StatsScreen from '../screens/StatsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -42,8 +42,8 @@ function TabNavigator() {
         }}
       />
       <Tab.Screen
-        name="Metrics"
-        component={MetricsScreen}
+        name="Stats"
+        component={StatsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="chart-line" size={size} color={color} />

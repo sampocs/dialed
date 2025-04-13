@@ -5,7 +5,7 @@ import { calculateStats } from '../utils/gameLogic';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export default function MetricsScreen() {
+export default function StatsScreen() {
   const { rounds } = useApp();
   const [showDifferential, setShowDifferential] = useState(true);
   const insets = useSafeAreaInsets();
@@ -397,29 +397,24 @@ export default function MetricsScreen() {
               />
             ))}
           </Svg>
-          <View style={styles.xAxis}>
-            {visibleTickIndices.map((originalIndex, index) => {
-              // Calculate x position using the same method as for data points
-              const position = pointX(originalIndex);
-              return (
-                <Text 
-                  key={index} 
-                  style={[
-                    styles.axisLabel,
-                    { 
-                      position: 'absolute',
-                      left: position - 8, // Increase width for better visibility
-                      textAlign: 'center',
-                      width: 16 // Increase width for better visibility
-                    }
-                  ]}
-                >
-                  {tickLabels[index]}
-                </Text>
-              );
-            })}
-          </View>
         </View>
+      </View>
+      
+      <View style={styles.xAxis}>
+        {tickLabels.map((label, index) => {
+          const xPosition = pointX(visibleTickIndices[index]);
+          return (
+            <Text 
+              key={index} 
+              style={[
+                styles.axisLabel,
+                { position: 'absolute', left: xPosition - 5 }
+              ]}
+            >
+              {label}
+            </Text>
+          );
+        })}
       </View>
     </View>
   );

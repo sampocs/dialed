@@ -23,7 +23,7 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 type RootTabParamList = {
   Play: undefined;
   Rounds: undefined;
-  Metrics: undefined;
+  Stats: undefined;
 };
 
 // Define the navigation prop type
