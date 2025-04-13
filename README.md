@@ -2,6 +2,8 @@
 
 A React Native mobile application for tracking scores in a putting game.
 
+[Screen Shots](./screenshots/)
+
 ## The Game
 
 Dialed is a practice game designed to sharpen your short game skills. Play it alongside your practice sessions at an indoor putting mat or an outdoor short game area.
