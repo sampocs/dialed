@@ -232,10 +232,6 @@ export default function PlayScreen() {
           <Text style={styles.buttonText}>Start Round</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.rulesButtonOutlined} onPress={() => setShowRules(true)}>
-          <Text style={styles.rulesButtonOutlinedText}>View Rules</Text>
-        </TouchableOpacity>
-        
         {/* Rules Modal */}
         <Modal
           visible={showRules}
