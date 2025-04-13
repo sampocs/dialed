@@ -92,17 +92,52 @@ npm list -g eas-cli | grep eas-cli
 npx expo run:ios
 ```
 
-## Deploying New Builds
+## Development Commands
 
-- Create new build
+For convenience, the project includes several useful npm scripts:
 
 ```bash
-eas build --platform ios --profile production
+# Start the Metro bundler without launching the app (useful for manual launches)
+npm start
+
+# Standard command to run your iOS app
+npm run ios
+
+# Clean the build folder and rebuild (use when changing app icon, name, etc.)
+npm run ios:clean
+
+# Reinstall CocoaPods dependencies (after adding new dependencies)
+npm run ios:pods
+
+# Full clean build using Xcode's clean command (for stubborn build issues)
+npm run rebuild:ios
 ```
 
-- Deploy to TestFlight
+These commands can help troubleshoot various development scenarios:
+
+- For normal development: `npm run ios`
+- To start Metro bundler only: `npm start` (then launch app from simulator/device manually)
+- When you change app resources (icon, name): `npm run ios:clean`
+- When experiencing build errors: `npm run rebuild:ios`
+- After adding new native dependencies: Run `npm run ios:pods` followed by `npm run ios`
+
+## Deploying New Builds
 
 ```bash
+# Create a new production build for iOS
+npm run build:ios
+
+# Submit the latest build to TestFlight
+npm run submit:ios
+```
+
+Or using EAS CLI directly:
+
+```bash
+# Create new build
+eas build --platform ios --profile production
+
+# Deploy to TestFlight
 eas submit --platform ios --latest
 ```
 
