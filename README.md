@@ -17,7 +17,7 @@ In outdoor mode, each 9-hole section features 7 Par 2 holes and 2 Par 3 holes. D
 - Par 2 holes: 10 or 15 yards
 - Par 3 holes: 20, 30, or 40 yards
 
-For each hole, select a target flag and place your ball approximately at the specified distance. Always start from off the green (unless space is limited on shorter Par 2 holes).
+For each hole, select a target flag and place your ball approximately at the specified distance. You can pace out your distance, but precision isn't strictly necessary - reasonable approximations work well. Always start from off the green (unless space is limited on shorter Par 2 holes).
 
 ### Indoor Mode
 
@@ -26,6 +26,8 @@ Indoor mode creates a course with 2 Par 1's, 5 Par 2's, and 2 Par 3's for each 9
 - Par 1 holes: 2.5, 3, or 3.5 feet (putter only)
 - Par 2 holes: 4 to 7.5 feet in 0.5-foot increments (putter only)
 - Par 3 holes: 10 feet (start with a wedge)
+
+It's recommended to use a practice green with distance markings like the Perfect Putting mat for more accurate distance setups. Otherwise, you can simply eyeball the distances.
 
 Indoor rules:
 
