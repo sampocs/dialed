@@ -38,23 +38,65 @@ export default function HoleEditor({
   const [currentHole, setCurrentHole] = useState(1);
   const [showScorecard, setShowScorecard] = useState(false);
   const [scoreResult, setScoreResult] = useState<string | null>(null);
+  const [scoredHoles, setScoredHoles] = useState<Set<number>>(
+    new Set(round.course.holes.filter(hole => hole.score !== undefined).map((_, idx) => idx + 1))
+  );
   
   // Animation values
   const popupOpacity = useRef(new Animated.Value(0)).current;
   const popupScale = useRef(new Animated.Value(0.5)).current;
   const parDistanceOpacity = useRef(new Animated.Value(1)).current;
 
+  // Check for skipped holes
+  const checkForSkippedHoles = (holeNumber: number): number | null => {
+    // Don't check in edit mode
+    if (isEditMode) return null;
+    
+    // Check all previous holes to see if any were skipped
+    for (let i = 1; i < holeNumber; i++) {
+      if (!scoredHoles.has(i)) {
+        return i;
+      }
+    }
+    
+    return null;
+  };
+
   const handleScoreSelect = (score: number) => {
     const hole = round.course.holes[currentHole - 1];
+    
+    // Check for skipped holes
+    const skippedHole = checkForSkippedHoles(currentHole);
+    if (skippedHole !== null) {
+      Alert.alert(
+        'Skipped Hole',
+        `You need to score hole #${skippedHole} before continuing.`,
+        [{ text: 'OK' }]
+      );
+      setCurrentHole(skippedHole);
+      return;
+    }
+    
+    // Check if this is the first time scoring this hole
+    const isFirstTimeScoring = !scoredHoles.has(currentHole);
     
     // If the current score is already set to this value, unselect it
     if (hole.score === score) {
       onUpdateScore(currentHole, undefined);
+      // Remove from scored holes
+      const newScoredHoles = new Set(scoredHoles);
+      newScoredHoles.delete(currentHole);
+      setScoredHoles(newScoredHoles);
       return;
     }
     
     // Set the score
     onUpdateScore(currentHole, score);
+    
+    // Add to scored holes
+    const newScoredHoles = new Set(scoredHoles);
+    newScoredHoles.add(currentHole);
+    setScoredHoles(newScoredHoles);
     
     // Determine the score result text
     const scoreDiff = score - hole.par;
@@ -114,8 +156,9 @@ export default function HoleEditor({
       ]).start(() => {
         setScoreResult(null);
         
-        // Auto-navigate to next hole if not on the last hole
-        if (!isEditMode && currentHole < round.course.holeCount) {
+        // Auto-navigate to next hole ONLY if this is the first time scoring this hole
+        // and we're not in edit mode and we're not on the last hole
+        if (isFirstTimeScoring && !isEditMode && currentHole < round.course.holeCount) {
           handleNavigateHole('next');
         }
       });
