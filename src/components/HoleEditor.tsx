@@ -46,6 +46,48 @@ export default function HoleEditor({
   const popupOpacity = useRef(new Animated.Value(0)).current;
   const popupScale = useRef(new Animated.Value(0.5)).current;
   const parDistanceOpacity = useRef(new Animated.Value(1)).current;
+  const holeNumberOpacity = useRef(new Animated.Value(1)).current;
+  const holeNumberScale = useRef(new Animated.Value(1)).current;
+  const holeNumberTranslateY = useRef(new Animated.Value(0)).current;
+  
+  // For tracking previous hole to determine animation direction
+  const prevHoleRef = useRef(currentHole);
+  
+  // Animate hole number change when currentHole changes
+  useEffect(() => {
+    if (prevHoleRef.current === currentHole) return;
+    
+    const isForward = currentHole > prevHoleRef.current;
+    const startValue = isForward ? 50 : -50;
+    
+    // Set starting values for animation
+    holeNumberOpacity.setValue(0);
+    holeNumberScale.setValue(0.7);
+    holeNumberTranslateY.setValue(startValue);
+    
+    // Run entrance animation
+    Animated.parallel([
+      Animated.timing(holeNumberOpacity, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(holeNumberScale, {
+        toValue: 1,
+        duration: 400,
+        easing: Easing.out(Easing.back(1.5)),
+        useNativeDriver: true,
+      }),
+      Animated.timing(holeNumberTranslateY, {
+        toValue: 0,
+        duration: 400,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      })
+    ]).start();
+    
+    prevHoleRef.current = currentHole;
+  }, [currentHole]);
 
   // Check for skipped holes
   const checkForSkippedHoles = (holeNumber: number): number | null => {
@@ -168,11 +210,31 @@ export default function HoleEditor({
   const handleNavigateHole = (direction: 'prev' | 'next') => {
     const maxHole = round.course.holeCount;
     
-    if (direction === 'prev' && currentHole > 1) {
-      setCurrentHole(currentHole - 1);
-    } else if (direction === 'next' && currentHole < maxHole) {
-      setCurrentHole(currentHole + 1);
-    }
+    // First animate current hole number out
+    Animated.parallel([
+      Animated.timing(holeNumberOpacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(holeNumberScale, {
+        toValue: 0.8,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(holeNumberTranslateY, {
+        toValue: direction === 'next' ? -50 : 50,
+        duration: 200,
+        useNativeDriver: true,
+      })
+    ]).start(() => {
+      // Then update the hole number state
+      if (direction === 'prev' && currentHole > 1) {
+        setCurrentHole(currentHole - 1);
+      } else if (direction === 'next' && currentHole < maxHole) {
+        setCurrentHole(currentHole + 1);
+      }
+    });
   };
 
   const handleQuit = () => {
@@ -260,7 +322,18 @@ export default function HoleEditor({
 
       <View style={styles.mainContentWrapper}>
         <View style={styles.scoreInfo}>
-          <Text style={styles.holeNumber}>Hole #{currentHole}</Text>
+          {/* Animated Hole Number */}
+          <Animated.View
+            style={{
+              opacity: holeNumberOpacity,
+              transform: [
+                { scale: holeNumberScale },
+                { translateY: holeNumberTranslateY }
+              ]
+            }}
+          >
+            <Text style={styles.holeNumber}>Hole #{currentHole}</Text>
+          </Animated.View>
           
           {/* Total Score Display */}
           <View style={styles.totalScoreContainer}>
