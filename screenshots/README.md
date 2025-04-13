@@ -1,43 +1,33 @@
-# Dialed App Screenshots
+# Screenshots
+
+Here are screenshots of various screens in the Dialed putting game app.
 
 ## Home Screen
 
-![Home Screen](./home.png)
+<img src="./home.png" width="300" alt="Home Screen">
 
 ## Course Preview
 
-### Indoor Round Preview
-
-![Indoor Round Preview](./indoor-round-preview.png)
-
-### Outdoor Round Preview
-
-![Outdoor Round Preview](./outdoor-round-preview.png)
+|                             Indoor Round Preview                              |                              Outdoor Round Preview                              |
+| :---------------------------------------------------------------------------: | :-----------------------------------------------------------------------------: |
+| <img src="./indoor-round-preview.png" width="300" alt="Indoor Round Preview"> | <img src="./outdoor-round-preview.png" width="300" alt="Outdoor Round Preview"> |
 
 ## Game In Progress
 
-### Hole View
-
-![Hole View](./hole.png)
-
-### Scorecard During Game
-
-![Scorecard In Progress](./scorecard-in-progress.png)
+|                     Hole View                      |                              Scorecard During Game                              |
+| :------------------------------------------------: | :-----------------------------------------------------------------------------: |
+| <img src="./hole.png" width="300" alt="Hole View"> | <img src="./scorecard-in-progress.png" width="300" alt="Scorecard In Progress"> |
 
 ## Completed Round
 
-![Round Complete](./round-complete.png)
+<img src="./round-complete.png" width="300" alt="Round Complete">
 
 ## Past Rounds
 
-### Rounds List
-
-![Rounds List](./rounds.png)
-
-### Past Round Details
-
-![Past Round Details](./past-round.png)
+|                      Rounds List                       |                        Past Round Details                         |
+| :----------------------------------------------------: | :---------------------------------------------------------------: |
+| <img src="./rounds.png" width="300" alt="Rounds List"> | <img src="./past-round.png" width="300" alt="Past Round Details"> |
 
 ## Stats
 
-![Stats Screen](./stats.png)
+<img src="./stats.png" width="300" alt="Stats Screen">

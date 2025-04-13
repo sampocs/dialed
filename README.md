@@ -66,7 +66,7 @@ Indoor rules:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/dialed.git
+git clone https://github.com/sampocs/dialed.git
 cd dialed
 ```
 
