@@ -14,9 +14,9 @@ Here are screenshots of various screens in the Dialed putting game app.
 
 ## Game In Progress
 
-|                     Hole View                      |                              Scorecard During Game                              |
-| :------------------------------------------------: | :-----------------------------------------------------------------------------: |
-| <img src="./hole.png" width="300" alt="Hole View"> | <img src="./scorecard-in-progress.png" width="300" alt="Scorecard In Progress"> |
+|                     Hole View                      |                        Animations                         |                              Scorecard During Game                              |
+| :------------------------------------------------: | :-------------------------------------------------------: | :-----------------------------------------------------------------------------: |
+| <img src="./hole.png" width="300" alt="Hole View"> | <img src="./animations.gif" width="300" alt="Animations"> | <img src="./scorecard-in-progress.png" width="300" alt="Scorecard In Progress"> |
 
 ## Completed Round
 
