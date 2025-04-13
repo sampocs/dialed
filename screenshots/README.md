@@ -4,7 +4,9 @@ Here are screenshots of various screens in the Dialed putting game app.
 
 ## Home Screen
 
-<img src="./home.png" width="300" alt="Home Screen">
+|                     Home Screen                      |                        Game Rules                         |
+| :--------------------------------------------------: | :-------------------------------------------------------: |
+| <img src="./home.png" width="300" alt="Home Screen"> | <img src="./game-rules.png" width="300" alt="Game Rules"> |
 
 ## Course Preview
 

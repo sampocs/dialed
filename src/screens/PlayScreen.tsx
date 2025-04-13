@@ -29,6 +29,7 @@ export default function PlayScreen() {
     quitGame,
   } = useApp();
   const [showScorecard, setShowScorecard] = useState(false);
+  const [showRules, setShowRules] = useState(false);
   const [courseMode, setCourseMode] = useState<"Indoor" | "Outdoor">("Indoor");
   const [holeCount, setHoleCount] = useState<9 | 18>(18);
   
@@ -43,6 +44,81 @@ export default function PlayScreen() {
 
   const handleStartRound = () => {
     startRound();
+  };
+
+  // Rule content based on the selected mode
+  const getRulesContent = () => {
+    if (courseMode === "Indoor") {
+      return (
+        <>
+          <Text style={styles.rulesTitle}>Indoor Putting Game Rules</Text>
+          <Text style={styles.rulesSubtitle}>Game Setup</Text>
+          <Text style={styles.rulesText}>
+            Indoor mode creates a course with 2 Par 1's, 5 Par 2's, and 2 Par 3's for each 9-hole section. 
+            The placement of the holes is randomized for each new course.
+          </Text>
+          
+          <Text style={styles.rulesSubtitle}>Distances</Text>
+          <Text style={styles.rulesText}>
+            • Par 1 holes: 2.5 to 4 feet (putter only){'\n'}
+            • Par 2 holes: 4.5 to 7.5 feet in 0.5-foot increments (putter only){'\n'}
+            • Par 3 holes: 10 feet (start with a wedge)
+          </Text>
+          
+          <Text style={styles.rulesSubtitle}>Playing Rules</Text>
+          <Text style={styles.rulesText}>
+            • Use a putting mat with distance markings if possible{'\n'}
+            • Missed putts: Move the ball 1 foot closer and try again{'\n'}
+            • Chips: If landing within 1 foot of the hole, attempt a 4-foot putt next. Otherwise, attempt a 7.5-foot putt{'\n'}
+            • Errant chips: Incur a 1-stroke penalty
+          </Text>
+          
+          <Text style={styles.rulesSubtitle}>Scoring</Text>
+          <Text style={styles.rulesText}>
+            • Par: The expected number of strokes to complete a hole{'\n'}
+            • Birdie: One stroke under par{'\n'}
+            • Eagle: Two strokes under par{'\n'}
+            • Bogey: One stroke over par{'\n'}
+            • Double bogey: Two strokes over par
+          </Text>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Text style={styles.rulesTitle}>Outdoor Putting Game Rules</Text>
+          <Text style={styles.rulesSubtitle}>Game Setup</Text>
+          <Text style={styles.rulesText}>
+            Outdoor mode creates a course with 7 Par 2 holes and 2 Par 3 holes for each 9-hole section.
+            The placement of the holes is randomized for each new course.
+          </Text>
+          
+          <Text style={styles.rulesSubtitle}>Distances</Text>
+          <Text style={styles.rulesText}>
+            • Par 2 holes: 10 or 15 yards{'\n'}
+            • Par 3 holes: 20, 30, or 40 yards
+          </Text>
+          
+          <Text style={styles.rulesSubtitle}>Playing Rules</Text>
+          <Text style={styles.rulesText}>
+            • Select a target flag and place your ball at the specified distance{'\n'}
+            • Pacing out distances is fine - precision isn't strictly necessary{'\n'}
+            • Always start from off the green (unless space is limited on shorter Par 2 holes){'\n'}
+            • Play the ball as it lies{'\n'}
+            • If your ball goes more than 10 feet from the putting area, take a one-stroke penalty and place it back within the area
+          </Text>
+          
+          <Text style={styles.rulesSubtitle}>Scoring</Text>
+          <Text style={styles.rulesText}>
+            • Par: The expected number of strokes to complete a hole{'\n'}
+            • Birdie: One stroke under par{'\n'}
+            • Eagle: Two strokes under par{'\n'}
+            • Bogey: One stroke over par{'\n'}
+            • Double bogey: Two strokes over par
+          </Text>
+        </>
+      );
+    }
   };
 
   // The game in progress screen is now handled by the HoleEditor component
@@ -96,9 +172,41 @@ export default function PlayScreen() {
           </TouchableOpacity>
         </View>
         
+        <TouchableOpacity style={styles.rulesButton} onPress={() => setShowRules(true)}>
+          <Text style={styles.rulesButtonText}>Game Rules</Text>
+        </TouchableOpacity>
+        
         <TouchableOpacity style={styles.newGameButton} onPress={handleStartNewGame}>
           <Text style={styles.newGameButtonText}>New Game</Text>
         </TouchableOpacity>
+        
+        {/* Rules Modal */}
+        <Modal
+          visible={showRules}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowRules(false)}
+        >
+          <View style={styles.modalContainer}>
+            <BlurView intensity={80} style={StyleSheet.absoluteFill} tint="dark" />
+            
+            <View style={styles.rulesModalContent}>
+              <View style={styles.rulesHeader}>
+                <Text style={styles.rulesHeaderTitle}>Game Rules</Text>
+                <TouchableOpacity 
+                  onPress={() => setShowRules(false)}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.closeButtonText}>✕</Text>
+                </TouchableOpacity>
+              </View>
+              
+              <ScrollView style={styles.rulesScrollView} contentContainerStyle={styles.rulesContent}>
+                {getRulesContent()}
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -123,6 +231,34 @@ export default function PlayScreen() {
         <TouchableOpacity style={[styles.button, styles.startRoundButton]} onPress={handleStartRound}>
           <Text style={styles.buttonText}>Start Round</Text>
         </TouchableOpacity>
+        
+        {/* Rules Modal */}
+        <Modal
+          visible={showRules}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowRules(false)}
+        >
+          <View style={styles.modalContainer}>
+            <BlurView intensity={80} style={StyleSheet.absoluteFill} tint="dark" />
+            
+            <View style={styles.rulesModalContent}>
+              <View style={styles.rulesHeader}>
+                <Text style={styles.rulesHeaderTitle}>Game Rules</Text>
+                <TouchableOpacity 
+                  onPress={() => setShowRules(false)}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.closeButtonText}>✕</Text>
+                </TouchableOpacity>
+              </View>
+              
+              <ScrollView style={styles.rulesScrollView} contentContainerStyle={styles.rulesContent}>
+                {getRulesContent()}
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -349,6 +485,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  rulesButton: {
+    marginTop: 2,
+    paddingVertical: 2,
+    paddingHorizontal: 24,
+  },
+  rulesButtonText: {
+    color: '#93C757',
+    fontSize: 16,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  rulesButtonOutlined: {
+    marginTop: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderWidth: 1,
+    borderColor: '#93C757',
+    borderRadius: 8,
+  },
+  rulesButtonOutlinedText: {
+    color: '#93C757',
+    fontSize: 16,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 20,
@@ -379,7 +540,24 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#3D3D3D',
   },
+  rulesModalContent: {
+    width: '95%',
+    maxHeight: '80%',
+    backgroundColor: '#292929',
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#3D3D3D',
+  },
   scorecardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3D3D3D',
+  },
+  rulesHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -391,6 +569,30 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#FFFFFF',
+  },
+  rulesHeaderTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  rulesTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  rulesSubtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#93C757',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  rulesText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    lineHeight: 22,
   },
   closeButton: {
     padding: 5,
@@ -406,6 +608,14 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 16,
     alignItems: 'center',
+  },
+  rulesScrollView: {
+    width: '100%',
+  },
+  rulesContent: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 40,
   },
   overlayNavButton: {
     position: 'absolute',
