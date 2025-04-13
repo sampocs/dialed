@@ -172,12 +172,12 @@ export default function PlayScreen() {
           </TouchableOpacity>
         </View>
         
-        <TouchableOpacity style={styles.newGameButton} onPress={handleStartNewGame}>
-          <Text style={styles.newGameButtonText}>New Game</Text>
-        </TouchableOpacity>
-        
         <TouchableOpacity style={styles.rulesButton} onPress={() => setShowRules(true)}>
           <Text style={styles.rulesButtonText}>Game Rules</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.newGameButton} onPress={handleStartNewGame}>
+          <Text style={styles.newGameButtonText}>New Game</Text>
         </TouchableOpacity>
         
         {/* Rules Modal */}
@@ -490,8 +490,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   rulesButton: {
-    marginTop: 20,
-    paddingVertical: 12,
+    marginTop: 2,
+    paddingVertical: 2,
     paddingHorizontal: 24,
   },
   rulesButtonText: {
