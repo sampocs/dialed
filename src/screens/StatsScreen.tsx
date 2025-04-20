@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function StatsScreen() {
   const { rounds } = useApp();
-  const [showDifferential, setShowDifferential] = useState(true);
   const insets = useSafeAreaInsets();
   const [graphHeight, setGraphHeight] = useState(200);
   
@@ -60,7 +59,7 @@ export default function StatsScreen() {
 
     return sortedCompletedRounds.map((round, index) => ({
       x: index,
-      y: showDifferential ? round.differential : round.totalScore,
+      y: round.totalScore,
     }));
   };
 
@@ -109,18 +108,6 @@ export default function StatsScreen() {
               <Text style={[styles.filterToggleText, courseModeFilter === "Outdoor" && styles.filterToggleTextSelected]}>Outdoor</Text>
             </TouchableOpacity>
           </View>
-        </View>
-        
-        {/* Toggle button moved here */}
-        <View style={styles.toggleButtonContainer}>
-          <TouchableOpacity
-            style={styles.toggleButton}
-            onPress={() => setShowDifferential(!showDifferential)}
-          >
-            <Text style={styles.toggleButtonText}>
-              Show {showDifferential ? 'Total Score' : 'Differential'}
-            </Text>
-          </TouchableOpacity>
         </View>
         
         <View style={styles.emptyContainer}>
@@ -329,16 +316,8 @@ export default function StatsScreen() {
         </View>
       </View>
 
-      {/* Toggle button moved here */}
-      <View style={styles.toggleButtonContainer}>
-        <TouchableOpacity
-          style={styles.toggleButton}
-          onPress={() => setShowDifferential(!showDifferential)}
-        >
-          <Text style={styles.toggleButtonText}>
-            Show {showDifferential ? 'Total Score' : 'Differential'}
-          </Text>
-        </TouchableOpacity>
+      <View style={[styles.graphTitle, { marginTop: 8, marginBottom: 8 }]}>
+        <Text style={styles.graphTitleText}>Total Score History</Text>
       </View>
       
       <View style={styles.graphContainer}>
@@ -465,7 +444,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: 20,
     marginTop: 20,
-    marginBottom: 30,
+    marginBottom: 20,
   },
   statItem: {
     alignItems: 'center',
@@ -495,6 +474,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingBottom: 10,
+  },
+  graphTitle: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  graphTitleText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#FFFFFF',
   },
   yAxis: {
     width: 40,
@@ -562,24 +551,5 @@ const styles = StyleSheet.create({
   filterToggleTextSelected: {
     color: '#FFFFFF',
     fontWeight: 'bold',
-  },
-  toggleButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingTop: 10,
-    paddingBottom: 15,
-    marginTop: 5,
-  },
-  toggleButton: {
-    backgroundColor: '#3D3D3D',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#93C757',
-  },
-  toggleButtonText: {
-    fontSize: 14,
-    color: '#93C757',
   },
 }); 
