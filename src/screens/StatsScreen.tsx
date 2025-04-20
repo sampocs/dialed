@@ -1,19 +1,28 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, StatusBar, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, StatusBar, ScrollView, PanResponder, Animated } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { calculateStats } from '../utils/gameLogic';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path, Circle, Line } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { format } from 'date-fns';
 
 export default function StatsScreen() {
   const { rounds } = useApp();
-  const [showDifferential, setShowDifferential] = useState(true);
   const insets = useSafeAreaInsets();
   const [graphHeight, setGraphHeight] = useState(200);
   
   // Filter state - initialize with defaults so one is always selected
-  const [holeCountFilter, setHoleCountFilter] = useState<9 | 18>(9);
+  const [holeCountFilter, setHoleCountFilter] = useState<9 | 18>(18);
   const [courseModeFilter, setCourseModeFilter] = useState<"Indoor" | "Outdoor">("Indoor");
+  
+  // State for selected point when user interacts with chart
+  const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
+  const pan = useRef(new Animated.Value(0)).current;
+  
+  // Controls if popup uses dynamic positioning or fixed position
+  // Set to true for dynamic positioning (popup moves based on point location)
+  // Set to false for fixed positioning (popup always in same place)
+  const useDynamicPopupPosition = true;
 
   // Calculate available space for the graph
   useEffect(() => {
@@ -55,12 +64,34 @@ export default function StatsScreen() {
     [completedRounds]
   );
 
+  // Get the par value from the rounds data
+  const getParForCurrentFilter = () => {
+    // If we have rounds that match the current filter, use their par value
+    if (filteredRounds.length > 0) {
+      return filteredRounds[0].course.totalPar;
+    }
+    
+    // Fallback par calculations based on the course mode and hole count
+    // (Note: These match the logic in the gameLogic.ts generateCourse function)
+    if (courseModeFilter === "Indoor") {
+      // Indoor courses have 2 par 1s, 5 par 2s, and 2 par 3s per 9 holes
+      const nineHolePar = (2 * 1) + (5 * 2) + (2 * 3) // = 19
+      return holeCountFilter === 9 ? nineHolePar : nineHolePar * 2;
+    } else {
+      // Outdoor courses have 2 par 2s and 7 par 3s per 9 holes
+      const nineHolePar = (2 * 2) + (7 * 3) // = 25
+      return holeCountFilter === 9 ? nineHolePar : nineHolePar * 2;
+    }
+  };
+
+  const parForCurrentFilter = getParForCurrentFilter();
+
   const getGraphPoints = () => {
     if (sortedCompletedRounds.length === 0) return [];
 
     return sortedCompletedRounds.map((round, index) => ({
       x: index,
-      y: showDifferential ? round.differential : round.totalScore,
+      y: round.totalScore,
     }));
   };
 
@@ -68,18 +99,10 @@ export default function StatsScreen() {
 
   if (points.length === 0) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.container}>
         {/* Header with Performance title and toggle */}
         <View style={styles.header}>
-          <Text style={styles.title}>Performance</Text>
-          <TouchableOpacity
-            style={styles.toggleButton}
-            onPress={() => setShowDifferential(!showDifferential)}
-          >
-            <Text style={styles.toggleButtonText}>
-              Show {showDifferential ? 'Total Score' : 'Differential'}
-            </Text>
-          </TouchableOpacity>
+          <Text style={styles.title}>Stats</Text>
         </View>
         
         {/* Fixed filter section */}
@@ -150,7 +173,15 @@ export default function StatsScreen() {
     // Generate the labels
     const labels = [];
     for (let i = start; i <= Math.ceil(paddedMaxY); i += increment) {
-      labels.push(i);
+      // Calculate differential for this score
+      const differential = i - parForCurrentFilter;
+      const differentialDisplay = differential > 0 ? `+${differential}` : differential;
+      
+      // Store both the score and differential
+      labels.push({
+        score: i,
+        display: `${i} (${differentialDisplay})`
+      });
     }
     
     return labels;
@@ -167,46 +198,23 @@ export default function StatsScreen() {
       return {
         xStep: 0,
         leftBuffer: graphWidth / 2, // Center the single point
-        tickLabels: numberOfRounds === 0 ? [] : [1],
-        visibleTickIndices: numberOfRounds === 0 ? [] : [0]
       };
     }
     
-    // Simple approach: use a fixed percentage of the width as buffer on each side
+    // More consistent approach with equal spacing
     const bufferPercentage = 0.1; // 10% buffer on each side
     const leftBuffer = graphWidth * bufferPercentage;
     const rightBuffer = graphWidth * bufferPercentage;
     const availableWidth = graphWidth - leftBuffer - rightBuffer;
     const xStep = availableWidth / (numberOfRounds - 1);
     
-    // Determine tick granularity based on number of rounds
-    let tickIncrement = 1;
-    if (numberOfRounds > 20) {
-      tickIncrement = 5;
-    } else if (numberOfRounds > 10) {
-      tickIncrement = 2;
-    }
-    
-    // Generate x-axis labels
-    const tickLabels = [];
-    const visibleTickIndices = [];
-    
-    for (let i = 1; i <= numberOfRounds; i++) {
-      if (i === 1 || i === numberOfRounds || i % tickIncrement === 0) {
-        tickLabels.push(i);
-        visibleTickIndices.push(i - 1); // 0-based index for the array
-      }
-    }
-    
     return {
       xStep,
       leftBuffer,
-      tickLabels,
-      visibleTickIndices
     };
   };
   
-  const { xStep, leftBuffer, tickLabels, visibleTickIndices } = getXAxisConfig();
+  const { xStep, leftBuffer } = getXAxisConfig();
   
   // Modify normalizeY to still work with our updated x-axis
   const normalizeY = (y: number, height: number) => {
@@ -247,19 +255,120 @@ export default function StatsScreen() {
   
   const horizontalGridLines = getHorizontalGridLines();
 
+  // Function to find the closest point to the touch x position
+  const findClosestPointIndex = (touchX: number) => {
+    if (points.length === 0) return null;
+    
+    // Calculate distances to each point
+    const distances = points.map((_, index) => Math.abs(pointX(index) - touchX));
+    
+    // Find the index of the minimum distance
+    return distances.indexOf(Math.min(...distances));
+  };
+  
+  // Create pan responder for touch interaction
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderGrant: (evt) => {
+          const touchX = evt.nativeEvent.locationX;
+          setSelectedPointIndex(findClosestPointIndex(touchX));
+        },
+        onPanResponderMove: (evt) => {
+          const touchX = evt.nativeEvent.locationX;
+          setSelectedPointIndex(findClosestPointIndex(touchX));
+        },
+        onPanResponderRelease: () => {
+          // Keep showing the selected point after release
+        },
+      }),
+    [points]
+  );
+
+  // Display a popup with round details when a point is selected
+  const renderSelectedPointDetails = () => {
+    if (selectedPointIndex === null || !sortedCompletedRounds[selectedPointIndex]) return null;
+    
+    const selectedRound = sortedCompletedRounds[selectedPointIndex];
+    const differential = selectedRound.totalScore - parForCurrentFilter;
+    const differentialDisplay = differential > 0 ? `+${differential}` : differential.toString();
+    const formattedDate = format(new Date(selectedRound.date), 'MMM d, yyyy');
+    
+    // Choose between dynamic or fixed positioning based on preference
+    if (useDynamicPopupPosition) {
+      // Dynamic positioning: popup appears near selected point
+      // Define custom ranges for horizontal sections (not equal thirds)
+      const leftThreshold = graphWidth * 0.33; // 33% from left
+      const rightThreshold = graphWidth * 0.55; // 55% from left
+      
+      const pointXPosition = pointX(selectedPointIndex);
+      const isInLeftSection = pointXPosition < leftThreshold;
+      const isInRightSection = pointXPosition > rightThreshold;
+      const isInMiddleSection = !isInLeftSection && !isInRightSection;
+      
+      // Calculate if we're in the top or bottom half of the graph
+      const pointYPosition = normalizeY(points[selectedPointIndex].y, graphHeight);
+      const isInTopHalf = pointYPosition < graphHeight / 2;
+      
+      // Define vertical offsets - increase the offset for bottom points
+      const topOffset = 20; // Standard offset below points
+      const bottomOffset = 40; // Increased offset above points (was 20)
+      
+      // Determine appropriate popup position based on point location
+      let popupPosition;
+      
+      if (isInMiddleSection) {
+        // For middle section, only position vertically (above or below) without horizontal adjustment
+        popupPosition = {
+          // Center horizontally over the point
+          left: pointXPosition - 100, // Center popup (half of 200px width)
+          // If in top half, show below; if in bottom half, show above with increased offset
+          top: isInTopHalf ? pointYPosition + topOffset : undefined,
+          bottom: !isInTopHalf ? graphHeight - pointYPosition + bottomOffset : undefined
+        };
+      } else {
+        // For left/right sections, keep original positioning logic
+        popupPosition = {
+          left: isInRightSection ? undefined : pointXPosition - 20,
+          right: isInRightSection ? graphWidth - pointXPosition - 20 : undefined,
+          // Apply the same vertical offset logic
+          top: isInTopHalf ? pointYPosition + topOffset : undefined,
+          bottom: !isInTopHalf ? graphHeight - pointYPosition + bottomOffset : undefined
+        };
+      }
+      
+      return (
+        <View style={[styles.detailsPopup, popupPosition]}>
+          <Text style={styles.detailsDate}>{formattedDate}</Text>
+          <Text style={styles.detailsCourseName}>{selectedRound.courseName}</Text>
+          <View style={styles.detailsScoreRow}>
+            <Text style={styles.detailsScore}>{selectedRound.totalScore}</Text>
+            <Text style={styles.detailsDifferential}>({differentialDisplay})</Text>
+          </View>
+        </View>
+      );
+    } else {
+      // Fixed position approach: popup always at the bottom of the graph
+      return (
+        <View style={[styles.detailsPopup, styles.fixedPopup]}>
+          <Text style={styles.detailsDate}>{formattedDate}</Text>
+          <Text style={styles.detailsCourseName}>{selectedRound.courseName}</Text>
+          <View style={styles.detailsScoreRow}>
+            <Text style={styles.detailsScore}>{selectedRound.totalScore}</Text>
+            <Text style={styles.detailsDifferential}>({differentialDisplay})</Text>
+          </View>
+        </View>
+      );
+    }
+  };
+
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       {/* Header with Performance title and toggle */}
       <View style={styles.header}>
-        <Text style={styles.title}>Performance</Text>
-        <TouchableOpacity
-          style={styles.toggleButton}
-          onPress={() => setShowDifferential(!showDifferential)}
-        >
-          <Text style={styles.toggleButtonText}>
-            Show {showDifferential ? 'Total Score' : 'Differential'}
-          </Text>
-        </TouchableOpacity>
+        <Text style={styles.title}>Stats</Text>
       </View>
 
       {/* Fixed filter section */}
@@ -301,11 +410,10 @@ export default function StatsScreen() {
 
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Average Score</Text>
+          <Text style={styles.statLabel}>Handicap</Text>
           <View style={styles.scoreContainer}>
-            <Text style={styles.statValue}>{Math.round(stats.averageTotal * 10) / 10}</Text>
-            <Text style={styles.differentialText}>
-              ({stats.averageScore > 0 ? '+' : ''}{Math.round(stats.averageScore * 10) / 10})
+            <Text style={styles.statValue}>
+              {stats.handicap > 0 ? '+' : ''}{stats.handicap}
             </Text>
           </View>
         </View>
@@ -322,57 +430,51 @@ export default function StatsScreen() {
           </View>
         )}
 
-        {sortedCompletedRounds.length > 0 && (
-          <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Last Round</Text>
-            <View style={styles.scoreContainer}>
-              <Text style={styles.statValue}>
-                {sortedCompletedRounds[sortedCompletedRounds.length - 1].totalScore}
-              </Text>
-              <Text style={styles.differentialText}>
-                ({sortedCompletedRounds[sortedCompletedRounds.length - 1].differential > 0 ? '+' : ''}
-                {sortedCompletedRounds[sortedCompletedRounds.length - 1].differential})
-              </Text>
-            </View>
+        <View style={styles.statItem}>
+          <Text style={styles.statLabel}>Average Score</Text>
+          <View style={styles.scoreContainer}>
+            <Text style={styles.statValue}>{Math.round(stats.averageTotal * 10) / 10}</Text>
+            <Text style={styles.differentialText}>
+              ({stats.averageScore > 0 ? '+' : ''}{Math.round(stats.averageScore * 10) / 10})
+            </Text>
           </View>
-        )}
+        </View>
       </View>
 
+      {/* Dividing line */}
+      <View style={styles.divider} />
+
+      <View style={[styles.graphTitle, { marginTop: 8, marginBottom: 8 }]}>
+        <Text style={styles.graphTitleText}>Score by Round</Text>
+      </View>
+      
       <View style={styles.graphContainer}>
         <View style={styles.yAxis}>
           {yAxisLabels.map((label, index) => {
-            const position = normalizeY(label, graphHeight);
+            const position = normalizeY(label.score, graphHeight);
             return (
               <Text 
                 key={index} 
                 style={[
                   styles.axisLabel, 
-                  { position: 'absolute', top: position - 6 }
+                  { position: 'absolute', top: position - 6, width: 70, textAlign: 'right' }
                 ]}
               >
-                {label}
+                {label.display}
               </Text>
             );
           })}
         </View>
-        <View style={styles.graph}>
+        <View 
+          style={styles.graph}
+          {...panResponder.panHandlers}
+        >
           <Svg width={graphWidth} height={graphHeight}>
             {/* Horizontal grid lines - for every integer value */}
             {horizontalGridLines.map((value, index) => (
               <Path
                 key={`hgrid-${index}`}
                 d={`M 0 ${normalizeY(value, graphHeight)} H ${graphWidth}`}
-                stroke="#3D3D3D"
-                strokeWidth="1"
-                strokeDasharray="4,4"
-              />
-            ))}
-            
-            {/* Vertical grid lines - only for visible tick marks */}
-            {visibleTickIndices.map((originalIndex, index) => (
-              <Path
-                key={`vgrid-${index}`}
-                d={`M ${pointX(originalIndex)} 0 V ${graphHeight}`}
                 stroke="#3D3D3D"
                 strokeWidth="1"
                 strokeDasharray="4,4"
@@ -387,34 +489,35 @@ export default function StatsScreen() {
                 fill="none"
               />
             )}
+            
+            {/* Show all points */}
             {points.map((point, index) => (
               <Circle
                 key={index}
                 cx={pointX(index)}
                 cy={normalizeY(point.y, graphHeight)}
-                r="4"
-                fill="#93C757"
+                r={selectedPointIndex === index ? "6" : "4"}
+                fill={selectedPointIndex === index ? "#FFFFFF" : "#93C757"}
               />
             ))}
+            
+            {/* Show vertical line at selected point */}
+            {selectedPointIndex !== null && (
+              <Line
+                x1={pointX(selectedPointIndex)}
+                y1="0"
+                x2={pointX(selectedPointIndex)}
+                y2={graphHeight}
+                stroke="#FFFFFF"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+              />
+            )}
           </Svg>
+          
+          {/* Render selected point details as an overlay */}
+          {selectedPointIndex !== null && renderSelectedPointDetails()}
         </View>
-      </View>
-      
-      <View style={styles.xAxis}>
-        {tickLabels.map((label, index) => {
-          const xPosition = pointX(visibleTickIndices[index]);
-          return (
-            <Text 
-              key={index} 
-              style={[
-                styles.axisLabel,
-                { position: 'absolute', left: xPosition - 5 }
-              ]}
-            >
-              {label}
-            </Text>
-          );
-        })}
       </View>
     </View>
   );
@@ -430,7 +533,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingTop: 60,
     paddingBottom: 15,
     backgroundColor: '#292929',
     zIndex: 10,
@@ -439,18 +542,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
-  },
-  toggleButton: {
-    backgroundColor: '#3D3D3D',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#93C757',
-  },
-  toggleButtonText: {
-    fontSize: 14,
-    color: '#93C757',
   },
   emptyContainer: {
     flex: 1,
@@ -469,7 +560,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: 20,
     marginTop: 20,
-    marginBottom: 30,
+    marginBottom: 15, // Reduced from 20 to account for divider
   },
   statItem: {
     alignItems: 'center',
@@ -498,10 +589,20 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 20,
-    paddingBottom: 65,
+    paddingBottom: 10,
+  },
+  graphTitle: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  graphTitleText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#FFFFFF',
   },
   yAxis: {
-    width: 40,
+    width: 70,
     position: 'relative',
     justifyContent: 'space-between',
     paddingVertical: 10,
@@ -511,14 +612,6 @@ const styles = StyleSheet.create({
   graph: {
     flex: 1,
     paddingRight: 20,
-  },
-  xAxis: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingTop: 10,
-    paddingHorizontal: 5,
-    position: 'relative',
-    height: 30,
   },
   axisLabel: {
     fontSize: 12,
@@ -565,5 +658,62 @@ const styles = StyleSheet.create({
   filterToggleTextSelected: {
     color: '#FFFFFF',
     fontWeight: 'bold',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#3D3D3D',
+    marginHorizontal: 20,
+    marginBottom: 10,
+  },
+  // Update styles for the details popup
+  detailsPopup: {
+    position: 'absolute',
+    width: 200,
+    backgroundColor: 'rgba(61, 61, 61, 0.9)',
+    borderRadius: 8,
+    padding: 12,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    zIndex: 10,
+  },
+  detailsDate: {
+    color: '#B0B0B0',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  detailsCourseName: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  detailsScoreRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  detailsScore: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  detailsDifferential: {
+    color: '#B0B0B0',
+    fontSize: 16,
+    marginLeft: 4,
+  },
+  // Alternative fixed position style that always shows at the bottom
+  fixedPopup: {
+    bottom: 10,
+    left: '50%',
+    marginLeft: -100, // Center horizontally (half of width)
   },
 }); 
