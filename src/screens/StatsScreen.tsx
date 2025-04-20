@@ -298,11 +298,10 @@ export default function StatsScreen() {
 
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Average Score</Text>
+          <Text style={styles.statLabel}>Handicap</Text>
           <View style={styles.scoreContainer}>
-            <Text style={styles.statValue}>{Math.round(stats.averageTotal * 10) / 10}</Text>
-            <Text style={styles.differentialText}>
-              ({stats.averageScore > 0 ? '+' : ''}{Math.round(stats.averageScore * 10) / 10})
+            <Text style={styles.statValue}>
+              {stats.handicap > 0 ? '+' : ''}{stats.handicap}
             </Text>
           </View>
         </View>
@@ -320,10 +319,11 @@ export default function StatsScreen() {
         )}
 
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Handicap</Text>
+          <Text style={styles.statLabel}>Average Score</Text>
           <View style={styles.scoreContainer}>
-            <Text style={styles.statValue}>
-              {stats.handicap > 0 ? '+' : ''}{stats.handicap}
+            <Text style={styles.statValue}>{Math.round(stats.averageTotal * 10) / 10}</Text>
+            <Text style={styles.differentialText}>
+              ({stats.averageScore > 0 ? '+' : ''}{Math.round(stats.averageScore * 10) / 10})
             </Text>
           </View>
         </View>
