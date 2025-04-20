@@ -17,6 +17,7 @@ export default function StatsScreen() {
   
   // State for selected point when user interacts with chart
   const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
+  const [isUserTouching, setIsUserTouching] = useState(false);
   const pan = useRef(new Animated.Value(0)).current;
 
   // Calculate available space for the graph
@@ -270,13 +271,19 @@ export default function StatsScreen() {
         onPanResponderGrant: (evt) => {
           const touchX = evt.nativeEvent.locationX;
           setSelectedPointIndex(findClosestPointIndex(touchX));
+          setIsUserTouching(true);
         },
         onPanResponderMove: (evt) => {
           const touchX = evt.nativeEvent.locationX;
           setSelectedPointIndex(findClosestPointIndex(touchX));
         },
         onPanResponderRelease: () => {
-          // Keep showing the selected point after release
+          // Hide the popup when finger is lifted
+          setIsUserTouching(false);
+        },
+        onPanResponderTerminate: () => {
+          // Also hide on termination (e.g., interrupted by system)
+          setIsUserTouching(false);
         },
       }),
     [points]
@@ -454,8 +461,8 @@ export default function StatsScreen() {
             )}
           </Svg>
           
-          {/* Render selected point details as an overlay */}
-          {selectedPointIndex !== null && renderSelectedPointDetails()}
+          {/* Only render details when user is touching and a point is selected */}
+          {isUserTouching && selectedPointIndex !== null && renderSelectedPointDetails()}
         </View>
       </View>
     </View>
