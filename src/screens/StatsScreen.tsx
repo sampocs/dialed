@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, StatusBar, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, StatusBar, ScrollView, PanResponder, Animated } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { calculateStats } from '../utils/gameLogic';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path, Circle, Line } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { format } from 'date-fns';
 
 export default function StatsScreen() {
   const { rounds } = useApp();
@@ -13,6 +14,10 @@ export default function StatsScreen() {
   // Filter state - initialize with defaults so one is always selected
   const [holeCountFilter, setHoleCountFilter] = useState<9 | 18>(18);
   const [courseModeFilter, setCourseModeFilter] = useState<"Indoor" | "Outdoor">("Indoor");
+  
+  // State for selected point when user interacts with chart
+  const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
+  const pan = useRef(new Animated.Value(0)).current;
 
   // Calculate available space for the graph
   useEffect(() => {
@@ -245,6 +250,59 @@ export default function StatsScreen() {
   
   const horizontalGridLines = getHorizontalGridLines();
 
+  // Function to find the closest point to the touch x position
+  const findClosestPointIndex = (touchX: number) => {
+    if (points.length === 0) return null;
+    
+    // Calculate distances to each point
+    const distances = points.map((_, index) => Math.abs(pointX(index) - touchX));
+    
+    // Find the index of the minimum distance
+    return distances.indexOf(Math.min(...distances));
+  };
+  
+  // Create pan responder for touch interaction
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderGrant: (evt) => {
+          const touchX = evt.nativeEvent.locationX;
+          setSelectedPointIndex(findClosestPointIndex(touchX));
+        },
+        onPanResponderMove: (evt) => {
+          const touchX = evt.nativeEvent.locationX;
+          setSelectedPointIndex(findClosestPointIndex(touchX));
+        },
+        onPanResponderRelease: () => {
+          // Keep showing the selected point after release
+        },
+      }),
+    [points]
+  );
+
+  // Display a popup with round details when a point is selected
+  const renderSelectedPointDetails = () => {
+    if (selectedPointIndex === null || !sortedCompletedRounds[selectedPointIndex]) return null;
+    
+    const selectedRound = sortedCompletedRounds[selectedPointIndex];
+    const differential = selectedRound.totalScore - parForCurrentFilter;
+    const differentialDisplay = differential > 0 ? `+${differential}` : differential.toString();
+    const formattedDate = format(new Date(selectedRound.date), 'MMM d, yyyy');
+    
+    return (
+      <View style={styles.detailsPopup}>
+        <Text style={styles.detailsDate}>{formattedDate}</Text>
+        <Text style={styles.detailsCourseName}>{selectedRound.courseName}</Text>
+        <View style={styles.detailsScoreRow}>
+          <Text style={styles.detailsScore}>{selectedRound.totalScore}</Text>
+          <Text style={styles.detailsDifferential}>({differentialDisplay})</Text>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* Header with Performance title and toggle */}
@@ -329,6 +387,9 @@ export default function StatsScreen() {
         <Text style={styles.graphTitleText}>Score by Round</Text>
       </View>
       
+      {/* Render selected point details if a point is selected */}
+      {renderSelectedPointDetails()}
+      
       <View style={styles.graphContainer}>
         <View style={styles.yAxis}>
           {yAxisLabels.map((label, index) => {
@@ -346,7 +407,10 @@ export default function StatsScreen() {
             );
           })}
         </View>
-        <View style={styles.graph}>
+        <View 
+          style={styles.graph}
+          {...panResponder.panHandlers}
+        >
           <Svg width={graphWidth} height={graphHeight}>
             {/* Horizontal grid lines - for every integer value */}
             {horizontalGridLines.map((value, index) => (
@@ -367,15 +431,30 @@ export default function StatsScreen() {
                 fill="none"
               />
             )}
+            
+            {/* Show all points */}
             {points.map((point, index) => (
               <Circle
                 key={index}
                 cx={pointX(index)}
                 cy={normalizeY(point.y, graphHeight)}
-                r="4"
-                fill="#93C757"
+                r={selectedPointIndex === index ? "6" : "4"}
+                fill={selectedPointIndex === index ? "#FFFFFF" : "#93C757"}
               />
             ))}
+            
+            {/* Show vertical line at selected point */}
+            {selectedPointIndex !== null && (
+              <Line
+                x1={pointX(selectedPointIndex)}
+                y1="0"
+                x2={pointX(selectedPointIndex)}
+                y2={graphHeight}
+                stroke="#FFFFFF"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+              />
+            )}
           </Svg>
         </View>
       </View>
@@ -524,5 +603,50 @@ const styles = StyleSheet.create({
     backgroundColor: '#3D3D3D',
     marginHorizontal: 20,
     marginBottom: 10,
+  },
+  // Add new styles for the details popup
+  detailsPopup: {
+    backgroundColor: '#3D3D3D',
+    borderRadius: 8,
+    padding: 12,
+    marginHorizontal: 20,
+    marginBottom: 10,
+    alignSelf: 'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  detailsDate: {
+    color: '#B0B0B0',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  detailsCourseName: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  detailsScoreRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  detailsScore: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  detailsDifferential: {
+    color: '#B0B0B0',
+    fontSize: 16,
+    marginLeft: 4,
   },
 }); 
