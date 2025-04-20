@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { AppState, Player, Round, RoundEdit } from '../types';
 import * as storage from '../utils/storage';
 import { createNewRound, updateScore } from '../utils/gameLogic';
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
+import { AppState as RNAppState, AppStateStatus } from 'react-native';
 
 interface AppContextType extends AppState {
   setPlayer: (player: Player) => Promise<void>;
@@ -28,10 +30,60 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     gameState: 'no-game',
     editState: null,
   });
+  
+  // Ref to track the screen lock timer
+  const screenLockTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const appStateRef = useRef<AppStateStatus>(RNAppState.currentState);
 
   useEffect(() => {
     loadInitialState();
+    
+    // Keep screen awake when app loads
+    activateKeepAwake();
+    
+    // Start timer to allow screen lock after 2 minutes
+    startScreenLockTimer();
+    
+    // Monitor app state changes (foreground/background)
+    const subscription = RNAppState.addEventListener('change', handleAppStateChange);
+    
+    return () => {
+      // Clean up when component unmounts
+      if (screenLockTimerRef.current) {
+        clearTimeout(screenLockTimerRef.current);
+      }
+      deactivateKeepAwake();
+      subscription.remove();
+    };
   }, []);
+  
+  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+    if (appStateRef.current.match(/inactive|background/) && nextAppState === 'active') {
+      // App has come to the foreground
+      activateKeepAwake();
+      startScreenLockTimer();
+    } else if (nextAppState.match(/inactive|background/)) {
+      // App has gone to the background
+      if (screenLockTimerRef.current) {
+        clearTimeout(screenLockTimerRef.current);
+      }
+      deactivateKeepAwake();
+    }
+    
+    appStateRef.current = nextAppState;
+  };
+  
+  const startScreenLockTimer = () => {
+    // Clear any existing timer
+    if (screenLockTimerRef.current) {
+      clearTimeout(screenLockTimerRef.current);
+    }
+    
+    // Set timer to allow screen to lock after 2 minutes (120000ms)
+    screenLockTimerRef.current = setTimeout(() => {
+      deactivateKeepAwake();
+    }, 120000);
+  };
 
   const loadInitialState = async () => {
     const initialState = await storage.loadInitialState();
