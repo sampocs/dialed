@@ -609,11 +609,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     left: '50%',
-    width: 200,
-    marginLeft: -100, // Center horizontally (half of width)
+    width: 160,
+    marginLeft: -80,
     backgroundColor: 'rgba(61, 61, 61, 0.9)',
     borderRadius: 8,
-    padding: 12,
+    padding: 8,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -626,30 +626,30 @@ const styles = StyleSheet.create({
   },
   detailsDate: {
     color: '#B0B0B0',
-    fontSize: 14,
+    fontSize: 12,
     textAlign: 'center',
   },
   detailsCourseName: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 4,
+    marginTop: 2,
   },
   detailsScoreRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: 2,
   },
   detailsScore: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   detailsDifferential: {
     color: '#B0B0B0',
-    fontSize: 16,
+    fontSize: 14,
     marginLeft: 4,
   },
 }); 
