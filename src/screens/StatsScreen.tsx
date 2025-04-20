@@ -188,8 +188,6 @@ export default function StatsScreen() {
       return {
         xStep: 0,
         leftBuffer: graphWidth / 2, // Center the single point
-        tickLabels: numberOfRounds === 0 ? [] : [1],
-        visibleTickIndices: numberOfRounds === 0 ? [] : [0]
       };
     }
     
@@ -200,35 +198,13 @@ export default function StatsScreen() {
     const availableWidth = graphWidth - leftBuffer - rightBuffer;
     const xStep = availableWidth / (numberOfRounds - 1);
     
-    // Determine tick granularity based on number of rounds
-    let tickIncrement = 1;
-    if (numberOfRounds > 20) {
-      tickIncrement = 5;
-    } else if (numberOfRounds > 10) {
-      tickIncrement = 2;
-    }
-    
-    // Generate x-axis labels
-    const tickLabels = [];
-    const visibleTickIndices = [];
-    
-    for (let i = 0; i < numberOfRounds; i++) {
-      // Show first, last, and incremental points
-      if (i === 0 || i === numberOfRounds - 1 || (i + 1) % tickIncrement === 0) {
-        tickLabels.push(i + 1); // Add 1 to make it 1-indexed for display
-        visibleTickIndices.push(i);
-      }
-    }
-    
     return {
       xStep,
       leftBuffer,
-      tickLabels,
-      visibleTickIndices
     };
   };
   
-  const { xStep, leftBuffer, tickLabels, visibleTickIndices } = getXAxisConfig();
+  const { xStep, leftBuffer } = getXAxisConfig();
   
   // Modify normalizeY to still work with our updated x-axis
   const normalizeY = (y: number, height: number) => {
@@ -383,17 +359,6 @@ export default function StatsScreen() {
               />
             ))}
             
-            {/* Vertical grid lines - only for visible tick marks */}
-            {visibleTickIndices.map((originalIndex, index) => (
-              <Path
-                key={`vgrid-${index}`}
-                d={`M ${pointX(originalIndex)} 0 V ${graphHeight}`}
-                stroke="#3D3D3D"
-                strokeWidth="1"
-                strokeDasharray="4,4"
-              />
-            ))}
-            
             {points.length > 1 && (
               <Path
                 d={getPathData(graphHeight)}
@@ -413,28 +378,6 @@ export default function StatsScreen() {
             ))}
           </Svg>
         </View>
-      </View>
-      
-      <View style={styles.xAxis}>
-        {tickLabels.map((label, index) => {
-          const xPosition = pointX(visibleTickIndices[index]);
-          return (
-            <Text 
-              key={index} 
-              style={[
-                styles.axisLabel,
-                { 
-                  position: 'absolute', 
-                  left: xPosition - 10, 
-                  width: 20, 
-                  textAlign: 'center' 
-                }
-              ]}
-            >
-              {label}
-            </Text>
-          );
-        })}
       </View>
     </View>
   );
@@ -529,15 +472,6 @@ const styles = StyleSheet.create({
   graph: {
     flex: 1,
     paddingRight: 20,
-  },
-  xAxis: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 5,
-    position: 'relative',
-    height: 30,
-    marginLeft: 70,
-    marginRight: 20,
   },
   axisLabel: {
     fontSize: 12,
