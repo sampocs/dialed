@@ -17,8 +17,12 @@ export default function StatsScreen() {
   
   // State for selected point when user interacts with chart
   const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
-  const [isUserTouching, setIsUserTouching] = useState(false);
   const pan = useRef(new Animated.Value(0)).current;
+  
+  // Controls if popup uses dynamic positioning or fixed position
+  // Set to true for dynamic positioning (popup moves based on point location)
+  // Set to false for fixed positioning (popup always in same place)
+  const useDynamicPopupPosition = true;
 
   // Calculate available space for the graph
   useEffect(() => {
@@ -271,19 +275,13 @@ export default function StatsScreen() {
         onPanResponderGrant: (evt) => {
           const touchX = evt.nativeEvent.locationX;
           setSelectedPointIndex(findClosestPointIndex(touchX));
-          setIsUserTouching(true);
         },
         onPanResponderMove: (evt) => {
           const touchX = evt.nativeEvent.locationX;
           setSelectedPointIndex(findClosestPointIndex(touchX));
         },
         onPanResponderRelease: () => {
-          // Hide the popup when finger is lifted
-          setIsUserTouching(false);
-        },
-        onPanResponderTerminate: () => {
-          // Also hide on termination (e.g., interrupted by system)
-          setIsUserTouching(false);
+          // Keep showing the selected point after release
         },
       }),
     [points]
@@ -298,16 +296,49 @@ export default function StatsScreen() {
     const differentialDisplay = differential > 0 ? `+${differential}` : differential.toString();
     const formattedDate = format(new Date(selectedRound.date), 'MMM d, yyyy');
     
-    return (
-      <View style={styles.detailsPopup}>
-        <Text style={styles.detailsDate}>{formattedDate}</Text>
-        <Text style={styles.detailsCourseName}>{selectedRound.courseName}</Text>
-        <View style={styles.detailsScoreRow}>
-          <Text style={styles.detailsScore}>{selectedRound.totalScore}</Text>
-          <Text style={styles.detailsDifferential}>({differentialDisplay})</Text>
+    // Choose between dynamic or fixed positioning based on preference
+    if (useDynamicPopupPosition) {
+      // Dynamic positioning: popup appears near selected point
+      // Calculate if we're in the first or second half of the graph
+      const isInRightHalf = pointX(selectedPointIndex) > graphWidth / 2;
+      
+      // Calculate if we're in the top or bottom half of the graph
+      const pointYPosition = normalizeY(points[selectedPointIndex].y, graphHeight);
+      const isInTopHalf = pointYPosition < graphHeight / 2;
+      
+      // Determine appropriate popup position based on point location
+      const popupPosition = {
+        // If point is in right half, align popup to right of point
+        left: isInRightHalf ? undefined : pointX(selectedPointIndex) - 20,
+        right: isInRightHalf ? graphWidth - pointX(selectedPointIndex) - 20 : undefined,
+        // If point is in top half, place popup below point, otherwise above
+        top: isInTopHalf ? pointYPosition + 20 : undefined,
+        bottom: !isInTopHalf ? graphHeight - pointYPosition + 20 : undefined
+      };
+      
+      return (
+        <View style={[styles.detailsPopup, popupPosition]}>
+          <Text style={styles.detailsDate}>{formattedDate}</Text>
+          <Text style={styles.detailsCourseName}>{selectedRound.courseName}</Text>
+          <View style={styles.detailsScoreRow}>
+            <Text style={styles.detailsScore}>{selectedRound.totalScore}</Text>
+            <Text style={styles.detailsDifferential}>({differentialDisplay})</Text>
+          </View>
         </View>
-      </View>
-    );
+      );
+    } else {
+      // Fixed position approach: popup always at the bottom of the graph
+      return (
+        <View style={[styles.detailsPopup, styles.fixedPopup]}>
+          <Text style={styles.detailsDate}>{formattedDate}</Text>
+          <Text style={styles.detailsCourseName}>{selectedRound.courseName}</Text>
+          <View style={styles.detailsScoreRow}>
+            <Text style={styles.detailsScore}>{selectedRound.totalScore}</Text>
+            <Text style={styles.detailsDifferential}>({differentialDisplay})</Text>
+          </View>
+        </View>
+      );
+    }
   };
 
   return (
@@ -461,8 +492,8 @@ export default function StatsScreen() {
             )}
           </Svg>
           
-          {/* Only render details when user is touching and a point is selected */}
-          {isUserTouching && selectedPointIndex !== null && renderSelectedPointDetails()}
+          {/* Render selected point details as an overlay */}
+          {selectedPointIndex !== null && renderSelectedPointDetails()}
         </View>
       </View>
     </View>
@@ -614,13 +645,10 @@ const styles = StyleSheet.create({
   // Update styles for the details popup
   detailsPopup: {
     position: 'absolute',
-    top: 10,
-    left: '50%',
-    width: 160,
-    marginLeft: -80,
+    width: 200,
     backgroundColor: 'rgba(61, 61, 61, 0.9)',
     borderRadius: 8,
-    padding: 8,
+    padding: 12,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -633,30 +661,36 @@ const styles = StyleSheet.create({
   },
   detailsDate: {
     color: '#B0B0B0',
-    fontSize: 12,
+    fontSize: 14,
     textAlign: 'center',
   },
   detailsCourseName: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 2,
+    marginTop: 4,
   },
   detailsScoreRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 2,
+    marginTop: 4,
   },
   detailsScore: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   detailsDifferential: {
     color: '#B0B0B0',
-    fontSize: 14,
+    fontSize: 16,
     marginLeft: 4,
+  },
+  // Alternative fixed position style that always shows at the bottom
+  fixedPopup: {
+    bottom: 10,
+    left: '50%',
+    marginLeft: -100, // Center horizontally (half of width)
   },
 }); 
