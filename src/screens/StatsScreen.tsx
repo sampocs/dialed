@@ -54,6 +54,28 @@ export default function StatsScreen() {
     [completedRounds]
   );
 
+  // Get the par value from the rounds data
+  const getParForCurrentFilter = () => {
+    // If we have rounds that match the current filter, use their par value
+    if (filteredRounds.length > 0) {
+      return filteredRounds[0].course.totalPar;
+    }
+    
+    // Fallback par calculations based on the course mode and hole count
+    // (Note: These match the logic in the gameLogic.ts generateCourse function)
+    if (courseModeFilter === "Indoor") {
+      // Indoor courses have 2 par 1s, 5 par 2s, and 2 par 3s per 9 holes
+      const nineHolePar = (2 * 1) + (5 * 2) + (2 * 3) // = 19
+      return holeCountFilter === 9 ? nineHolePar : nineHolePar * 2;
+    } else {
+      // Outdoor courses have 2 par 2s and 7 par 3s per 9 holes
+      const nineHolePar = (2 * 2) + (7 * 3) // = 25
+      return holeCountFilter === 9 ? nineHolePar : nineHolePar * 2;
+    }
+  };
+
+  const parForCurrentFilter = getParForCurrentFilter();
+
   const getGraphPoints = () => {
     if (sortedCompletedRounds.length === 0) return [];
 
@@ -141,7 +163,15 @@ export default function StatsScreen() {
     // Generate the labels
     const labels = [];
     for (let i = start; i <= Math.ceil(paddedMaxY); i += increment) {
-      labels.push(i);
+      // Calculate differential for this score
+      const differential = i - parForCurrentFilter;
+      const differentialDisplay = differential > 0 ? `+${differential}` : differential;
+      
+      // Store both the score and differential
+      labels.push({
+        score: i,
+        display: `${i} (${differentialDisplay})`
+      });
     }
     
     return labels;
@@ -317,22 +347,22 @@ export default function StatsScreen() {
       </View>
 
       <View style={[styles.graphTitle, { marginTop: 8, marginBottom: 8 }]}>
-        <Text style={styles.graphTitleText}>Total Score History</Text>
+        <Text style={styles.graphTitleText}>Total Score History (Par: {parForCurrentFilter})</Text>
       </View>
       
       <View style={styles.graphContainer}>
         <View style={styles.yAxis}>
           {yAxisLabels.map((label, index) => {
-            const position = normalizeY(label, graphHeight);
+            const position = normalizeY(label.score, graphHeight);
             return (
               <Text 
                 key={index} 
                 style={[
                   styles.axisLabel, 
-                  { position: 'absolute', top: position - 6 }
+                  { position: 'absolute', top: position - 6, width: 70, textAlign: 'right' }
                 ]}
               >
-                {label}
+                {label.display}
               </Text>
             );
           })}
@@ -486,7 +516,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   yAxis: {
-    width: 40,
+    width: 70,
     position: 'relative',
     justifyContent: 'space-between',
     paddingVertical: 10,
@@ -503,7 +533,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     position: 'relative',
     height: 30,
-    marginLeft: 40,
+    marginLeft: 70,
     marginRight: 20,
   },
   axisLabel: {
