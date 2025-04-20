@@ -312,6 +312,10 @@ export default function StatsScreen() {
       const pointYPosition = normalizeY(points[selectedPointIndex].y, graphHeight);
       const isInTopHalf = pointYPosition < graphHeight / 2;
       
+      // Define vertical offsets - increase the offset for bottom points
+      const topOffset = 20; // Standard offset below points
+      const bottomOffset = 40; // Increased offset above points (was 20)
+      
       // Determine appropriate popup position based on point location
       let popupPosition;
       
@@ -320,17 +324,18 @@ export default function StatsScreen() {
         popupPosition = {
           // Center horizontally over the point
           left: pointXPosition - 100, // Center popup (half of 200px width)
-          // If in top half, show below; if in bottom half, show above
-          top: isInTopHalf ? pointYPosition + 20 : undefined,
-          bottom: !isInTopHalf ? graphHeight - pointYPosition + 20 : undefined
+          // If in top half, show below; if in bottom half, show above with increased offset
+          top: isInTopHalf ? pointYPosition + topOffset : undefined,
+          bottom: !isInTopHalf ? graphHeight - pointYPosition + bottomOffset : undefined
         };
       } else {
         // For left/right sections, keep original positioning logic
         popupPosition = {
           left: isInRightSection ? undefined : pointXPosition - 20,
           right: isInRightSection ? graphWidth - pointXPosition - 20 : undefined,
-          top: isInTopHalf ? pointYPosition + 20 : undefined,
-          bottom: !isInTopHalf ? graphHeight - pointYPosition + 20 : undefined
+          // Apply the same vertical offset logic
+          top: isInTopHalf ? pointYPosition + topOffset : undefined,
+          bottom: !isInTopHalf ? graphHeight - pointYPosition + bottomOffset : undefined
         };
       }
       
