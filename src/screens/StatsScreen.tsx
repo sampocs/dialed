@@ -68,18 +68,10 @@ export default function StatsScreen() {
 
   if (points.length === 0) {
     return (
-      <View style={[styles.container, { paddingTop: insets.top }]}>
+      <View style={styles.container}>
         {/* Header with Performance title and toggle */}
         <View style={styles.header}>
-          <Text style={styles.title}>Performance</Text>
-          <TouchableOpacity
-            style={styles.toggleButton}
-            onPress={() => setShowDifferential(!showDifferential)}
-          >
-            <Text style={styles.toggleButtonText}>
-              Show {showDifferential ? 'Total Score' : 'Differential'}
-            </Text>
-          </TouchableOpacity>
+          <Text style={styles.title}>Stats</Text>
         </View>
         
         {/* Fixed filter section */}
@@ -117,6 +109,18 @@ export default function StatsScreen() {
               <Text style={[styles.filterToggleText, courseModeFilter === "Outdoor" && styles.filterToggleTextSelected]}>Outdoor</Text>
             </TouchableOpacity>
           </View>
+        </View>
+        
+        {/* Toggle button moved here */}
+        <View style={styles.toggleButtonContainer}>
+          <TouchableOpacity
+            style={styles.toggleButton}
+            onPress={() => setShowDifferential(!showDifferential)}
+          >
+            <Text style={styles.toggleButtonText}>
+              Show {showDifferential ? 'Total Score' : 'Differential'}
+            </Text>
+          </TouchableOpacity>
         </View>
         
         <View style={styles.emptyContainer}>
@@ -248,18 +252,10 @@ export default function StatsScreen() {
   const horizontalGridLines = getHorizontalGridLines();
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       {/* Header with Performance title and toggle */}
       <View style={styles.header}>
-        <Text style={styles.title}>Performance</Text>
-        <TouchableOpacity
-          style={styles.toggleButton}
-          onPress={() => setShowDifferential(!showDifferential)}
-        >
-          <Text style={styles.toggleButtonText}>
-            Show {showDifferential ? 'Total Score' : 'Differential'}
-          </Text>
-        </TouchableOpacity>
+        <Text style={styles.title}>Stats</Text>
       </View>
 
       {/* Fixed filter section */}
@@ -338,6 +334,18 @@ export default function StatsScreen() {
         )}
       </View>
 
+      {/* Toggle button moved here */}
+      <View style={styles.toggleButtonContainer}>
+        <TouchableOpacity
+          style={styles.toggleButton}
+          onPress={() => setShowDifferential(!showDifferential)}
+        >
+          <Text style={styles.toggleButtonText}>
+            Show {showDifferential ? 'Total Score' : 'Differential'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+      
       <View style={styles.graphContainer}>
         <View style={styles.yAxis}>
           {yAxisLabels.map((label, index) => {
@@ -430,7 +438,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingTop: 60,
     paddingBottom: 15,
     backgroundColor: '#292929',
     zIndex: 10,
@@ -439,18 +447,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
-  },
-  toggleButton: {
-    backgroundColor: '#3D3D3D',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#93C757',
-  },
-  toggleButtonText: {
-    fontSize: 14,
-    color: '#93C757',
   },
   emptyContainer: {
     flex: 1,
@@ -565,5 +561,24 @@ const styles = StyleSheet.create({
   filterToggleTextSelected: {
     color: '#FFFFFF',
     fontWeight: 'bold',
+  },
+  toggleButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: 10,
+    paddingBottom: 15,
+    marginTop: 5,
+  },
+  toggleButton: {
+    backgroundColor: '#3D3D3D',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#93C757',
+  },
+  toggleButtonText: {
+    fontSize: 14,
+    color: '#93C757',
   },
 }); 
