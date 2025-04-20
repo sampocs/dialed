@@ -60,7 +60,7 @@ export default function PlayScreen() {
           
           <Text style={styles.rulesSubtitle}>Distances</Text>
           <Text style={styles.rulesText}>
-            • Par 1 holes: 2.5 to 4 feet in 0.5-foot increments (putter only){'\n'}
+            • Par 1 holes: 2.5 to 4 feet (putter only){'\n'}
             • Par 2 holes: 4.5 to 7.5 feet in 0.5-foot increments (putter only){'\n'}
             • Par 3 holes: 10 feet (start with a wedge)
           </Text>
@@ -80,11 +80,6 @@ export default function PlayScreen() {
             • Eagle: Two strokes under par{'\n'}
             • Bogey: One stroke over par{'\n'}
             • Double bogey: Two strokes over par
-          </Text>
-          
-          <Text style={styles.rulesSubtitle}>Make It Your Own</Text>
-          <Text style={styles.rulesText}>
-            Feel free to adapt these rules to your own setup and preferences. You can adjust distances based on the space available, create your own custom challenges, or add house rules to make the game more fun for your situation. The goal is to enjoy yourself while improving your putting skills!
           </Text>
         </>
       );
@@ -120,11 +115,6 @@ export default function PlayScreen() {
             • Eagle: Two strokes under par{'\n'}
             • Bogey: One stroke over par{'\n'}
             • Double bogey: Two strokes over par
-          </Text>
-          
-          <Text style={styles.rulesSubtitle}>Make It Your Own</Text>
-          <Text style={styles.rulesText}>
-            Customize the experience to your practice area by mixing up target holes and varying the amount of green to work with on each shot. Create challenges with different amounts of break, uphill/downhill lies, or shots that must carry hazards.
           </Text>
         </>
       );

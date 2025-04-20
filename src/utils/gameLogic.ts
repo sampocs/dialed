@@ -200,7 +200,6 @@ export function calculateStats(rounds: Round[]) {
       averageTotal: 0,
       bestRound: null,
       recentTrend: 0,
-      handicap: 0,
     };
   }
 
@@ -212,7 +211,6 @@ export function calculateStats(rounds: Round[]) {
       averageTotal: 0,
       bestRound: null,
       recentTrend: 0,
-      handicap: 0,
     };
   }
 
@@ -240,33 +238,11 @@ export function calculateStats(rounds: Round[]) {
         recentRounds.length
       : 0;
 
-  // Calculate handicap based on best 8 of last 20 rounds (or fewer if not enough rounds)
-  const sortedByDate = [...completedRounds].sort((a, b) => b.date - a.date);
-  const last20Rounds = sortedByDate.slice(0, 20);
-  const sortedByDifferential = [...last20Rounds].sort(
-    (a, b) => a.differential - b.differential
-  );
-
-  // Take best 8 rounds (or all if fewer than 8)
-  const countToUse = Math.min(8, sortedByDifferential.length);
-  const bestRounds = sortedByDifferential.slice(0, countToUse);
-
-  // Calculate average differential of best rounds (this is the handicap)
-  const handicap =
-    bestRounds.length > 0
-      ? Math.round(
-          (bestRounds.reduce((sum, round) => sum + round.differential, 0) /
-            bestRounds.length) *
-            10
-        ) / 10
-      : 0;
-
   return {
     averageScore,
     averageTotal,
     bestRound,
     recentTrend,
-    handicap,
   };
 }
 

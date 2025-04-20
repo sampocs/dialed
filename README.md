@@ -89,6 +89,14 @@ npm install
 npm list -g eas-cli | grep eas-cli
 ```
 
+## Running the App
+
+- Start with simulator
+
+```bash
+npx expo run:ios
+```
+
 ## Development Commands
 
 For convenience, the project includes several useful npm scripts:

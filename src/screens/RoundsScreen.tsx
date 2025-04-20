@@ -196,11 +196,6 @@ export default function RoundsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Rounds</Text>
-      </View>
-      
       {/* Fixed filter section */}
       <View style={styles.filterSection}>
         {/* Hole Count Toggle */}
@@ -382,23 +377,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#292929',
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 15,
-    backgroundColor: '#292929',
-    zIndex: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
   filterSection: {
-    paddingTop: 5,
+    paddingTop: 60,
     paddingBottom: 10,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
