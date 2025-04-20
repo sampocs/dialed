@@ -319,20 +319,14 @@ export default function StatsScreen() {
           </View>
         )}
 
-        {sortedCompletedRounds.length > 0 && (
-          <View style={styles.statItem}>
-            <Text style={styles.statLabel}>Last Round</Text>
-            <View style={styles.scoreContainer}>
-              <Text style={styles.statValue}>
-                {sortedCompletedRounds[sortedCompletedRounds.length - 1].totalScore}
-              </Text>
-              <Text style={styles.differentialText}>
-                ({sortedCompletedRounds[sortedCompletedRounds.length - 1].differential > 0 ? '+' : ''}
-                {sortedCompletedRounds[sortedCompletedRounds.length - 1].differential})
-              </Text>
-            </View>
+        <View style={styles.statItem}>
+          <Text style={styles.statLabel}>Handicap</Text>
+          <View style={styles.scoreContainer}>
+            <Text style={styles.statValue}>
+              {stats.handicap > 0 ? '+' : ''}{stats.handicap}
+            </Text>
           </View>
-        )}
+        </View>
       </View>
 
       {/* Toggle button moved here */}
