@@ -299,22 +299,38 @@ export default function StatsScreen() {
     // Choose between dynamic or fixed positioning based on preference
     if (useDynamicPopupPosition) {
       // Dynamic positioning: popup appears near selected point
-      // Calculate if we're in the first or second half of the graph
-      const isInRightHalf = pointX(selectedPointIndex) > graphWidth / 2;
+      // Calculate if we're in the first, middle, or last third of the graph horizontally
+      const horizontalThirdWidth = graphWidth / 3;
+      const pointXPosition = pointX(selectedPointIndex);
+      const isInLeftThird = pointXPosition < horizontalThirdWidth;
+      const isInRightThird = pointXPosition > horizontalThirdWidth * 2;
+      const isInMiddleThird = !isInLeftThird && !isInRightThird;
       
       // Calculate if we're in the top or bottom half of the graph
       const pointYPosition = normalizeY(points[selectedPointIndex].y, graphHeight);
       const isInTopHalf = pointYPosition < graphHeight / 2;
       
       // Determine appropriate popup position based on point location
-      const popupPosition = {
-        // If point is in right half, align popup to right of point
-        left: isInRightHalf ? undefined : pointX(selectedPointIndex) - 20,
-        right: isInRightHalf ? graphWidth - pointX(selectedPointIndex) - 20 : undefined,
-        // If point is in top half, place popup below point, otherwise above
-        top: isInTopHalf ? pointYPosition + 20 : undefined,
-        bottom: !isInTopHalf ? graphHeight - pointYPosition + 20 : undefined
-      };
+      let popupPosition;
+      
+      if (isInMiddleThird) {
+        // For middle third, only position vertically (above or below) without horizontal adjustment
+        popupPosition = {
+          // Center horizontally over the point
+          left: pointXPosition - 100, // Center popup (half of 200px width)
+          // If in top half, show below; if in bottom half, show above
+          top: isInTopHalf ? pointYPosition + 20 : undefined,
+          bottom: !isInTopHalf ? graphHeight - pointYPosition + 20 : undefined
+        };
+      } else {
+        // For left/right thirds, keep original positioning logic
+        popupPosition = {
+          left: isInRightThird ? undefined : pointXPosition - 20,
+          right: isInRightThird ? graphWidth - pointXPosition - 20 : undefined,
+          top: isInTopHalf ? pointYPosition + 20 : undefined,
+          bottom: !isInTopHalf ? graphHeight - pointYPosition + 20 : undefined
+        };
+      }
       
       return (
         <View style={[styles.detailsPopup, popupPosition]}>
