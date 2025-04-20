@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useRef } from 'r
 import { AppState, Player, Round, RoundEdit } from '../types';
 import * as storage from '../utils/storage';
 import { createNewRound, updateScore } from '../utils/gameLogic';
-import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { AppState as RNAppState, AppStateStatus } from 'react-native';
 
 interface AppContextType extends AppState {
@@ -36,13 +36,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const appStateRef = useRef<AppStateStatus>(RNAppState.currentState);
 
   useEffect(() => {
-    loadInitialState();
+    const setup = async () => {
+      await loadInitialState();
+      
+      // Keep screen awake when app loads
+      await activateKeepAwakeAsync();
+      
+      // Start timer to allow screen lock after 2 minutes
+      startScreenLockTimer();
+    };
     
-    // Keep screen awake when app loads
-    activateKeepAwake();
-    
-    // Start timer to allow screen lock after 2 minutes
-    startScreenLockTimer();
+    setup();
     
     // Monitor app state changes (foreground/background)
     const subscription = RNAppState.addEventListener('change', handleAppStateChange);
@@ -57,10 +61,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
   
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+  const handleAppStateChange = async (nextAppState: AppStateStatus) => {
     if (appStateRef.current.match(/inactive|background/) && nextAppState === 'active') {
       // App has come to the foreground
-      activateKeepAwake();
+      await activateKeepAwakeAsync();
       startScreenLockTimer();
     } else if (nextAppState.match(/inactive|background/)) {
       // App has gone to the background
