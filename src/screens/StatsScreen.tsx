@@ -176,7 +176,7 @@ export default function StatsScreen() {
       };
     }
     
-    // Simple approach: use a fixed percentage of the width as buffer on each side
+    // More consistent approach with equal spacing
     const bufferPercentage = 0.1; // 10% buffer on each side
     const leftBuffer = graphWidth * bufferPercentage;
     const rightBuffer = graphWidth * bufferPercentage;
@@ -195,10 +195,11 @@ export default function StatsScreen() {
     const tickLabels = [];
     const visibleTickIndices = [];
     
-    for (let i = 1; i <= numberOfRounds; i++) {
-      if (i === 1 || i === numberOfRounds || i % tickIncrement === 0) {
-        tickLabels.push(i);
-        visibleTickIndices.push(i - 1); // 0-based index for the array
+    for (let i = 0; i < numberOfRounds; i++) {
+      // Show first, last, and incremental points
+      if (i === 0 || i === numberOfRounds - 1 || (i + 1) % tickIncrement === 0) {
+        tickLabels.push(i + 1); // Add 1 to make it 1-indexed for display
+        visibleTickIndices.push(i);
       }
     }
     
@@ -416,7 +417,12 @@ export default function StatsScreen() {
               key={index} 
               style={[
                 styles.axisLabel,
-                { position: 'absolute', left: xPosition - 5 }
+                { 
+                  position: 'absolute', 
+                  left: xPosition - 10, 
+                  width: 20, 
+                  textAlign: 'center' 
+                }
               ]}
             >
               {label}
@@ -494,7 +500,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 20,
-    paddingBottom: 65,
+    paddingBottom: 10,
   },
   yAxis: {
     width: 40,
@@ -511,10 +517,11 @@ const styles = StyleSheet.create({
   xAxis: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 10,
     paddingHorizontal: 5,
     position: 'relative',
     height: 30,
+    marginLeft: 40,
+    marginRight: 20,
   },
   axisLabel: {
     fontSize: 12,
