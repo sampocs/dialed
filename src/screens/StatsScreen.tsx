@@ -387,9 +387,6 @@ export default function StatsScreen() {
         <Text style={styles.graphTitleText}>Score by Round</Text>
       </View>
       
-      {/* Render selected point details if a point is selected */}
-      {renderSelectedPointDetails()}
-      
       <View style={styles.graphContainer}>
         <View style={styles.yAxis}>
           {yAxisLabels.map((label, index) => {
@@ -456,6 +453,9 @@ export default function StatsScreen() {
               />
             )}
           </Svg>
+          
+          {/* Render selected point details as an overlay */}
+          {selectedPointIndex !== null && renderSelectedPointDetails()}
         </View>
       </View>
     </View>
@@ -604,14 +604,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 10,
   },
-  // Add new styles for the details popup
+  // Update styles for the details popup
   detailsPopup: {
-    backgroundColor: '#3D3D3D',
+    position: 'absolute',
+    top: 10,
+    left: '50%',
+    width: 200,
+    marginLeft: -100, // Center horizontally (half of width)
+    backgroundColor: 'rgba(61, 61, 61, 0.9)',
     borderRadius: 8,
     padding: 12,
-    marginHorizontal: 20,
-    marginBottom: 10,
-    alignSelf: 'center',
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -620,6 +622,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    zIndex: 10,
   },
   detailsDate: {
     color: '#B0B0B0',
