@@ -346,8 +346,11 @@ export default function StatsScreen() {
         </View>
       </View>
 
+      {/* Dividing line */}
+      <View style={styles.divider} />
+
       <View style={[styles.graphTitle, { marginTop: 8, marginBottom: 8 }]}>
-        <Text style={styles.graphTitleText}>Total Score History (Par: {parForCurrentFilter})</Text>
+        <Text style={styles.graphTitleText}>Score by Round</Text>
       </View>
       
       <View style={styles.graphContainer}>
@@ -474,7 +477,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: 20,
     marginTop: 20,
-    marginBottom: 20,
+    marginBottom: 15, // Reduced from 20 to account for divider
   },
   statItem: {
     alignItems: 'center',
@@ -581,5 +584,11 @@ const styles = StyleSheet.create({
   filterToggleTextSelected: {
     color: '#FFFFFF',
     fontWeight: 'bold',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#3D3D3D',
+    marginHorizontal: 20,
+    marginBottom: 10,
   },
 }); 
