@@ -12,7 +12,7 @@ export default function StatsScreen() {
   const [graphHeight, setGraphHeight] = useState(200);
   
   // Filter state - initialize with defaults so one is always selected
-  const [holeCountFilter, setHoleCountFilter] = useState<9 | 18>(9);
+  const [holeCountFilter, setHoleCountFilter] = useState<9 | 18>(18);
   const [courseModeFilter, setCourseModeFilter] = useState<"Indoor" | "Outdoor">("Indoor");
 
   // Calculate available space for the graph
