@@ -27,7 +27,7 @@ const INDOOR_PAR_3_DISTANCE = 10;
 
 // Outdoor distances (in yards)
 const OUTDOOR_PAR_2_DISTANCES = [10, 15];
-const OUTDOOR_PAR_3_DISTANCES = [20, 30, 40];
+const OUTDOOR_PAR_3_DISTANCES = [20, 25, 30, 35, 40];
 
 export const OUTDOOR_COURSES = [
   "Augusta National",
