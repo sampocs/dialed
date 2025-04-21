@@ -29,6 +29,26 @@ export default function StatsScreen() {
   
   // Reference to ScrollView for programmatic navigation
   const scrollViewRef = useRef<ScrollView>(null);
+  
+  // Animated values for title opacity
+  const firstTitleOpacity = useRef(new Animated.Value(1)).current;
+  const secondTitleOpacity = useRef(new Animated.Value(0)).current;
+
+  // Update title opacity when page changes
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(firstTitleOpacity, {
+        toValue: currentPage === 0 ? 1 : 0,
+        duration: 150,
+        useNativeDriver: true
+      }),
+      Animated.timing(secondTitleOpacity, {
+        toValue: currentPage === 1 ? 1 : 0,
+        duration: 150,
+        useNativeDriver: true
+      })
+    ]).start();
+  }, [currentPage]);
 
   // Create pan responder for title bar swipe
   const titlePanResponder = useMemo(
@@ -588,10 +608,24 @@ export default function StatsScreen() {
         style={styles.graphTitleBar}
         {...titlePanResponder.panHandlers}
       >
-        {/* Title that shows the current page */}
-        <Text style={styles.graphTitleText}>
-          {currentPage === 0 ? "Score by Round" : "Future Chart"}
-        </Text>
+        {/* Fixed titles with opacity transitions */}
+        <View style={styles.titleContainer}>
+          <Animated.Text style={[
+            styles.graphTitleText, 
+            { opacity: firstTitleOpacity },
+            styles.absoluteTitle
+          ]}>
+            Score by Round
+          </Animated.Text>
+          <Animated.Text style={[
+            styles.graphTitleText, 
+            { opacity: secondTitleOpacity },
+            styles.absoluteTitle
+          ]}>
+            Future Chart
+          </Animated.Text>
+        </View>
+        
         <TouchableOpacity 
           style={styles.pageIndicator}
           onPress={() => navigateToPage(currentPage === 0 ? 1 : 0)}
@@ -849,5 +883,15 @@ const styles = StyleSheet.create({
     color: '#B0B0B0',
     fontSize: 18,
     fontWeight: '500',
+  },
+  titleContainer: {
+    position: 'relative',
+    height: 20,
+    width: 120,
+    justifyContent: 'center',
+  },
+  absoluteTitle: {
+    position: 'absolute',
+    left: 0,
   },
 }); 
