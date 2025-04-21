@@ -132,6 +132,10 @@ npm run build:ios
 
 # Submit the latest build to TestFlight
 npm run submit:ios
+
+# Or using makefiles commands
+make version-bump
+make build-and-deploy
 ```
 
 ## License

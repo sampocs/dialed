@@ -4,7 +4,7 @@ generate-courses:
 	@echo "Generating courses.json..."
 	node scripts/generateCourses.js 
 
-bump-and-build:
+version-bump:
 	@echo "Bumping minor version..."
 	@VERSION=$$(jq -r '.expo.version' app.json) && \
 	MAJOR=$$(echo $$VERSION | cut -d. -f1) && \
@@ -14,6 +14,8 @@ bump-and-build:
 	NEW_VERSION="$$MAJOR.$$NEW_MINOR.$$PATCH" && \
 	jq '.expo.version = "'"$$NEW_VERSION"'"' app.json > tmp.json && mv tmp.json app.json && \
 	echo "Version bumped to $$NEW_VERSION"
+
+build-and-deploy:
 	@echo "Running iOS prebuild..."
 	npm run prebuild:ios
 	@echo "Building for iOS..."
