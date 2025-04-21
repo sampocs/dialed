@@ -571,14 +571,13 @@ export default function StatsScreen() {
             {currentPage === 0 ? "Score by Round" : "Future Chart"}
           </Text>
         </TouchableOpacity>
-        <View style={styles.pageIndicator}>
-          <TouchableOpacity onPress={() => navigateToPage(0)}>
-            <View style={[styles.pageIndicatorDot, currentPage === 0 && styles.pageIndicatorDotActive]} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigateToPage(1)}>
-            <View style={[styles.pageIndicatorDot, currentPage === 1 && styles.pageIndicatorDotActive]} />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity 
+          style={styles.pageIndicator}
+          onPress={() => navigateToPage(currentPage === 0 ? 1 : 0)}
+        >
+          <View style={[styles.pageIndicatorDot, currentPage === 0 && styles.pageIndicatorDotActive]} />
+          <View style={[styles.pageIndicatorDot, currentPage === 1 && styles.pageIndicatorDotActive]} />
+        </TouchableOpacity>
       </View>
 
       {/* Horizontal scroll view for the chart section */}
@@ -695,6 +694,7 @@ const styles = StyleSheet.create({
   pageIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 10, // Add padding to increase touch area
   },
   pageIndicatorDot: {
     width: 8,
@@ -702,7 +702,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#3D3D3D',
     marginHorizontal: 4,
-    padding: 8, // Add padding to increase touch area
   },
   pageIndicatorDotActive: {
     backgroundColor: '#93C757',
