@@ -650,6 +650,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingBottom: 10,
+    paddingTop: 10, // Add top padding to prevent y-axis labels from being cut off
+    paddingLeft: 10, // Add left padding to give more space for y-axis labels
   },
   graphTitleBar: {
     flexDirection: 'row',
@@ -685,6 +687,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingRight: 5,
     alignItems: 'flex-end',
+    marginLeft: 5, // Add margin to prevent leftmost labels from being cut off
   },
   graph: {
     flex: 1,
