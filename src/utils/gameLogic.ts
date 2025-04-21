@@ -35,6 +35,31 @@ export const INDOOR_COURSES = [
   "Royal Melbourne",
 ];
 
+// Map to store pre-generated courses
+export const PRE_GENERATED_COURSES: {
+  [courseName: string]: Course;
+} = {};
+
+// Function to initialize all the courses with fixed layouts
+export function initializeAllCourses(): void {
+  // First generate all outdoor courses
+  OUTDOOR_COURSES.forEach((courseName) => {
+    PRE_GENERATED_COURSES[courseName] = generateCourse(18, "Outdoor");
+  });
+
+  // Then generate all indoor courses
+  INDOOR_COURSES.forEach((courseName) => {
+    PRE_GENERATED_COURSES[courseName] = generateCourse(18, "Indoor");
+  });
+
+  // Log all generated courses for debugging
+  console.log("All courses have been pre-generated:");
+  console.log(JSON.stringify(PRE_GENERATED_COURSES, null, 2));
+}
+
+// Call initializeAllCourses on module load
+initializeAllCourses();
+
 function shuffleArray<T>(array: T[]): T[] {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
@@ -71,6 +96,8 @@ function generateOutdoorNineTemplate(): number[] {
   ];
 }
 
+// This function is now primarily used for initialization of pre-generated courses
+// It should not be called directly to create new courses at runtime
 export function generateCourse(
   holeCount: 9 | 18 = 18,
   courseMode: "Indoor" | "Outdoor" = "Indoor"
@@ -143,7 +170,30 @@ export function createNewRound(
   const randomIndex = Math.floor(Math.random() * courses.length);
   const courseName = courses[randomIndex];
 
-  const course = generateCourse(holeCount, courseMode);
+  // Get the pre-generated course
+  const preGeneratedCourse = PRE_GENERATED_COURSES[courseName];
+
+  let course: Course;
+
+  if (holeCount === 18) {
+    // Use the full 18-hole course
+    course = { ...preGeneratedCourse };
+  } else {
+    // Use only the front 9 holes
+    const frontNineHoles = preGeneratedCourse.holes.slice(0, 9);
+
+    course = {
+      holes: frontNineHoles,
+      totalPar: preGeneratedCourse.frontNinePar,
+      totalDistance: preGeneratedCourse.frontNineDistance,
+      frontNinePar: preGeneratedCourse.frontNinePar,
+      frontNineDistance: preGeneratedCourse.frontNineDistance,
+      backNinePar: 0,
+      backNineDistance: 0,
+      courseMode: preGeneratedCourse.courseMode,
+      holeCount: 9,
+    };
+  }
 
   // Create a unique ID by combining timestamp with a random string
   const uniqueId = `${Date.now()}_${Math.random()
@@ -362,7 +412,7 @@ function generateRoundsWithConfig(
     const dayOffset = i;
     const date = startDate + dayOffset * 24 * 60 * 60 * 1000;
 
-    // Create a new round
+    // Create a new round using the pre-generated courses
     const round = createNewRound(courseMode, holeCount);
 
     // Set the date
