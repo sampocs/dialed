@@ -9,6 +9,7 @@
     "web": "expo start --web",
     "ios:clean": "cd ios && rm -rf build/ && cd .. && npx expo run:ios",
     "ios:pods": "cd ios && pod install && cd ..",
+    "prebuild:ios": "npx expo prebuild --platform ios --clean",
     "rebuild:ios": "cd ios && xcodebuild -workspace dialed.xcworkspace -scheme dialed clean && cd .. && npx expo run:ios",
     "build:ios": "eas build --platform ios --profile production",
     "submit:ios": "eas submit --platform ios --latest"

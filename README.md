@@ -121,22 +121,17 @@ These commands can help troubleshoot various development scenarios:
 
 ## Deploying New Builds
 
+- Increment the version number and app.json, then:
+
 ```bash
+# Regenerate native code to have updated version
+npm run prebuild:ios
+
 # Create a new production build for iOS
 npm run build:ios
 
 # Submit the latest build to TestFlight
 npm run submit:ios
-```
-
-Or using EAS CLI directly:
-
-```bash
-# Create new build
-eas build --platform ios --profile production
-
-# Deploy to TestFlight
-eas submit --platform ios --latest
 ```
 
 ## License
