@@ -212,7 +212,7 @@ export default function StatsScreen() {
     
     return (
       <View style={styles.graphContainer}>
-        <View style={styles.yAxis}>
+        <View style={styles.lineChartYAxis}>
           {yAxisLabels.map((label, index) => {
             const position = normalizeY(label.score, graphHeight);
             return (
@@ -220,7 +220,7 @@ export default function StatsScreen() {
                 key={index} 
                 style={[
                   styles.axisLabel, 
-                  { position: 'absolute', top: position - 6, width: 30, textAlign: 'right' }
+                  { position: 'absolute', top: position - 6, width: 50, textAlign: 'right' }
                 ]}
               >
                 {label.display}
@@ -237,7 +237,7 @@ export default function StatsScreen() {
             {horizontalGridLines.map((value, index) => (
               <Path
                 key={`hgrid-${index}`}
-                d={`M 0 ${normalizeY(value, graphHeight)} H ${graphWidth}`}
+                d={`M 10 ${normalizeY(value, graphHeight)} H ${graphWidth}`}
                 stroke="#3D3D3D"
                 strokeWidth="1"
                 strokeDasharray="4,4"
@@ -953,6 +953,15 @@ const styles = StyleSheet.create({
   },
   pageIndicatorDotActive: {
     backgroundColor: '#93C757',
+  },
+  lineChartYAxis: {
+    width: 50,
+    position: 'relative',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    paddingRight: 5,
+    alignItems: 'flex-end',
+    marginLeft: 5,
   },
   yAxis: {
     width: 30,
