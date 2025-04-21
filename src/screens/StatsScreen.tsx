@@ -33,6 +33,7 @@ export default function StatsScreen() {
   // Animated values for title opacity
   const firstTitleOpacity = useRef(new Animated.Value(1)).current;
   const secondTitleOpacity = useRef(new Animated.Value(0)).current;
+  const thirdTitleOpacity = useRef(new Animated.Value(0)).current;
 
   // Update title opacity when page changes
   useEffect(() => {
@@ -44,6 +45,11 @@ export default function StatsScreen() {
       }),
       Animated.timing(secondTitleOpacity, {
         toValue: currentPage === 1 ? 1 : 0,
+        duration: 150,
+        useNativeDriver: true
+      }),
+      Animated.timing(thirdTitleOpacity, {
+        toValue: currentPage === 2 ? 1 : 0,
         duration: 150,
         useNativeDriver: true
       })
@@ -60,12 +66,12 @@ export default function StatsScreen() {
           return Math.abs(gestureState.dx) > 10;
         },
         onPanResponderRelease: (_, gestureState) => {
-          if (gestureState.dx < -50 && currentPage === 0) {
+          if (gestureState.dx < -50 && currentPage < 2) {
             // Swipe left, go to next page
-            navigateToPage(1);
-          } else if (gestureState.dx > 50 && currentPage === 1) {
+            navigateToPage(currentPage + 1);
+          } else if (gestureState.dx > 50 && currentPage > 0) {
             // Swipe right, go to previous page
-            navigateToPage(0);
+            navigateToPage(currentPage - 1);
           }
         },
       }),
@@ -435,6 +441,208 @@ export default function StatsScreen() {
                       fontSize="10"
                     >
                       {item.differential > 0 ? `+${item.differential}` : item.differential}
+                    </SvgText>
+                  </React.Fragment>
+                );
+              })}
+            </Svg>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  // Update the calculateAverageScoreByDistance function to group by exact distances
+  const calculateAverageScoreByDistance = () => {
+    if (completedRounds.length === 0) return [];
+
+    // Group holes by exact distances
+    const distanceScores: Record<number, { totalScore: number; count: number }> = {};
+    
+    completedRounds.forEach(round => {
+      round.course.holes.forEach(hole => {
+        if (hole.score !== undefined) {
+          // Use exact distance as the key
+          const distance = hole.distance;
+          
+          if (!distanceScores[distance]) {
+            distanceScores[distance] = { totalScore: 0, count: 0 };
+          }
+          
+          distanceScores[distance].totalScore += hole.score;
+          distanceScores[distance].count++;
+        }
+      });
+    });
+    
+    // Convert to array and calculate averages
+    const averageScoreByDistance = Object.entries(distanceScores).map(([distanceStr, data]) => {
+      const distance = parseFloat(distanceStr);
+      const averageScore = data.totalScore / data.count;
+      return {
+        distance,
+        averageScore: Math.round(averageScore * 10) / 10,
+        count: data.count
+      };
+    });
+    
+    // Sort by distance
+    return averageScoreByDistance.sort((a, b) => a.distance - b.distance);
+  };
+
+  const averageScoreByDistance = useMemo(() => calculateAverageScoreByDistance(), [completedRounds, courseModeFilter]);
+
+  // Update the renderThirdSection function to use exact distances
+  const renderThirdSection = () => {
+    if (averageScoreByDistance.length === 0) {
+      return (
+        <View style={styles.blankPageContainer}>
+          <Text style={styles.blankPageText}>No data available</Text>
+        </View>
+      );
+    }
+
+    // Define chart dimensions
+    const barChartWidth = graphWidth;
+    const barChartHeight = graphHeight;
+    const paddingLeft = 20;
+    const paddingBottom = 60; // Extra padding at bottom for distance labels
+    const paddingTop = 10;
+    const paddingRight = 20;
+    
+    // Calculate available space for bars
+    const chartAreaWidth = barChartWidth - paddingLeft - paddingRight;
+    const chartAreaHeight = barChartHeight - paddingBottom - paddingTop;
+    
+    // Calculate bar dimensions based on data
+    const barCount = averageScoreByDistance.length;
+    // Limit max bar width, but also ensure bars aren't too thin when there are many
+    const maxBarWidth = 60;
+    const minBarWidth = 15; // Use a smaller minimum to fit more bars if needed
+    const barWidth = Math.max(
+      minBarWidth, 
+      Math.min(maxBarWidth, (chartAreaWidth / barCount) * 0.7)
+    );
+    const barSpacing = (chartAreaWidth - barWidth * barCount) / (barCount + 1);
+    
+    // Find min and max values for scaling
+    const scoreValues = averageScoreByDistance.map(item => item.averageScore);
+    const minValue = Math.floor(Math.min(...scoreValues) - 0.5);
+    const maxValue = Math.ceil(Math.max(...scoreValues) + 0.5);
+    const valueRange = maxValue - minValue;
+    
+    // Function to scale a value to the chart height
+    const scaleY = (value: number) => {
+      return chartAreaHeight - ((value - minValue) / valueRange) * chartAreaHeight + paddingTop;
+    };
+    
+    // Function to calculate horizontal position of a bar
+    const getBarX = (index: number) => {
+      return paddingLeft + barSpacing + index * (barWidth + barSpacing);
+    };
+    
+    // Generate y-axis labels
+    const yAxisLabels = [];
+    const yStepCount = valueRange <= 4 ? valueRange : 4;
+    const yStep = valueRange / yStepCount;
+    
+    for (let i = 0; i <= yStepCount; i++) {
+      const value = minValue + i * yStep;
+      yAxisLabels.push({
+        value: Math.round(value * 10) / 10,
+        y: scaleY(value)
+      });
+    }
+    
+    // Format distance labels based on course mode
+    const formatDistance = (distance: number) => {
+      const isIndoor = courseModeFilter === "Indoor";
+      return `${distance}${isIndoor ? "'" : "y"}`;
+    };
+    
+    return (
+      <View style={styles.barChartContainer}>
+        <View style={styles.graphContainer}>
+          <View style={styles.yAxis}>
+            {yAxisLabels.map((label, index) => (
+              <Text 
+                key={index} 
+                style={[
+                  styles.axisLabel, 
+                  { position: 'absolute', top: label.y - 6, width: 30, textAlign: 'right' }
+                ]}
+              >
+                {label.value}
+              </Text>
+            ))}
+          </View>
+          
+          <View style={styles.graph}>
+            <Svg width={barChartWidth} height={barChartHeight}>
+              {/* Horizontal grid lines */}
+              {yAxisLabels.map((label, index) => (
+                <Path
+                  key={`hgrid-${index}`}
+                  d={`M ${paddingLeft} ${label.y} H ${barChartWidth}`}
+                  stroke="#3D3D3D"
+                  strokeWidth="1"
+                  strokeDasharray="4,4"
+                />
+              ))}
+              
+              {/* X-axis base line */}
+              <Path
+                d={`M ${paddingLeft} ${barChartHeight - paddingBottom} H ${barChartWidth}`}
+                stroke="#B0B0B0"
+                strokeWidth="1"
+              />
+              
+              {/* Y-axis line */}
+              <Path
+                d={`M ${paddingLeft} ${paddingTop} V ${barChartHeight - paddingBottom}`}
+                stroke="#B0B0B0"
+                strokeWidth="1"
+              />
+              
+              {/* Bars */}
+              {averageScoreByDistance.map((item, index) => {
+                const barHeight = chartAreaHeight - (scaleY(item.averageScore) - paddingTop);
+                const x = getBarX(index);
+                
+                return (
+                  <React.Fragment key={index}>
+                    {/* Bar */}
+                    <Rect
+                      x={x}
+                      y={barChartHeight - paddingBottom - barHeight}
+                      width={barWidth}
+                      height={barHeight}
+                      fill="#93C757"
+                      rx={4}
+                      ry={4}
+                    />
+                    
+                    {/* Distance label */}
+                    <SvgText
+                      x={x + barWidth / 2}
+                      y={barChartHeight - paddingBottom + 20}
+                      fill="#FFFFFF"
+                      textAnchor="middle"
+                      fontSize={barWidth < 20 ? 8 : 10} // Smaller font for narrow bars
+                    >
+                      {formatDistance(item.distance)}
+                    </SvgText>
+                    
+                    {/* Score value on top of bar */}
+                    <SvgText
+                      x={x + barWidth / 2}
+                      y={barChartHeight - paddingBottom - barHeight - 8}
+                      fill="#FFFFFF"
+                      textAnchor="middle"
+                      fontSize="12"
+                      fontWeight="bold"
+                    >
+                      {item.averageScore}
                     </SvgText>
                   </React.Fragment>
                 );
@@ -820,14 +1028,22 @@ export default function StatsScreen() {
           ]}>
             Average Score by Par
           </Animated.Text>
+          <Animated.Text style={[
+            styles.graphTitleText, 
+            { opacity: thirdTitleOpacity },
+            styles.absoluteTitle
+          ]}>
+            Score by Distance
+          </Animated.Text>
         </View>
         
         <TouchableOpacity 
           style={styles.pageIndicator}
-          onPress={() => navigateToPage(currentPage === 0 ? 1 : 0)}
+          onPress={() => navigateToPage((currentPage + 1) % 3)}
         >
           <View style={[styles.pageIndicatorDot, currentPage === 0 && styles.pageIndicatorDotActive]} />
           <View style={[styles.pageIndicatorDot, currentPage === 1 && styles.pageIndicatorDotActive]} />
+          <View style={[styles.pageIndicatorDot, currentPage === 2 && styles.pageIndicatorDotActive]} />
         </TouchableOpacity>
       </View>
 
@@ -847,9 +1063,14 @@ export default function StatsScreen() {
           {renderChartSection()}
         </View>
         
-        {/* Second page - Blank for now */}
+        {/* Second page - Average Score by Par */}
         <View style={{width: Dimensions.get('window').width}}>
           {renderSecondSection()}
+        </View>
+        
+        {/* Third page - Average Score by Distance */}
+        <View style={{width: Dimensions.get('window').width}}>
+          {renderThirdSection()}
         </View>
       </ScrollView>
     </View>
