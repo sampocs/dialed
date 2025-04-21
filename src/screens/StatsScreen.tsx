@@ -24,6 +24,9 @@ export default function StatsScreen() {
   // Set to false for fixed positioning (popup always in same place)
   const useDynamicPopupPosition = true;
 
+  // Current page for the horizontal scroll view
+  const [currentPage, setCurrentPage] = useState(0);
+
   // Calculate available space for the graph
   useEffect(() => {
     // Get window height and subtract estimated space for other components
@@ -96,6 +99,102 @@ export default function StatsScreen() {
   };
 
   const points = getGraphPoints();
+
+  // Handle scroll event to update current page
+  const handleScroll = (event: { nativeEvent: { contentOffset: { x: number } } }) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const pageWidth = Dimensions.get('window').width;
+    const currentPage = Math.floor((offsetX + (pageWidth / 2)) / pageWidth);
+    setCurrentPage(currentPage);
+  };
+
+  // Render the chart section based on the current filter settings
+  const renderChartSection = () => {
+    if (points.length === 0) return null;
+    
+    return (
+      <View style={styles.graphContainer}>
+        <View style={styles.yAxis}>
+          {yAxisLabels.map((label, index) => {
+            const position = normalizeY(label.score, graphHeight);
+            return (
+              <Text 
+                key={index} 
+                style={[
+                  styles.axisLabel, 
+                  { position: 'absolute', top: position - 6, width: 70, textAlign: 'right' }
+                ]}
+              >
+                {label.display}
+              </Text>
+            );
+          })}
+        </View>
+        <View 
+          style={styles.graph}
+          {...panResponder.panHandlers}
+        >
+          <Svg width={graphWidth} height={graphHeight}>
+            {/* Horizontal grid lines - for every integer value */}
+            {horizontalGridLines.map((value, index) => (
+              <Path
+                key={`hgrid-${index}`}
+                d={`M 0 ${normalizeY(value, graphHeight)} H ${graphWidth}`}
+                stroke="#3D3D3D"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+              />
+            ))}
+            
+            {points.length > 1 && (
+              <Path
+                d={getPathData(graphHeight)}
+                stroke="#93C757"
+                strokeWidth="2"
+                fill="none"
+              />
+            )}
+            
+            {/* Show all points */}
+            {points.map((point, index) => (
+              <Circle
+                key={index}
+                cx={pointX(index)}
+                cy={normalizeY(point.y, graphHeight)}
+                r={selectedPointIndex === index ? "6" : "4"}
+                fill={selectedPointIndex === index ? "#FFFFFF" : "#93C757"}
+              />
+            ))}
+            
+            {/* Show vertical line at selected point */}
+            {selectedPointIndex !== null && (
+              <Line
+                x1={pointX(selectedPointIndex)}
+                y1="0"
+                x2={pointX(selectedPointIndex)}
+                y2={graphHeight}
+                stroke="#FFFFFF"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+              />
+            )}
+          </Svg>
+          
+          {/* Render selected point details as an overlay */}
+          {selectedPointIndex !== null && renderSelectedPointDetails()}
+        </View>
+      </View>
+    );
+  };
+
+  // Render a second page that's blank for now
+  const renderSecondSection = () => {
+    return (
+      <View style={styles.blankPageContainer}>
+        <Text style={styles.blankPageText}>Future chart will go here</Text>
+      </View>
+    );
+  };
 
   if (points.length === 0) {
     return (
@@ -444,81 +543,36 @@ export default function StatsScreen() {
       {/* Dividing line */}
       <View style={styles.divider} />
 
-      <View style={[styles.graphTitle, { marginTop: 8, marginBottom: 8 }]}>
-        <Text style={styles.graphTitleText}>Score by Round</Text>
-      </View>
-      
-      <View style={styles.graphContainer}>
-        <View style={styles.yAxis}>
-          {yAxisLabels.map((label, index) => {
-            const position = normalizeY(label.score, graphHeight);
-            return (
-              <Text 
-                key={index} 
-                style={[
-                  styles.axisLabel, 
-                  { position: 'absolute', top: position - 6, width: 70, textAlign: 'right' }
-                ]}
-              >
-                {label.display}
-              </Text>
-            );
-          })}
-        </View>
-        <View 
-          style={styles.graph}
-          {...panResponder.panHandlers}
-        >
-          <Svg width={graphWidth} height={graphHeight}>
-            {/* Horizontal grid lines - for every integer value */}
-            {horizontalGridLines.map((value, index) => (
-              <Path
-                key={`hgrid-${index}`}
-                d={`M 0 ${normalizeY(value, graphHeight)} H ${graphWidth}`}
-                stroke="#3D3D3D"
-                strokeWidth="1"
-                strokeDasharray="4,4"
-              />
-            ))}
-            
-            {points.length > 1 && (
-              <Path
-                d={getPathData(graphHeight)}
-                stroke="#93C757"
-                strokeWidth="2"
-                fill="none"
-              />
-            )}
-            
-            {/* Show all points */}
-            {points.map((point, index) => (
-              <Circle
-                key={index}
-                cx={pointX(index)}
-                cy={normalizeY(point.y, graphHeight)}
-                r={selectedPointIndex === index ? "6" : "4"}
-                fill={selectedPointIndex === index ? "#FFFFFF" : "#93C757"}
-              />
-            ))}
-            
-            {/* Show vertical line at selected point */}
-            {selectedPointIndex !== null && (
-              <Line
-                x1={pointX(selectedPointIndex)}
-                y1="0"
-                x2={pointX(selectedPointIndex)}
-                y2={graphHeight}
-                stroke="#FFFFFF"
-                strokeWidth="1"
-                strokeDasharray="4,4"
-              />
-            )}
-          </Svg>
-          
-          {/* Render selected point details as an overlay */}
-          {selectedPointIndex !== null && renderSelectedPointDetails()}
+      {/* Graph title bar with page indicator */}
+      <View style={styles.graphTitleBar}>
+        <Text style={styles.graphTitleText}>
+          {currentPage === 0 ? "Score by Round" : "Future Chart"}
+        </Text>
+        <View style={styles.pageIndicator}>
+          <View style={[styles.pageIndicatorDot, currentPage === 0 && styles.pageIndicatorDotActive]} />
+          <View style={[styles.pageIndicatorDot, currentPage === 1 && styles.pageIndicatorDotActive]} />
         </View>
       </View>
+
+      {/* Horizontal scroll view for the chart section */}
+      <ScrollView 
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        style={styles.horizontalScrollView}
+      >
+        {/* First page - Score chart */}
+        <View style={{width: Dimensions.get('window').width}}>
+          {renderChartSection()}
+        </View>
+        
+        {/* Second page - Blank for now */}
+        <View style={{width: Dimensions.get('window').width}}>
+          {renderSecondSection()}
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -591,15 +645,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 10,
   },
-  graphTitle: {
+  graphTitleBar: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 20,
+    marginTop: 8,
+    marginBottom: 8,
   },
   graphTitleText: {
     fontSize: 16,
     fontWeight: '500',
     color: '#FFFFFF',
+  },
+  pageIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  pageIndicatorDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#3D3D3D',
+    marginHorizontal: 4,
+  },
+  pageIndicatorDotActive: {
+    backgroundColor: '#93C757',
   },
   yAxis: {
     width: 70,
@@ -617,7 +688,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#B0B0B0',
   },
-  // Add new styles for filter section
   filterSection: {
     paddingTop: 5,
     paddingBottom: 10,
@@ -665,7 +735,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 10,
   },
-  // Update styles for the details popup
   detailsPopup: {
     position: 'absolute',
     width: 200,
@@ -710,10 +779,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 4,
   },
-  // Alternative fixed position style that always shows at the bottom
   fixedPopup: {
     bottom: 10,
     left: '50%',
     marginLeft: -100, // Center horizontally (half of width)
+  },
+  horizontalScrollView: {
+    flex: 1,
+  },
+  blankPageContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  blankPageText: {
+    color: '#B0B0B0',
+    fontSize: 18,
+    fontWeight: '500',
   },
 }); 
