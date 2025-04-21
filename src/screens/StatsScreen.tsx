@@ -211,77 +211,75 @@ export default function StatsScreen() {
     if (points.length === 0) return null;
     
     return (
-      <View style={styles.lineChartContainer}>
-        <View style={styles.graphContainer}>
-          <View style={styles.lineChartYAxis}>
-            {yAxisLabels.map((label, index) => {
-              const position = normalizeY(label.score, graphHeight);
-              return (
-                <Text 
-                  key={index} 
-                  style={[
-                    styles.axisLabel, 
-                    { position: 'absolute', top: position - 6, width: 50, textAlign: 'right' }
-                  ]}
-                >
-                  {label.display}
-                </Text>
-              );
-            })}
-          </View>
-          <View 
-            style={styles.graph}
-            {...panResponder.panHandlers}
-          >
-            <Svg width={graphWidth} height={graphHeight}>
-              {/* Horizontal grid lines - for every integer value */}
-              {horizontalGridLines.map((value, index) => (
-                <Path
-                  key={`hgrid-${index}`}
-                  d={`M 10 ${normalizeY(value, graphHeight)} H ${graphWidth}`}
-                  stroke="#3D3D3D"
-                  strokeWidth="1"
-                  strokeDasharray="4,4"
-                />
-              ))}
-              
-              {points.length > 1 && (
-                <Path
-                  d={getPathData(graphHeight)}
-                  stroke="#93C757"
-                  strokeWidth="2"
-                  fill="none"
-                />
-              )}
-              
-              {/* Show all points */}
-              {points.map((point, index) => (
-                <Circle
-                  key={index}
-                  cx={pointX(index)}
-                  cy={normalizeY(point.y, graphHeight)}
-                  r={selectedPointIndex === index ? "6" : "4"}
-                  fill={selectedPointIndex === index ? "#FFFFFF" : "#93C757"}
-                />
-              ))}
-              
-              {/* Show vertical line at selected point */}
-              {selectedPointIndex !== null && (
-                <Line
-                  x1={pointX(selectedPointIndex)}
-                  y1="0"
-                  x2={pointX(selectedPointIndex)}
-                  y2={graphHeight}
-                  stroke="#FFFFFF"
-                  strokeWidth="1"
-                  strokeDasharray="4,4"
-                />
-              )}
-            </Svg>
+      <View style={styles.lineChartGraphContainer}>
+        <View style={styles.lineChartYAxis}>
+          {yAxisLabels.map((label, index) => {
+            const position = normalizeY(label.score, graphHeight);
+            return (
+              <Text 
+                key={index} 
+                style={[
+                  styles.axisLabel, 
+                  { position: 'absolute', top: position - 6, width: 50, textAlign: 'right' }
+                ]}
+              >
+                {label.display}
+              </Text>
+            );
+          })}
+        </View>
+        <View 
+          style={styles.graph}
+          {...panResponder.panHandlers}
+        >
+          <Svg width={graphWidth} height={graphHeight}>
+            {/* Horizontal grid lines - for every integer value */}
+            {horizontalGridLines.map((value, index) => (
+              <Path
+                key={`hgrid-${index}`}
+                d={`M 10 ${normalizeY(value, graphHeight)} H ${graphWidth}`}
+                stroke="#3D3D3D"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+              />
+            ))}
             
-            {/* Render selected point details as an overlay */}
-            {selectedPointIndex !== null && renderSelectedPointDetails()}
-          </View>
+            {points.length > 1 && (
+              <Path
+                d={getPathData(graphHeight)}
+                stroke="#93C757"
+                strokeWidth="2"
+                fill="none"
+              />
+            )}
+            
+            {/* Show all points */}
+            {points.map((point, index) => (
+              <Circle
+                key={index}
+                cx={pointX(index)}
+                cy={normalizeY(point.y, graphHeight)}
+                r={selectedPointIndex === index ? "6" : "4"}
+                fill={selectedPointIndex === index ? "#FFFFFF" : "#93C757"}
+              />
+            ))}
+            
+            {/* Show vertical line at selected point */}
+            {selectedPointIndex !== null && (
+              <Line
+                x1={pointX(selectedPointIndex)}
+                y1="0"
+                x2={pointX(selectedPointIndex)}
+                y2={graphHeight}
+                stroke="#FFFFFF"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+              />
+            )}
+          </Svg>
+          
+          {/* Render selected point details as an overlay */}
+          {selectedPointIndex !== null && renderSelectedPointDetails()}
         </View>
       </View>
     );
@@ -925,8 +923,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingBottom: 10,
-    paddingTop: 10, // Add top padding to prevent y-axis labels from being cut off
-    paddingLeft: 10, // Add left padding to give more space for y-axis labels
+    paddingTop: 10,
+    paddingLeft: 10,
   },
   graphTitleBar: {
     flexDirection: 'row',
@@ -1105,8 +1103,12 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 10,
   },
-  lineChartContainer: {
+  lineChartGraphContainer: {
     flex: 1,
-    paddingBottom: 20, // Increased from 15 to 20
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingBottom: 30, // Increased from 25 to 30
+    paddingTop: 10,
+    paddingLeft: 10,
   },
 }); 
