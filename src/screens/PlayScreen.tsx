@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Alert,
   Modal,
   FlatList,
+  Animated,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useApp } from '../context/AppContext';
@@ -28,6 +29,7 @@ export default function PlayScreen() {
     updateHoleScore,
     completeRound,
     quitGame,
+    switchCourse,
   } = useApp();
   const [showScorecard, setShowScorecard] = useState(false);
   const [showRules, setShowRules] = useState(false);
@@ -35,11 +37,15 @@ export default function PlayScreen() {
   const [holeCount, setHoleCount] = useState<9 | 18>(18);
   const [showCourseDropdown, setShowCourseDropdown] = useState(false);
   const [availableCourses, setAvailableCourses] = useState<string[]>([]);
+  const [isChangingCourse, setIsChangingCourse] = useState(false);
   
   // Load the Bebas Neue font
   const [fontsLoaded] = useFonts({
     BebasNeue_400Regular,
   });
+
+  // Add an animation value for fading
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   // Update available courses when course mode changes
   useEffect(() => {
@@ -54,16 +60,35 @@ export default function PlayScreen() {
     startRound();
   };
 
-  const handleSelectCourse = (courseName: string) => {
-    if (currentRound) {
-      // Update the current round with the new course
-      quitGame();
+  const handleSelectCourse = async (courseName: string) => {
+    if (currentRound && currentRound.courseName !== courseName) {
+      // Provide visual feedback during the change
+      setIsChangingCourse(true);
+      setShowCourseDropdown(false);
+      
+      // Fade out animation
+      Animated.timing(fadeAnim, {
+        toValue: 0.4,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+      
+      // Use the new switchCourse function which provides a smoother transition
+      await switchCourse(courseName);
+      
+      // Reset loading state and fade back in after a short delay
       setTimeout(() => {
-        startNewGame(courseMode, holeCount, courseName);
-      }, 100);
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start(() => {
+          setIsChangingCourse(false);
+        });
+      }, 300);
+    } else {
+      setShowCourseDropdown(false);
     }
-    
-    setShowCourseDropdown(false);
   };
 
   // Rule content based on the selected mode
@@ -253,21 +278,33 @@ export default function PlayScreen() {
         
         <TouchableOpacity 
           style={styles.courseNameContainer} 
-          onPress={() => setShowCourseDropdown(true)}
+          onPress={() => !isChangingCourse && setShowCourseDropdown(true)}
+          disabled={isChangingCourse}
         >
           <View style={styles.titleSmallContainer}>
-            <Text style={styles.titleSmall}>{currentRound.courseName}</Text>
+            <Text style={styles.titleSmall}>
+              {isChangingCourse ? "Loading..." : currentRound.courseName}
+            </Text>
           </View>
-          <Text style={styles.dropdownArrow}>▼</Text>
+          {!isChangingCourse && <Text style={styles.dropdownArrow}>▼</Text>}
         </TouchableOpacity>
         
         <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
         
-        <View style={styles.scorecardContainer}>
+        <Animated.View 
+          style={[
+            styles.scorecardContainer,
+            { opacity: fadeAnim }
+          ]}
+        >
           <Scorecard course={currentRound.course} showCourseMode={false} showScores={false} />
-        </View>
+        </Animated.View>
         
-        <TouchableOpacity style={[styles.button, styles.startRoundButton]} onPress={handleStartRound}>
+        <TouchableOpacity 
+          style={[styles.button, styles.startRoundButton]} 
+          onPress={handleStartRound}
+          disabled={isChangingCourse}
+        >
           <Text style={styles.buttonText}>Start Round</Text>
         </TouchableOpacity>
         

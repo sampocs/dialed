@@ -18,6 +18,7 @@ interface AppContextType extends AppState {
   saveRoundEdit: () => Promise<void>;
   cancelRoundEdit: () => Promise<void>;
   hasEditChanges: () => boolean;
+  switchCourse: (courseName: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -264,6 +265,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState(current => ({ ...current, rounds: updatedRounds }));
   };
 
+  const switchCourse = async (courseName: string) => {
+    if (!state.currentRound) return;
+    
+    // Create a new round with the same properties but different course
+    const newRound = createNewRound(
+      state.currentRound.course.courseMode, 
+      state.currentRound.course.holeCount, 
+      courseName
+    );
+    
+    // Preserve the same ID to maintain history
+    newRound.id = state.currentRound.id;
+    newRound.date = state.currentRound.date;
+    
+    await storage.saveCurrentRound(newRound);
+    setState(current => ({
+      ...current,
+      currentRound: newRound,
+      gameState: 'game-ready',
+    }));
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -280,6 +303,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         saveRoundEdit,
         cancelRoundEdit,
         hasEditChanges,
+        switchCourse,
       }}
     >
       {children}
