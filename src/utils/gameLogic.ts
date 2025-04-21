@@ -1,4 +1,24 @@
 import { Course, Hole, Round } from "../types";
+import coursesDataRaw from "./courses.json";
+
+// Type assertion to ensure the JSON data matches our Course type
+const coursesData: { [courseName: string]: Course } = Object.entries(
+  coursesDataRaw
+).reduce((acc, [name, course]) => {
+  // Ensure the par property in each hole is properly typed as 1 | 2 | 3
+  const typedCourse: Course = {
+    ...course,
+    holes: course.holes.map((hole) => ({
+      ...hole,
+      par: hole.par as 1 | 2 | 3,
+    })),
+    courseMode: course.courseMode as "Indoor" | "Outdoor",
+    holeCount: course.holeCount as 9 | 18,
+  };
+
+  acc[name] = typedCourse;
+  return acc;
+}, {} as { [courseName: string]: Course });
 
 // Indoor distances (in feet)
 const INDOOR_PAR_1_DISTANCES = [2.5, 3, 3.5, 4];
@@ -38,23 +58,21 @@ export const INDOOR_COURSES = [
 // Map to store pre-generated courses
 export const PRE_GENERATED_COURSES: {
   [courseName: string]: Course;
-} = {};
+} = coursesData;
 
 // Function to initialize all the courses with fixed layouts
 export function initializeAllCourses(): void {
-  // First generate all outdoor courses
-  OUTDOOR_COURSES.forEach((courseName) => {
-    PRE_GENERATED_COURSES[courseName] = generateCourse(18, "Outdoor");
-  });
+  console.log("All courses have been loaded from courses.json");
+  console.log(`Loaded ${Object.keys(PRE_GENERATED_COURSES).length} courses`);
 
-  // Then generate all indoor courses
-  INDOOR_COURSES.forEach((courseName) => {
-    PRE_GENERATED_COURSES[courseName] = generateCourse(18, "Indoor");
+  // Log brief details of each course for verification
+  Object.entries(PRE_GENERATED_COURSES).forEach(([name, course]) => {
+    console.log(
+      `${name}: ${course.courseMode}, ${course.totalPar} par, ${
+        course.totalDistance
+      } ${course.courseMode === "Indoor" ? "feet" : "yards"}`
+    );
   });
-
-  // Log all generated courses for debugging
-  console.log("All courses have been pre-generated:");
-  console.log(JSON.stringify(PRE_GENERATED_COURSES, null, 2));
 }
 
 // Call initializeAllCourses on module load
@@ -68,6 +86,9 @@ function shuffleArray<T>(array: T[]): T[] {
   }
   return newArray;
 }
+
+// The following functions are now only used for testing or creating new course templates
+// They are not used during normal gameplay since courses are loaded from courses.json
 
 function getRandomIndoorDistance(par: number): number {
   if (par === 3) return INDOOR_PAR_3_DISTANCE;
@@ -96,8 +117,8 @@ function generateOutdoorNineTemplate(): number[] {
   ];
 }
 
-// This function is now primarily used for initialization of pre-generated courses
-// It should not be called directly to create new courses at runtime
+// This function is now primarily used for testing or creating new course templates
+// It is not used during normal gameplay since courses are loaded from courses.json
 export function generateCourse(
   holeCount: 9 | 18 = 18,
   courseMode: "Indoor" | "Outdoor" = "Indoor"

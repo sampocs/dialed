@@ -84,10 +84,14 @@ export async function loadInitialState(): Promise<Partial<AppState>> {
   const migratedRounds =
     rounds?.map((round) => {
       if (!round.courseName) {
-        // Add a random course name from the COURSES array if not present
-        const { COURSES } = require("./gameLogic");
-        const randomIndex = Math.floor(Math.random() * COURSES.length);
-        return { ...round, courseName: COURSES[randomIndex] };
+        // Add a random course name based on the course mode
+        const { INDOOR_COURSES, OUTDOOR_COURSES } = require("./gameLogic");
+        const courses =
+          round.course.courseMode === "Indoor"
+            ? INDOOR_COURSES
+            : OUTDOOR_COURSES;
+        const randomIndex = Math.floor(Math.random() * courses.length);
+        return { ...round, courseName: courses[randomIndex] };
       }
       return round;
     }) || [];
@@ -105,11 +109,15 @@ export async function loadInitialState(): Promise<Partial<AppState>> {
   // Handle data migration for current round without courseName
   let migratedCurrentRound = currentRound;
   if (currentRound && !currentRound.courseName) {
-    const { COURSES } = require("./gameLogic");
-    const randomIndex = Math.floor(Math.random() * COURSES.length);
+    const { INDOOR_COURSES, OUTDOOR_COURSES } = require("./gameLogic");
+    const courses =
+      currentRound.course.courseMode === "Indoor"
+        ? INDOOR_COURSES
+        : OUTDOOR_COURSES;
+    const randomIndex = Math.floor(Math.random() * courses.length);
     migratedCurrentRound = {
       ...currentRound,
-      courseName: COURSES[randomIndex],
+      courseName: courses[randomIndex],
     };
     // Save the migrated current round
     await saveCurrentRound(migratedCurrentRound);

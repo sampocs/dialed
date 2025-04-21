@@ -1,0 +1,2042 @@
+{
+  "Augusta National": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 2,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 3,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 5,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 7,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 8,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 9,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 12,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 13,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 15,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 16,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 17,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 18,
+        "par": 2,
+        "distance": 10
+      }
+    ],
+    "totalPar": 50,
+    "totalDistance": 475,
+    "frontNinePar": 25,
+    "frontNineDistance": 260,
+    "backNinePar": 25,
+    "backNineDistance": 215,
+    "courseMode": "Outdoor",
+    "holeCount": 18
+  },
+  "Pebble Beach": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 2,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 3,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 4,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 5,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 7,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 8,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 9,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 12,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 13,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 14,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 15,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 16,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 17,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 18,
+        "par": 2,
+        "distance": 10
+      }
+    ],
+    "totalPar": 50,
+    "totalDistance": 430,
+    "frontNinePar": 25,
+    "frontNineDistance": 240,
+    "backNinePar": 25,
+    "backNineDistance": 190,
+    "courseMode": "Outdoor",
+    "holeCount": 18
+  },
+  "TPC Sawgrass": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 2,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 3,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 7,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 8,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 9,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 12,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 13,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 15,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 16,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 17,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 18,
+        "par": 2,
+        "distance": 10
+      }
+    ],
+    "totalPar": 50,
+    "totalDistance": 485,
+    "frontNinePar": 25,
+    "frontNineDistance": 245,
+    "backNinePar": 25,
+    "backNineDistance": 240,
+    "courseMode": "Outdoor",
+    "holeCount": 18
+  },
+  "Torrey Pines": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 2,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 3,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 7,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 8,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 9,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 12,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 15,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 16,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 17,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 40
+      }
+    ],
+    "totalPar": 50,
+    "totalDistance": 495,
+    "frontNinePar": 25,
+    "frontNineDistance": 240,
+    "backNinePar": 25,
+    "backNineDistance": 255,
+    "courseMode": "Outdoor",
+    "holeCount": 18
+  },
+  "Ojai Valley": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 2,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 3,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 7,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 8,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 9,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 12,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 13,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 15,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 16,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 17,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 18,
+        "par": 2,
+        "distance": 15
+      }
+    ],
+    "totalPar": 50,
+    "totalDistance": 515,
+    "frontNinePar": 25,
+    "frontNineDistance": 280,
+    "backNinePar": 25,
+    "backNineDistance": 235,
+    "courseMode": "Outdoor",
+    "holeCount": 18
+  },
+  "PGA West": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 2,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 3,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 7,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 8,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 9,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 10,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 12,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 13,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 15,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 16,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 17,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 30
+      }
+    ],
+    "totalPar": 50,
+    "totalDistance": 440,
+    "frontNinePar": 25,
+    "frontNineDistance": 195,
+    "backNinePar": 25,
+    "backNineDistance": 245,
+    "courseMode": "Outdoor",
+    "holeCount": 18
+  },
+  "Shadow Creek": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 2,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 3,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 7,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 8,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 9,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 12,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 15,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 16,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 17,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 20
+      }
+    ],
+    "totalPar": 50,
+    "totalDistance": 465,
+    "frontNinePar": 25,
+    "frontNineDistance": 225,
+    "backNinePar": 25,
+    "backNineDistance": 240,
+    "courseMode": "Outdoor",
+    "holeCount": 18
+  },
+  "Coeur d'Alene": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 2,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 3,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 5,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 6,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 7,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 9,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 12,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 15,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 16,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 17,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 20
+      }
+    ],
+    "totalPar": 50,
+    "totalDistance": 440,
+    "frontNinePar": 25,
+    "frontNineDistance": 225,
+    "backNinePar": 25,
+    "backNineDistance": 215,
+    "courseMode": "Outdoor",
+    "holeCount": 18
+  },
+  "Greywalls": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 2,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 3,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 5,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 7,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 8,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 9,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 12,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 13,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 15,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 16,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 17,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 40
+      }
+    ],
+    "totalPar": 50,
+    "totalDistance": 475,
+    "frontNinePar": 25,
+    "frontNineDistance": 210,
+    "backNinePar": 25,
+    "backNineDistance": 265,
+    "courseMode": "Outdoor",
+    "holeCount": 18
+  },
+  "Sand Valley": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 2,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 3,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 5,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 7,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 9,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 12,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 10
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 40
+      },
+      {
+        "number": 15,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 16,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 17,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 20
+      }
+    ],
+    "totalPar": 50,
+    "totalDistance": 435,
+    "frontNinePar": 25,
+    "frontNineDistance": 200,
+    "backNinePar": 25,
+    "backNineDistance": 235,
+    "courseMode": "Outdoor",
+    "holeCount": 18
+  },
+  "Moonlight Basin": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 2,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 3,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 5,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 7,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 9,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 10,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 12,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 14,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 15,
+        "par": 1,
+        "distance": 4
+      },
+      {
+        "number": 16,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 17,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 10
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 109,
+    "frontNinePar": 18,
+    "frontNineDistance": 54,
+    "backNinePar": 18,
+    "backNineDistance": 55,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  },
+  "Black Desert Stone": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 2,
+        "par": 1,
+        "distance": 4
+      },
+      {
+        "number": 3,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 6,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 7,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 9,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 10,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 11,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 12,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 15,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 16,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 17,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 10
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 112,
+    "frontNinePar": 18,
+    "frontNineDistance": 54.5,
+    "backNinePar": 18,
+    "backNineDistance": 57.5,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  },
+  "Pinehurst No. 2": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 2,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 3,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 7,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 9,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 11,
+        "par": 1,
+        "distance": 4
+      },
+      {
+        "number": 12,
+        "par": 1,
+        "distance": 4
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 14,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 15,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 16,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 17,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 18,
+        "par": 2,
+        "distance": 6
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 114,
+    "frontNinePar": 18,
+    "frontNineDistance": 57.5,
+    "backNinePar": 18,
+    "backNineDistance": 56.5,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  },
+  "Pine Valley": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 2,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 3,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 4,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 6,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 7,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 9,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 10,
+        "par": 1,
+        "distance": 4
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 12,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 14,
+        "par": 2,
+        "distance": 7
+      },
+      {
+        "number": 15,
+        "par": 1,
+        "distance": 4
+      },
+      {
+        "number": 16,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 17,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 18,
+        "par": 2,
+        "distance": 6.5
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 112.5,
+    "frontNinePar": 18,
+    "frontNineDistance": 51.5,
+    "backNinePar": 18,
+    "backNineDistance": 61,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  },
+  "Whistling Straits": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 2,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 3,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 4,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 6,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 7,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 8,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 9,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 10,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 11,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 12,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 13,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 15,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 16,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 17,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 18,
+        "par": 2,
+        "distance": 5.5
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 107,
+    "frontNinePar": 18,
+    "frontNineDistance": 54.5,
+    "backNinePar": 18,
+    "backNineDistance": 52.5,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  },
+  "Bethpage Black": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 2,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 3,
+        "par": 2,
+        "distance": 7
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 5,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 6,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 7,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 9,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 10,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 11,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 12,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 13,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 14,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 15,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 16,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 17,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 10
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 112,
+    "frontNinePar": 18,
+    "frontNineDistance": 57,
+    "backNinePar": 18,
+    "backNineDistance": 55,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  },
+  "Valhalla": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 2,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 3,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 4,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 6,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 7,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 9,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 10,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 11,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 12,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 13,
+        "par": 1,
+        "distance": 4
+      },
+      {
+        "number": 14,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 15,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 16,
+        "par": 2,
+        "distance": 7
+      },
+      {
+        "number": 17,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 18,
+        "par": 2,
+        "distance": 6
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 116.5,
+    "frontNinePar": 18,
+    "frontNineDistance": 54.5,
+    "backNinePar": 18,
+    "backNineDistance": 62,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  },
+  "St. Andrews": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 2,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 3,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 4,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 5,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 6,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 7,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 8,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 9,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 11,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 12,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 14,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 15,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 16,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 17,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 10
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 114,
+    "frontNinePar": 18,
+    "frontNineDistance": 58.5,
+    "backNinePar": 18,
+    "backNineDistance": 55.5,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  },
+  "Erin Hills": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 2,
+        "par": 1,
+        "distance": 4
+      },
+      {
+        "number": 3,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 4,
+        "par": 2,
+        "distance": 7
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 6,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 7,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 8,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 9,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 10,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 11,
+        "par": 2,
+        "distance": 7
+      },
+      {
+        "number": 12,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 14,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 15,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 16,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 17,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 10
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 111,
+    "frontNinePar": 18,
+    "frontNineDistance": 56.5,
+    "backNinePar": 18,
+    "backNineDistance": 54.5,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  },
+  "Royal Melbourne": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 2,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 3,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 4,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 5,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 6,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 7,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 9,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 10,
+        "par": 2,
+        "distance": 7
+      },
+      {
+        "number": 11,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 12,
+        "par": 1,
+        "distance": 4
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 14,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 15,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 16,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 17,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 10
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 117,
+    "frontNinePar": 18,
+    "frontNineDistance": 59.5,
+    "backNinePar": 18,
+    "backNineDistance": 57.5,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  }
+}
