@@ -220,7 +220,7 @@ export default function StatsScreen() {
                 key={index} 
                 style={[
                   styles.axisLabel, 
-                  { position: 'absolute', top: position - 6, width: 70, textAlign: 'right' }
+                  { position: 'absolute', top: position - 6, width: 40, textAlign: 'right' }
                 ]}
               >
                 {label.display}
@@ -298,7 +298,7 @@ export default function StatsScreen() {
     // Define chart dimensions
     const barChartWidth = graphWidth;
     const barChartHeight = graphHeight;
-    const paddingLeft = 40;
+    const paddingLeft = 30;
     const paddingBottom = 40;
     const paddingTop = 20;
     const paddingRight = 20;
@@ -350,7 +350,7 @@ export default function StatsScreen() {
                 key={index} 
                 style={[
                   styles.axisLabel, 
-                  { position: 'absolute', top: label.y - 6, width: 70, textAlign: 'right' }
+                  { position: 'absolute', top: label.y - 6, width: 40, textAlign: 'right' }
                 ]}
               >
                 {label.value}
@@ -955,7 +955,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#93C757',
   },
   yAxis: {
-    width: 70,
+    width: 40,
     position: 'relative',
     justifyContent: 'space-between',
     paddingVertical: 10,
