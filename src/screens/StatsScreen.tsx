@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, StatusBar, ScrollView, PanResponder, Animated } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { calculateStats } from '../utils/gameLogic';
-import Svg, { Path, Circle, Line } from 'react-native-svg';
+import Svg, { Path, Circle, Line, Rect, Text as SvgText } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { format } from 'date-fns';
 
@@ -24,6 +24,60 @@ export default function StatsScreen() {
   // Set to false for fixed positioning (popup always in same place)
   const useDynamicPopupPosition = true;
 
+  // Current page for the horizontal scroll view
+  const [currentPage, setCurrentPage] = useState(0);
+  
+  // Reference to ScrollView for programmatic navigation
+  const scrollViewRef = useRef<ScrollView>(null);
+  
+  // Animated values for title opacity
+  const firstTitleOpacity = useRef(new Animated.Value(1)).current;
+  const secondTitleOpacity = useRef(new Animated.Value(0)).current;
+  const thirdTitleOpacity = useRef(new Animated.Value(0)).current;
+
+  // Update title opacity when page changes
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(firstTitleOpacity, {
+        toValue: currentPage === 0 ? 1 : 0,
+        duration: 150,
+        useNativeDriver: true
+      }),
+      Animated.timing(secondTitleOpacity, {
+        toValue: currentPage === 1 ? 1 : 0,
+        duration: 150,
+        useNativeDriver: true
+      }),
+      Animated.timing(thirdTitleOpacity, {
+        toValue: currentPage === 2 ? 1 : 0,
+        duration: 150,
+        useNativeDriver: true
+      })
+    ]).start();
+  }, [currentPage]);
+
+  // Create pan responder for title bar swipe
+  const titlePanResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: (_, gestureState) => {
+          // Only respond to horizontal movements greater than 10px
+          return Math.abs(gestureState.dx) > 10;
+        },
+        onPanResponderRelease: (_, gestureState) => {
+          if (gestureState.dx < -50 && currentPage < 2) {
+            // Swipe left, go to next page
+            navigateToPage(currentPage + 1);
+          } else if (gestureState.dx > 50 && currentPage > 0) {
+            // Swipe right, go to previous page
+            navigateToPage(currentPage - 1);
+          }
+        },
+      }),
+    [currentPage]
+  );
+  
   // Calculate available space for the graph
   useEffect(() => {
     // Get window height and subtract estimated space for other components
@@ -96,6 +150,509 @@ export default function StatsScreen() {
   };
 
   const points = getGraphPoints();
+
+  // Function to navigate to specific page
+  const navigateToPage = (pageIndex: number) => {
+    if (scrollViewRef.current) {
+      const pageWidth = Dimensions.get('window').width;
+      scrollViewRef.current.scrollTo({ x: pageIndex * pageWidth, animated: true });
+      setCurrentPage(pageIndex);
+    }
+  };
+  
+  // Handle scroll event to update current page
+  const handleScroll = (event: { nativeEvent: { contentOffset: { x: number } } }) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const pageWidth = Dimensions.get('window').width;
+    const currentPage = Math.floor((offsetX + (pageWidth / 2)) / pageWidth);
+    setCurrentPage(currentPage);
+  };
+
+  // Calculate the average scores for each par
+  const calculateAverageScoreByPar = () => {
+    if (completedRounds.length === 0) return [];
+
+    // Collect all holes from all completed rounds
+    const allHoles: { par: number; score: number }[] = [];
+    
+    completedRounds.forEach(round => {
+      round.course.holes.forEach(hole => {
+        if (hole.score !== undefined) {
+          allHoles.push({
+            par: hole.par,
+            score: hole.score
+          });
+        }
+      });
+    });
+    
+    // Group holes by par
+    const holesByPar = allHoles.reduce((acc, curr) => {
+      if (!acc[curr.par]) {
+        acc[curr.par] = [];
+      }
+      acc[curr.par].push(curr.score);
+      return acc;
+    }, {} as Record<number, number[]>);
+    
+    // Calculate average score for each par
+    const averageScoreByPar = Object.entries(holesByPar).map(([par, scores]) => {
+      const averageScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+      return {
+        par: parseInt(par),
+        averageScore: Math.round(averageScore * 10) / 10,
+        differential: Math.round((averageScore - parseInt(par)) * 10) / 10,
+        count: scores.length
+      };
+    });
+    
+    // Sort by par
+    return averageScoreByPar.sort((a, b) => a.par - b.par);
+  };
+  
+  const averageScoreByPar = useMemo(() => calculateAverageScoreByPar(), [completedRounds]);
+
+  // Render the chart section based on the current filter settings
+  const renderChartSection = () => {
+    if (points.length === 0) return null;
+    
+    return (
+      <View style={styles.lineChartGraphContainer}>
+        <View style={styles.lineChartYAxis}>
+          {yAxisLabels.map((label, index) => {
+            const position = normalizeY(label.score, graphHeight);
+            return (
+              <Text 
+                key={index} 
+                style={[
+                  styles.axisLabel, 
+                  { position: 'absolute', top: position - 6, width: 50, textAlign: 'right' }
+                ]}
+              >
+                {label.display}
+              </Text>
+            );
+          })}
+        </View>
+        <View 
+          style={styles.graph}
+          {...panResponder.panHandlers}
+        >
+          <Svg width={graphWidth} height={graphHeight}>
+            {/* Horizontal grid lines - for every integer value */}
+            {horizontalGridLines.map((value, index) => (
+              <Path
+                key={`hgrid-${index}`}
+                d={`M 10 ${normalizeY(value, graphHeight)} H ${graphWidth}`}
+                stroke="#3D3D3D"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+              />
+            ))}
+            
+            {points.length > 1 && (
+              <Path
+                d={getPathData(graphHeight)}
+                stroke="#93C757"
+                strokeWidth="2"
+                fill="none"
+              />
+            )}
+            
+            {/* Show all points */}
+            {points.map((point, index) => (
+              <Circle
+                key={index}
+                cx={pointX(index)}
+                cy={normalizeY(point.y, graphHeight)}
+                r={selectedPointIndex === index ? "6" : "4"}
+                fill={selectedPointIndex === index ? "#FFFFFF" : "#93C757"}
+              />
+            ))}
+            
+            {/* Show vertical line at selected point */}
+            {selectedPointIndex !== null && (
+              <Line
+                x1={pointX(selectedPointIndex)}
+                y1="0"
+                x2={pointX(selectedPointIndex)}
+                y2={graphHeight}
+                stroke="#FFFFFF"
+                strokeWidth="1"
+                strokeDasharray="4,4"
+              />
+            )}
+          </Svg>
+          
+          {/* Render selected point details as an overlay */}
+          {selectedPointIndex !== null && renderSelectedPointDetails()}
+        </View>
+      </View>
+    );
+  };
+
+  // Render a second page with the average score by par bar chart
+  const renderSecondSection = () => {
+    if (averageScoreByPar.length === 0) {
+      return (
+        <View style={styles.blankPageContainer}>
+          <Text style={styles.blankPageText}>No data available</Text>
+        </View>
+      );
+    }
+
+    // Define chart dimensions
+    const barChartWidth = graphWidth;
+    const barChartHeight = graphHeight;
+    const paddingLeft = 20;
+    const paddingBottom = 40;
+    const paddingTop = 10;
+    const paddingRight = 20;
+    
+    // Calculate available space for bars
+    const chartAreaWidth = barChartWidth - paddingLeft - paddingRight;
+    const chartAreaHeight = barChartHeight - paddingBottom - paddingTop;
+    
+    // Calculate bar dimensions based on data
+    const barCount = averageScoreByPar.length;
+    const barWidth = Math.min(60, (chartAreaWidth / barCount) * 0.7); // Limit max width
+    const barSpacing = (chartAreaWidth - barWidth * barCount) / (barCount + 1);
+    
+    // Find min and max values for scaling
+    const scoreValues = averageScoreByPar.map(item => item.averageScore);
+    const minValue = Math.floor(Math.min(...scoreValues) - 0.5);
+    const maxValue = Math.ceil(Math.max(...scoreValues) + 0.5);
+    const valueRange = maxValue - minValue;
+    
+    // Function to scale a value to the chart height
+    const scaleY = (value: number) => {
+      return chartAreaHeight - ((value - minValue) / valueRange) * chartAreaHeight + paddingTop;
+    };
+    
+    // Function to calculate horizontal position of a bar
+    const getBarX = (index: number) => {
+      return paddingLeft + barSpacing + index * (barWidth + barSpacing);
+    };
+    
+    // Generate y-axis labels
+    const yAxisLabels = [];
+    const yStepCount = valueRange <= 4 ? valueRange : 4;
+    const yStep = valueRange / yStepCount;
+    
+    for (let i = 0; i <= yStepCount; i++) {
+      const value = minValue + i * yStep;
+      yAxisLabels.push({
+        value: Math.round(value * 10) / 10,
+        y: scaleY(value)
+      });
+    }
+    
+    return (
+      <View style={styles.barChartContainer}>
+        <View style={styles.graphContainer}>
+          <View style={styles.yAxis}>
+            {yAxisLabels.map((label, index) => (
+              <Text 
+                key={index} 
+                style={[
+                  styles.axisLabel, 
+                  { position: 'absolute', top: label.y - 6, width: 30, textAlign: 'right' }
+                ]}
+              >
+                {label.value}
+              </Text>
+            ))}
+          </View>
+          
+          <View style={styles.graph}>
+            <Svg width={barChartWidth} height={barChartHeight}>
+              {/* Horizontal grid lines */}
+              {yAxisLabels.map((label, index) => (
+                <Path
+                  key={`hgrid-${index}`}
+                  d={`M ${paddingLeft} ${label.y} H ${barChartWidth}`}
+                  stroke="#3D3D3D"
+                  strokeWidth="1"
+                  strokeDasharray="4,4"
+                />
+              ))}
+              
+              {/* X-axis base line */}
+              <Path
+                d={`M ${paddingLeft} ${barChartHeight - paddingBottom} H ${barChartWidth}`}
+                stroke="#B0B0B0"
+                strokeWidth="1"
+              />
+              
+              {/* Y-axis line */}
+              <Path
+                d={`M ${paddingLeft} ${paddingTop} V ${barChartHeight - paddingBottom}`}
+                stroke="#B0B0B0"
+                strokeWidth="1"
+              />
+              
+              {/* Bars */}
+              {averageScoreByPar.map((item, index) => {
+                const barHeight = chartAreaHeight - (scaleY(item.averageScore) - paddingTop);
+                const x = getBarX(index);
+                
+                return (
+                  <React.Fragment key={index}>
+                    {/* Bar */}
+                    <Rect
+                      x={x}
+                      y={barChartHeight - paddingBottom - barHeight}
+                      width={barWidth}
+                      height={barHeight}
+                      fill="#93C757"
+                      rx={4}
+                      ry={4}
+                    />
+                    
+                    {/* Par label */}
+                    <SvgText
+                      x={x + barWidth / 2}
+                      y={barChartHeight - paddingBottom + 20}
+                      fill="#FFFFFF"
+                      textAnchor="middle"
+                      fontSize="12"
+                    >
+                      Par {item.par}
+                    </SvgText>
+                    
+                    {/* Score value on top of bar */}
+                    <SvgText
+                      x={x + barWidth / 2}
+                      y={barChartHeight - paddingBottom - barHeight - 8}
+                      fill="#FFFFFF"
+                      textAnchor="middle"
+                      fontSize="12"
+                      fontWeight="bold"
+                    >
+                      {item.averageScore}
+                    </SvgText>
+                    
+                    {/* Differential below score */}
+                    <SvgText
+                      x={x + barWidth / 2}
+                      y={barChartHeight - paddingBottom - barHeight + 8}
+                      fill="#B0B0B0"
+                      textAnchor="middle"
+                      fontSize="10"
+                    >
+                      {item.differential > 0 ? `+${item.differential}` : item.differential}
+                    </SvgText>
+                  </React.Fragment>
+                );
+              })}
+            </Svg>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  // Update the calculateAverageScoreByDistance function to group by exact distances
+  const calculateAverageScoreByDistance = () => {
+    if (completedRounds.length === 0) return [];
+
+    // Group holes by exact distances
+    const distanceScores: Record<number, { totalScore: number; count: number }> = {};
+    
+    completedRounds.forEach(round => {
+      round.course.holes.forEach(hole => {
+        if (hole.score !== undefined) {
+          // Use exact distance as the key
+          const distance = hole.distance;
+          
+          if (!distanceScores[distance]) {
+            distanceScores[distance] = { totalScore: 0, count: 0 };
+          }
+          
+          distanceScores[distance].totalScore += hole.score;
+          distanceScores[distance].count++;
+        }
+      });
+    });
+    
+    // Convert to array and calculate averages
+    const averageScoreByDistance = Object.entries(distanceScores).map(([distanceStr, data]) => {
+      const distance = parseFloat(distanceStr);
+      const averageScore = data.totalScore / data.count;
+      return {
+        distance,
+        averageScore: Math.round(averageScore * 10) / 10,
+        count: data.count
+      };
+    });
+    
+    // Sort by distance
+    return averageScoreByDistance.sort((a, b) => a.distance - b.distance);
+  };
+
+  const averageScoreByDistance = useMemo(() => calculateAverageScoreByDistance(), [completedRounds, courseModeFilter]);
+
+  // Update the renderThirdSection function to use exact distances
+  const renderThirdSection = () => {
+    if (averageScoreByDistance.length === 0) {
+      return (
+        <View style={styles.blankPageContainer}>
+          <Text style={styles.blankPageText}>No data available</Text>
+        </View>
+      );
+    }
+
+    // Define chart dimensions
+    const barChartWidth = graphWidth;
+    const barChartHeight = graphHeight;
+    const paddingLeft = 20;
+    const paddingBottom = 60; // Extra padding at bottom for distance labels
+    const paddingTop = 10;
+    const paddingRight = 20;
+    
+    // Calculate available space for bars
+    const chartAreaWidth = barChartWidth - paddingLeft - paddingRight;
+    const chartAreaHeight = barChartHeight - paddingBottom - paddingTop;
+    
+    // Calculate bar dimensions based on data
+    const barCount = averageScoreByDistance.length;
+    // Limit max bar width, but also ensure bars aren't too thin when there are many
+    const maxBarWidth = 60;
+    const minBarWidth = 15; // Use a smaller minimum to fit more bars if needed
+    const barWidth = Math.max(
+      minBarWidth, 
+      Math.min(maxBarWidth, (chartAreaWidth / barCount) * 0.7)
+    );
+    const barSpacing = (chartAreaWidth - barWidth * barCount) / (barCount + 1);
+    
+    // Find min and max values for scaling
+    const scoreValues = averageScoreByDistance.map(item => item.averageScore);
+    const minValue = Math.floor(Math.min(...scoreValues) - 0.5);
+    const maxValue = Math.ceil(Math.max(...scoreValues) + 0.5);
+    const valueRange = maxValue - minValue;
+    
+    // Function to scale a value to the chart height
+    const scaleY = (value: number) => {
+      return chartAreaHeight - ((value - minValue) / valueRange) * chartAreaHeight + paddingTop;
+    };
+    
+    // Function to calculate horizontal position of a bar
+    const getBarX = (index: number) => {
+      return paddingLeft + barSpacing + index * (barWidth + barSpacing);
+    };
+    
+    // Generate y-axis labels
+    const yAxisLabels = [];
+    const yStepCount = valueRange <= 4 ? valueRange : 4;
+    const yStep = valueRange / yStepCount;
+    
+    for (let i = 0; i <= yStepCount; i++) {
+      const value = minValue + i * yStep;
+      yAxisLabels.push({
+        value: Math.round(value * 10) / 10,
+        y: scaleY(value)
+      });
+    }
+    
+    // Format distance labels based on course mode
+    const formatDistance = (distance: number) => {
+      const isIndoor = courseModeFilter === "Indoor";
+      return `${distance}${isIndoor ? "'" : "y"}`;
+    };
+    
+    return (
+      <View style={styles.barChartContainer}>
+        <View style={styles.graphContainer}>
+          <View style={styles.yAxis}>
+            {yAxisLabels.map((label, index) => (
+              <Text 
+                key={index} 
+                style={[
+                  styles.axisLabel, 
+                  { position: 'absolute', top: label.y - 6, width: 30, textAlign: 'right' }
+                ]}
+              >
+                {label.value}
+              </Text>
+            ))}
+          </View>
+          
+          <View style={styles.graph}>
+            <Svg width={barChartWidth} height={barChartHeight}>
+              {/* Horizontal grid lines */}
+              {yAxisLabels.map((label, index) => (
+                <Path
+                  key={`hgrid-${index}`}
+                  d={`M ${paddingLeft} ${label.y} H ${barChartWidth}`}
+                  stroke="#3D3D3D"
+                  strokeWidth="1"
+                  strokeDasharray="4,4"
+                />
+              ))}
+              
+              {/* X-axis base line */}
+              <Path
+                d={`M ${paddingLeft} ${barChartHeight - paddingBottom} H ${barChartWidth}`}
+                stroke="#B0B0B0"
+                strokeWidth="1"
+              />
+              
+              {/* Y-axis line */}
+              <Path
+                d={`M ${paddingLeft} ${paddingTop} V ${barChartHeight - paddingBottom}`}
+                stroke="#B0B0B0"
+                strokeWidth="1"
+              />
+              
+              {/* Bars */}
+              {averageScoreByDistance.map((item, index) => {
+                const barHeight = chartAreaHeight - (scaleY(item.averageScore) - paddingTop);
+                const x = getBarX(index);
+                
+                return (
+                  <React.Fragment key={index}>
+                    {/* Bar */}
+                    <Rect
+                      x={x}
+                      y={barChartHeight - paddingBottom - barHeight}
+                      width={barWidth}
+                      height={barHeight}
+                      fill="#93C757"
+                      rx={4}
+                      ry={4}
+                    />
+                    
+                    {/* Distance label */}
+                    <SvgText
+                      x={x + barWidth / 2}
+                      y={barChartHeight - paddingBottom + 20}
+                      fill="#FFFFFF"
+                      textAnchor="middle"
+                      fontSize={barWidth < 20 ? 8 : 10} // Smaller font for narrow bars
+                    >
+                      {formatDistance(item.distance)}
+                    </SvgText>
+                    
+                    {/* Score value on top of bar */}
+                    <SvgText
+                      x={x + barWidth / 2}
+                      y={barChartHeight - paddingBottom - barHeight - 8}
+                      fill="#FFFFFF"
+                      textAnchor="middle"
+                      fontSize="12"
+                      fontWeight="bold"
+                    >
+                      {item.averageScore}
+                    </SvgText>
+                  </React.Fragment>
+                );
+              })}
+            </Svg>
+          </View>
+        </View>
+      </View>
+    );
+  };
 
   if (points.length === 0) {
     return (
@@ -281,7 +838,8 @@ export default function StatsScreen() {
           setSelectedPointIndex(findClosestPointIndex(touchX));
         },
         onPanResponderRelease: () => {
-          // Keep showing the selected point after release
+          // Clear the selected point when touch is released
+          setSelectedPointIndex(null);
         },
       }),
     [points]
@@ -364,6 +922,11 @@ export default function StatsScreen() {
     }
   };
 
+  // Clear selectedPointIndex when switching to a different filter or page
+  useEffect(() => {
+    setSelectedPointIndex(null);
+  }, [holeCountFilter, courseModeFilter, currentPage]);
+
   return (
     <View style={styles.container}>
       {/* Header with Performance title and toggle */}
@@ -444,81 +1007,72 @@ export default function StatsScreen() {
       {/* Dividing line */}
       <View style={styles.divider} />
 
-      <View style={[styles.graphTitle, { marginTop: 8, marginBottom: 8 }]}>
-        <Text style={styles.graphTitleText}>Score by Round</Text>
-      </View>
-      
-      <View style={styles.graphContainer}>
-        <View style={styles.yAxis}>
-          {yAxisLabels.map((label, index) => {
-            const position = normalizeY(label.score, graphHeight);
-            return (
-              <Text 
-                key={index} 
-                style={[
-                  styles.axisLabel, 
-                  { position: 'absolute', top: position - 6, width: 70, textAlign: 'right' }
-                ]}
-              >
-                {label.display}
-              </Text>
-            );
-          })}
+      {/* Graph title bar with page indicator */}
+      <View 
+        style={styles.graphTitleBar}
+        {...titlePanResponder.panHandlers}
+      >
+        {/* Fixed titles with opacity transitions */}
+        <View style={styles.titleContainer}>
+          <Animated.Text style={[
+            styles.graphTitleText, 
+            { opacity: firstTitleOpacity },
+            styles.absoluteTitle
+          ]}>
+            Score by Round
+          </Animated.Text>
+          <Animated.Text style={[
+            styles.graphTitleText, 
+            { opacity: secondTitleOpacity },
+            styles.absoluteTitle
+          ]}>
+            Average Score by Par
+          </Animated.Text>
+          <Animated.Text style={[
+            styles.graphTitleText, 
+            { opacity: thirdTitleOpacity },
+            styles.absoluteTitle
+          ]}>
+            Score by Distance
+          </Animated.Text>
         </View>
-        <View 
-          style={styles.graph}
-          {...panResponder.panHandlers}
+        
+        <TouchableOpacity 
+          style={styles.pageIndicator}
+          onPress={() => navigateToPage((currentPage + 1) % 3)}
         >
-          <Svg width={graphWidth} height={graphHeight}>
-            {/* Horizontal grid lines - for every integer value */}
-            {horizontalGridLines.map((value, index) => (
-              <Path
-                key={`hgrid-${index}`}
-                d={`M 0 ${normalizeY(value, graphHeight)} H ${graphWidth}`}
-                stroke="#3D3D3D"
-                strokeWidth="1"
-                strokeDasharray="4,4"
-              />
-            ))}
-            
-            {points.length > 1 && (
-              <Path
-                d={getPathData(graphHeight)}
-                stroke="#93C757"
-                strokeWidth="2"
-                fill="none"
-              />
-            )}
-            
-            {/* Show all points */}
-            {points.map((point, index) => (
-              <Circle
-                key={index}
-                cx={pointX(index)}
-                cy={normalizeY(point.y, graphHeight)}
-                r={selectedPointIndex === index ? "6" : "4"}
-                fill={selectedPointIndex === index ? "#FFFFFF" : "#93C757"}
-              />
-            ))}
-            
-            {/* Show vertical line at selected point */}
-            {selectedPointIndex !== null && (
-              <Line
-                x1={pointX(selectedPointIndex)}
-                y1="0"
-                x2={pointX(selectedPointIndex)}
-                y2={graphHeight}
-                stroke="#FFFFFF"
-                strokeWidth="1"
-                strokeDasharray="4,4"
-              />
-            )}
-          </Svg>
-          
-          {/* Render selected point details as an overlay */}
-          {selectedPointIndex !== null && renderSelectedPointDetails()}
-        </View>
+          <View style={[styles.pageIndicatorDot, currentPage === 0 && styles.pageIndicatorDotActive]} />
+          <View style={[styles.pageIndicatorDot, currentPage === 1 && styles.pageIndicatorDotActive]} />
+          <View style={[styles.pageIndicatorDot, currentPage === 2 && styles.pageIndicatorDotActive]} />
+        </TouchableOpacity>
       </View>
+
+      {/* Horizontal scroll view for the chart section */}
+      <ScrollView 
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        style={styles.horizontalScrollView}
+        scrollEnabled={false} // Disable scroll gestures
+      >
+        {/* First page - Score chart */}
+        <View style={{width: Dimensions.get('window').width}}>
+          {renderChartSection()}
+        </View>
+        
+        {/* Second page - Average Score by Par */}
+        <View style={{width: Dimensions.get('window').width}}>
+          {renderSecondSection()}
+        </View>
+        
+        {/* Third page - Average Score by Distance */}
+        <View style={{width: Dimensions.get('window').width}}>
+          {renderThirdSection()}
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -590,24 +1144,54 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 20,
     paddingBottom: 10,
+    paddingTop: 10,
+    paddingLeft: 10,
   },
-  graphTitle: {
+  graphTitleBar: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 25,
+    marginTop: 8,
+    marginBottom: 8,
   },
   graphTitleText: {
     fontSize: 16,
     fontWeight: '500',
     color: '#FFFFFF',
   },
-  yAxis: {
-    width: 70,
+  pageIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10, // Add padding to increase touch area
+  },
+  pageIndicatorDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#3D3D3D',
+    marginHorizontal: 4,
+  },
+  pageIndicatorDotActive: {
+    backgroundColor: '#93C757',
+  },
+  lineChartYAxis: {
+    width: 50,
     position: 'relative',
     justifyContent: 'space-between',
     paddingVertical: 10,
     paddingRight: 5,
     alignItems: 'flex-end',
+    marginLeft: 5,
+  },
+  yAxis: {
+    width: 30,
+    position: 'relative',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    paddingRight: 4,
+    alignItems: 'flex-end',
+    marginLeft: 3,
   },
   graph: {
     flex: 1,
@@ -617,7 +1201,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#B0B0B0',
   },
-  // Add new styles for filter section
   filterSection: {
     paddingTop: 5,
     paddingBottom: 10,
@@ -665,7 +1248,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 10,
   },
-  // Update styles for the details popup
   detailsPopup: {
     position: 'absolute',
     width: 200,
@@ -710,10 +1292,48 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 4,
   },
-  // Alternative fixed position style that always shows at the bottom
   fixedPopup: {
     bottom: 10,
     left: '50%',
     marginLeft: -100, // Center horizontally (half of width)
+  },
+  horizontalScrollView: {
+    flex: 1,
+  },
+  blankPageContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  blankPageText: {
+    color: '#B0B0B0',
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  titleContainer: {
+    position: 'relative',
+    height: 20,
+    width: 160,
+    justifyContent: 'center',
+  },
+  absoluteTitle: {
+    position: 'absolute',
+    left: 0,
+  },
+  barChartContainer: {
+    flex: 1,
+    paddingTop: 0, // Reduced top padding for the bar chart
+  },
+  chartContainer: {
+    flex: 1,
+    paddingTop: 10, // Original padding
+  },
+  lineChartGraphContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingBottom: 30, // Increased from 25 to 30
+    paddingTop: 10,
+    paddingLeft: 10,
   },
 }); 
