@@ -38,14 +38,16 @@ export default function PlayScreen() {
   const [showCourseDropdown, setShowCourseDropdown] = useState(false);
   const [availableCourses, setAvailableCourses] = useState<string[]>([]);
   const [isChangingCourse, setIsChangingCourse] = useState(false);
+  const [transitionCourseName, setTransitionCourseName] = useState<string | null>(null);
   
   // Load the Bebas Neue font
   const [fontsLoaded] = useFonts({
     BebasNeue_400Regular,
   });
 
-  // Add an animation value for fading
+  // Add animation values for text transitions
   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const textFadeAnim = useRef(new Animated.Value(1)).current;
 
   // Update available courses when course mode changes
   useEffect(() => {
@@ -62,11 +64,28 @@ export default function PlayScreen() {
 
   const handleSelectCourse = async (courseName: string) => {
     if (currentRound && currentRound.courseName !== courseName) {
-      // Provide visual feedback during the change
+      // Animate text transition
+      Animated.sequence([
+        // Fade text out
+        Animated.timing(textFadeAnim, {
+          toValue: 0.2,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        // Fade text back in with new name
+        Animated.timing(textFadeAnim, {
+          toValue: 0.9,
+          duration: 150,
+          useNativeDriver: true,
+        })
+      ]).start();
+      
+      // Set the target course name immediately for a more seamless transition
+      setTransitionCourseName(courseName);
       setIsChangingCourse(true);
       setShowCourseDropdown(false);
       
-      // Fade out animation
+      // Fade scorecard out animation
       Animated.timing(fadeAnim, {
         toValue: 0.4,
         duration: 200,
@@ -78,12 +97,21 @@ export default function PlayScreen() {
       
       // Reset loading state and fade back in after a short delay
       setTimeout(() => {
+        // Fade scorecard back in
         Animated.timing(fadeAnim, {
           toValue: 1,
           duration: 300,
           useNativeDriver: true,
         }).start(() => {
           setIsChangingCourse(false);
+          setTransitionCourseName(null);
+          
+          // Restore text opacity fully
+          Animated.timing(textFadeAnim, {
+            toValue: 1,
+            duration: 150,
+            useNativeDriver: true,
+          }).start();
         });
       }, 300);
     } else {
@@ -282,9 +310,12 @@ export default function PlayScreen() {
           disabled={isChangingCourse}
         >
           <View style={styles.titleSmallContainer}>
-            <Text style={styles.titleSmall}>
-              {isChangingCourse ? "Loading..." : currentRound.courseName}
-            </Text>
+            <Animated.Text style={[
+              styles.titleSmall,
+              { opacity: textFadeAnim }
+            ]}>
+              {transitionCourseName || currentRound.courseName}
+            </Animated.Text>
           </View>
           {!isChangingCourse && <Text style={styles.dropdownArrow}>▼</Text>}
         </TouchableOpacity>
