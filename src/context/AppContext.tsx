@@ -7,7 +7,7 @@ import { AppState as RNAppState, AppStateStatus } from 'react-native';
 
 interface AppContextType extends AppState {
   setPlayer: (player: Player) => Promise<void>;
-  startNewGame: (courseMode?: "Indoor" | "Outdoor", holeCount?: 9 | 18) => Promise<void>;
+  startNewGame: (courseMode?: "Indoor" | "Outdoor", holeCount?: 9 | 18, courseName?: string) => Promise<void>;
   startRound: () => Promise<void>;
   updateHoleScore: (holeNumber: number, score: number | undefined) => Promise<void>;
   completeRound: () => Promise<void>;
@@ -18,6 +18,7 @@ interface AppContextType extends AppState {
   saveRoundEdit: () => Promise<void>;
   cancelRoundEdit: () => Promise<void>;
   hasEditChanges: () => boolean;
+  switchCourse: (courseName: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -109,8 +110,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState(current => ({ ...current, player }));
   };
 
-  const startNewGame = async (courseMode: "Indoor" | "Outdoor" = "Indoor", holeCount: 9 | 18 = 18) => {
-    const newRound = createNewRound(courseMode, holeCount);
+  const startNewGame = async (courseMode: "Indoor" | "Outdoor" = "Indoor", holeCount: 9 | 18 = 18, courseName?: string) => {
+    const newRound = createNewRound(courseMode, holeCount, courseName);
     await storage.saveCurrentRound(newRound);
     setState(current => ({
       ...current,
@@ -264,6 +265,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState(current => ({ ...current, rounds: updatedRounds }));
   };
 
+  const switchCourse = async (courseName: string) => {
+    if (!state.currentRound) return;
+    
+    // Create a new round with the same properties but different course
+    const newRound = createNewRound(
+      state.currentRound.course.courseMode, 
+      state.currentRound.course.holeCount, 
+      courseName
+    );
+    
+    // Preserve the same ID to maintain history
+    newRound.id = state.currentRound.id;
+    newRound.date = state.currentRound.date;
+    
+    await storage.saveCurrentRound(newRound);
+    setState(current => ({
+      ...current,
+      currentRound: newRound,
+      gameState: 'game-ready',
+    }));
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -280,6 +303,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         saveRoundEdit,
         cancelRoundEdit,
         hasEditChanges,
+        switchCourse,
       }}
     >
       {children}

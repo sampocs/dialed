@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,12 @@ import {
   ScrollView,
   Alert,
   Modal,
+  FlatList,
+  Animated,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useApp } from '../context/AppContext';
-import { isValidScore } from '../utils/gameLogic';
+import { isValidScore, INDOOR_COURSES, OUTDOOR_COURSES, PRE_GENERATED_COURSES } from '../utils/gameLogic';
 import Scorecard from '../components/Scorecard';
 import HoleEditor from '../components/HoleEditor';
 import { 
@@ -27,16 +29,33 @@ export default function PlayScreen() {
     updateHoleScore,
     completeRound,
     quitGame,
+    switchCourse,
   } = useApp();
   const [showScorecard, setShowScorecard] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [courseMode, setCourseMode] = useState<"Indoor" | "Outdoor">("Indoor");
   const [holeCount, setHoleCount] = useState<9 | 18>(18);
+  const [showCourseDropdown, setShowCourseDropdown] = useState(false);
+  const [availableCourses, setAvailableCourses] = useState<string[]>([]);
+  const [isChangingCourse, setIsChangingCourse] = useState(false);
+  const [transitionCourseName, setTransitionCourseName] = useState<string | null>(null);
   
   // Load the Bebas Neue font
   const [fontsLoaded] = useFonts({
     BebasNeue_400Regular,
   });
+
+  // Add animation values for text transitions
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const textFadeAnim = useRef(new Animated.Value(1)).current;
+  const arrowFadeAnim = useRef(new Animated.Value(1)).current;
+
+  // Update available courses when course mode changes
+  useEffect(() => {
+    // Sort the courses alphabetically before setting them
+    const sortedCourses = [...(courseMode === "Indoor" ? INDOOR_COURSES : OUTDOOR_COURSES)].sort();
+    setAvailableCourses(sortedCourses);
+  }, [courseMode]);
 
   const handleStartNewGame = () => {
     startNewGame(courseMode, holeCount);
@@ -44,6 +63,82 @@ export default function PlayScreen() {
 
   const handleStartRound = () => {
     startRound();
+  };
+
+  const handleSelectCourse = async (courseName: string) => {
+    if (currentRound && currentRound.courseName !== courseName) {
+      // Synchronize the fading out of arrow and text
+      Animated.parallel([
+        // Fade out arrow
+        Animated.timing(arrowFadeAnim, {
+          toValue: 0,
+          duration: 120,
+          useNativeDriver: true,
+        }),
+        // Fade text out
+        Animated.timing(textFadeAnim, {
+          toValue: 0.2,
+          duration: 120,
+          useNativeDriver: true,
+        })
+      ]).start();
+      
+      // Set the target course name immediately for a more seamless transition
+      setTransitionCourseName(courseName);
+      setIsChangingCourse(true);
+      setShowCourseDropdown(false);
+      
+      // Short delay before fading text back in with the new name
+      setTimeout(() => {
+        // Fade text back in with new name
+        Animated.timing(textFadeAnim, {
+          toValue: 0.9,
+          duration: 180,
+          useNativeDriver: true,
+        }).start();
+      }, 150);
+      
+      // Fade scorecard out animation
+      Animated.timing(fadeAnim, {
+        toValue: 0.4,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+      
+      // Use the new switchCourse function which provides a smoother transition
+      await switchCourse(courseName);
+      
+      // Reset loading state and fade back in after a short delay
+      setTimeout(() => {
+        // Synchronize the fading in of elements
+        Animated.parallel([
+          // Fade scorecard back in
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          // Fade arrow back in at the same time
+          Animated.timing(arrowFadeAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          // Restore text opacity fully
+          Animated.timing(textFadeAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          })
+        ]).start(() => {
+          // Reset state flags when animation completes
+          setIsChangingCourse(false);
+          setTransitionCourseName(null);
+        });
+      }, 250);
+    } else {
+      setShowCourseDropdown(false);
+    }
   };
 
   // Rule content based on the selected mode
@@ -94,14 +189,15 @@ export default function PlayScreen() {
           <Text style={styles.rulesTitle}>Outdoor Putting Game Rules</Text>
           <Text style={styles.rulesSubtitle}>Game Setup</Text>
           <Text style={styles.rulesText}>
-            Outdoor mode creates a course with 7 Par 2 holes and 2 Par 3 holes for each 9-hole section.
+            Outdoor mode creates a course with 2 Par 2 holes, 6 Par 3 holes, and 1 Par 4 hole for each 9-hole section.
             The placement of the holes is randomized for each new course.
           </Text>
           
           <Text style={styles.rulesSubtitle}>Distances</Text>
           <Text style={styles.rulesText}>
             • Par 2 holes: 10 or 15 yards{'\n'}
-            • Par 3 holes: 20, 30, or 40 yards
+            • Par 3 holes: 20, 25, 30, or 35 yards{'\n'}
+            • Par 4 holes: 40 yards
           </Text>
           
           <Text style={styles.rulesSubtitle}>Playing Rules</Text>
@@ -231,16 +327,93 @@ export default function PlayScreen() {
           </TouchableOpacity>
         </View>
         
-        <Text style={styles.titleSmall}>{currentRound.courseName}</Text>
+        <TouchableOpacity 
+          style={styles.courseNameContainer} 
+          onPress={() => !isChangingCourse && setShowCourseDropdown(true)}
+          disabled={isChangingCourse}
+        >
+          <View style={styles.titleSmallContainer}>
+            <Animated.Text style={[
+              styles.titleSmall,
+              { opacity: textFadeAnim }
+            ]}>
+              {transitionCourseName || currentRound.courseName}
+            </Animated.Text>
+          </View>
+          <Animated.Text 
+            style={[
+              styles.dropdownArrow,
+              { opacity: arrowFadeAnim }
+            ]}
+          >
+            ▼
+          </Animated.Text>
+        </TouchableOpacity>
+        
         <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
         
-        <View style={styles.scorecardContainer}>
+        <Animated.View 
+          style={[
+            styles.scorecardContainer,
+            { opacity: fadeAnim }
+          ]}
+        >
           <Scorecard course={currentRound.course} showCourseMode={false} showScores={false} />
-        </View>
+        </Animated.View>
         
-        <TouchableOpacity style={[styles.button, styles.startRoundButton]} onPress={handleStartRound}>
+        <TouchableOpacity 
+          style={[styles.button, styles.startRoundButton]} 
+          onPress={handleStartRound}
+          disabled={isChangingCourse}
+        >
           <Text style={styles.buttonText}>Start Round</Text>
         </TouchableOpacity>
+        
+        {/* Course Selection Modal */}
+        <Modal
+          visible={showCourseDropdown}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowCourseDropdown(false)}
+        >
+          <View style={styles.modalContainer}>
+            <BlurView intensity={80} style={StyleSheet.absoluteFill} tint="dark" />
+            
+            <View style={styles.courseDropdownContent}>
+              <View style={styles.dropdownHeader}>
+                <Text style={styles.dropdownHeaderTitle}>Select Course</Text>
+                <TouchableOpacity 
+                  onPress={() => setShowCourseDropdown(false)}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.closeButtonText}>✕</Text>
+                </TouchableOpacity>
+              </View>
+              
+              <FlatList
+                data={availableCourses}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (
+                  <TouchableOpacity 
+                    style={[
+                      styles.courseItem, 
+                      currentRound?.courseName === item && styles.courseItemSelected
+                    ]} 
+                    onPress={() => handleSelectCourse(item)}
+                  >
+                    <Text style={[
+                      styles.courseItemText,
+                      currentRound?.courseName === item && styles.courseItemTextSelected
+                    ]}>
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                style={styles.courseList}
+              />
+            </View>
+          </View>
+        </Modal>
         
         {/* Rules Modal */}
         <Modal
@@ -666,9 +839,66 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#FFFFFF',
+    marginVertical: 0,
+    paddingVertical: 0,
+  },
+  titleSmallContainer: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  courseNameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dropdownArrow: {
+    color: '#93C757',
+    fontSize: 16,
+    marginLeft: 8,
+    marginTop: 2,
+  },
+  courseDropdownContent: {
+    width: '90%',
+    maxHeight: '70%',
+    backgroundColor: '#292929',
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#3D3D3D',
+  },
+  dropdownHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3D3D3D',
+  },
+  dropdownHeaderTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
     color: '#FFFFFF',
+  },
+  courseList: {
+    width: '100%',
+  },
+  courseItem: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3D3D3D',
+  },
+  courseItemSelected: {
+    backgroundColor: '#3D3D3D',
+  },
+  courseItemText: {
+    fontSize: 18,
+    color: '#FFFFFF',
+  },
+  courseItemTextSelected: {
+    color: '#93C757',
+    fontWeight: 'bold',
   },
   scorecardContainer: {
     width: '90%',

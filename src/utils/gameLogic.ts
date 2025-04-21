@@ -1,4 +1,24 @@
 import { Course, Hole, Round } from "../types";
+import coursesDataRaw from "./courses.json";
+
+// Type assertion to ensure the JSON data matches our Course type
+const coursesData: { [courseName: string]: Course } = Object.entries(
+  coursesDataRaw
+).reduce((acc, [name, course]) => {
+  // Ensure the par property in each hole is properly typed as 1 | 2 | 3 | 4
+  const typedCourse: Course = {
+    ...course,
+    holes: course.holes.map((hole) => ({
+      ...hole,
+      par: hole.par as 1 | 2 | 3 | 4,
+    })),
+    courseMode: course.courseMode as "Indoor" | "Outdoor",
+    holeCount: course.holeCount as 9 | 18,
+  };
+
+  acc[name] = typedCourse;
+  return acc;
+}, {} as { [courseName: string]: Course });
 
 // Indoor distances (in feet)
 const INDOOR_PAR_1_DISTANCES = [2.5, 3, 3.5, 4];
@@ -7,35 +27,57 @@ const INDOOR_PAR_3_DISTANCE = 10;
 
 // Outdoor distances (in yards)
 const OUTDOOR_PAR_2_DISTANCES = [10, 15];
-const OUTDOOR_PAR_3_DISTANCES = [20, 30, 40];
+const OUTDOOR_PAR_3_DISTANCES = [20, 25, 30, 35];
+const OUTDOOR_PAR_4_DISTANCES = [40];
 
-export const COURSES = [
-  "Moonlight Basin",
-  "Black Desert Stone",
+export const OUTDOOR_COURSES = [
   "Augusta National",
   "Pebble Beach",
   "TPC Sawgrass",
   "Torrey Pines",
-  "Pinehurst No. 2",
-  "Royal Troon",
-  "St. Andrews",
-  "Whispering Pines",
-  "Crystal Springs",
-  "Sunset Done",
-  "Diamond Ridge",
-  "Misty Harbor",
-  "Royal Highlands",
-  "Whistling Straights",
+  "Ojai Valley",
+  "PGA West",
+  "Shadow Creek",
+  "Coeur d'Alene",
   "Greywalls",
-  "George Dunne",
-  "Coyote Run",
-  "Chevy Chase",
-  "Mount Prospect",
-  "Schaumburg",
-  "Arboretum Club",
-  "Villiage Links",
-  "Oak Meadows",
+  "Sand Valley",
 ];
+
+export const INDOOR_COURSES = [
+  "Moonlight Basin",
+  "Black Desert Stone",
+  "Pinehurst No. 2",
+  "Pine Valley",
+  "Whistling Straits",
+  "Bethpage Black",
+  "Valhalla",
+  "St. Andrews",
+  "Erin Hills",
+  "Royal Melbourne",
+];
+
+// Map to store pre-generated courses
+export const PRE_GENERATED_COURSES: {
+  [courseName: string]: Course;
+} = coursesData;
+
+// Function to initialize all the courses with fixed layouts
+export function initializeAllCourses(): void {
+  console.log("All courses have been loaded from courses.json");
+  console.log(`Loaded ${Object.keys(PRE_GENERATED_COURSES).length} courses`);
+
+  // Log brief details of each course for verification
+  Object.entries(PRE_GENERATED_COURSES).forEach(([name, course]) => {
+    console.log(
+      `${name}: ${course.courseMode}, ${course.totalPar} par, ${
+        course.totalDistance
+      } ${course.courseMode === "Indoor" ? "feet" : "yards"}`
+    );
+  });
+}
+
+// Call initializeAllCourses on module load
+initializeAllCourses();
 
 function shuffleArray<T>(array: T[]): T[] {
   const newArray = [...array];
@@ -46,6 +88,9 @@ function shuffleArray<T>(array: T[]): T[] {
   return newArray;
 }
 
+// The following functions are now only used for testing or creating new course templates
+// They are not used during normal gameplay since courses are loaded from courses.json
+
 function getRandomIndoorDistance(par: number): number {
   if (par === 3) return INDOOR_PAR_3_DISTANCE;
   const distances = par === 1 ? INDOOR_PAR_1_DISTANCES : INDOOR_PAR_2_DISTANCES;
@@ -53,8 +98,15 @@ function getRandomIndoorDistance(par: number): number {
 }
 
 function getRandomOutdoorDistance(par: number): number {
-  const distances =
-    par === 2 ? OUTDOOR_PAR_2_DISTANCES : OUTDOOR_PAR_3_DISTANCES;
+  let distances;
+  if (par === 2) {
+    distances = OUTDOOR_PAR_2_DISTANCES;
+  } else if (par === 3) {
+    distances = OUTDOOR_PAR_3_DISTANCES;
+  } else {
+    // par 4
+    distances = OUTDOOR_PAR_4_DISTANCES;
+  }
   return distances[Math.floor(Math.random() * distances.length)];
 }
 
@@ -69,10 +121,13 @@ function generateIndoorNineTemplate(): number[] {
 function generateOutdoorNineTemplate(): number[] {
   return [
     ...Array(2).fill(2), // 2 par 2s
-    ...Array(7).fill(3), // 7 par 3s
+    ...Array(6).fill(3), // 6 par 3s
+    ...Array(1).fill(4), // 1 par 4
   ];
 }
 
+// This function is now primarily used for testing or creating new course templates
+// It is not used during normal gameplay since courses are loaded from courses.json
 export function generateCourse(
   holeCount: 9 | 18 = 18,
   courseMode: "Indoor" | "Outdoor" = "Indoor"
@@ -99,7 +154,7 @@ export function generateCourse(
   // Generate holes with distances
   const holes: Hole[] = [...frontNine, ...backNine].map((par, index) => ({
     number: index + 1,
-    par: par as 1 | 2 | 3,
+    par: par as 1 | 2 | 3 | 4,
     distance: getDistance(par),
   }));
 
@@ -138,13 +193,46 @@ export function generateCourse(
 
 export function createNewRound(
   courseMode: "Indoor" | "Outdoor" = "Indoor",
-  holeCount: 9 | 18 = 18
+  holeCount: 9 | 18 = 18,
+  specificCourseName?: string
 ): Round {
-  // Get a random course name from the COURSES array
-  const randomIndex = Math.floor(Math.random() * COURSES.length);
-  const courseName = COURSES[randomIndex];
+  // Get a course name - either the specified one or a random one
+  let courseName: string;
 
-  const course = generateCourse(holeCount, courseMode);
+  if (specificCourseName) {
+    // Use the specified course name if provided
+    courseName = specificCourseName;
+  } else {
+    // Get a random course name based on course mode
+    const courses = courseMode === "Indoor" ? INDOOR_COURSES : OUTDOOR_COURSES;
+    const randomIndex = Math.floor(Math.random() * courses.length);
+    courseName = courses[randomIndex];
+  }
+
+  // Get the pre-generated course
+  const preGeneratedCourse = PRE_GENERATED_COURSES[courseName];
+
+  let course: Course;
+
+  if (holeCount === 18) {
+    // Use the full 18-hole course
+    course = { ...preGeneratedCourse };
+  } else {
+    // Use only the front 9 holes
+    const frontNineHoles = preGeneratedCourse.holes.slice(0, 9);
+
+    course = {
+      holes: frontNineHoles,
+      totalPar: preGeneratedCourse.frontNinePar,
+      totalDistance: preGeneratedCourse.frontNineDistance,
+      frontNinePar: preGeneratedCourse.frontNinePar,
+      frontNineDistance: preGeneratedCourse.frontNineDistance,
+      backNinePar: 0,
+      backNineDistance: 0,
+      courseMode: preGeneratedCourse.courseMode,
+      holeCount: 9,
+    };
+  }
 
   // Create a unique ID by combining timestamp with a random string
   const uniqueId = `${Date.now()}_${Math.random()
@@ -190,6 +278,7 @@ export function updateScore(
 
 export function isValidScore(par: number, score: number): boolean {
   if (par === 1) return score >= 1 && score <= 3;
+  if (par === 4) return score >= 1 && score <= 6; // For par 4, allow up to double bogey
   return score >= 1 && score <= 4; // For par 2 and par 3
 }
 
@@ -363,7 +452,7 @@ function generateRoundsWithConfig(
     const dayOffset = i;
     const date = startDate + dayOffset * 24 * 60 * 60 * 1000;
 
-    // Create a new round
+    // Create a new round using the pre-generated courses
     const round = createNewRound(courseMode, holeCount);
 
     // Set the date
