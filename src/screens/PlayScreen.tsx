@@ -48,6 +48,7 @@ export default function PlayScreen() {
   // Add animation values for text transitions
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const textFadeAnim = useRef(new Animated.Value(1)).current;
+  const arrowFadeAnim = useRef(new Animated.Value(1)).current;
 
   // Update available courses when course mode changes
   useEffect(() => {
@@ -64,18 +65,18 @@ export default function PlayScreen() {
 
   const handleSelectCourse = async (courseName: string) => {
     if (currentRound && currentRound.courseName !== courseName) {
-      // Animate text transition
-      Animated.sequence([
+      // Synchronize the fading out of arrow and text
+      Animated.parallel([
+        // Fade out arrow
+        Animated.timing(arrowFadeAnim, {
+          toValue: 0,
+          duration: 120,
+          useNativeDriver: true,
+        }),
         // Fade text out
         Animated.timing(textFadeAnim, {
           toValue: 0.2,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-        // Fade text back in with new name
-        Animated.timing(textFadeAnim, {
-          toValue: 0.9,
-          duration: 150,
+          duration: 120,
           useNativeDriver: true,
         })
       ]).start();
@@ -84,6 +85,16 @@ export default function PlayScreen() {
       setTransitionCourseName(courseName);
       setIsChangingCourse(true);
       setShowCourseDropdown(false);
+      
+      // Short delay before fading text back in with the new name
+      setTimeout(() => {
+        // Fade text back in with new name
+        Animated.timing(textFadeAnim, {
+          toValue: 0.9,
+          duration: 180,
+          useNativeDriver: true,
+        }).start();
+      }, 150);
       
       // Fade scorecard out animation
       Animated.timing(fadeAnim, {
@@ -97,23 +108,32 @@ export default function PlayScreen() {
       
       // Reset loading state and fade back in after a short delay
       setTimeout(() => {
-        // Fade scorecard back in
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }).start(() => {
-          setIsChangingCourse(false);
-          setTransitionCourseName(null);
-          
+        // Synchronize the fading in of elements
+        Animated.parallel([
+          // Fade scorecard back in
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          // Fade arrow back in at the same time
+          Animated.timing(arrowFadeAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
           // Restore text opacity fully
           Animated.timing(textFadeAnim, {
             toValue: 1,
-            duration: 150,
+            duration: 300,
             useNativeDriver: true,
-          }).start();
+          })
+        ]).start(() => {
+          // Reset state flags when animation completes
+          setIsChangingCourse(false);
+          setTransitionCourseName(null);
         });
-      }, 300);
+      }, 250);
     } else {
       setShowCourseDropdown(false);
     }
@@ -317,7 +337,14 @@ export default function PlayScreen() {
               {transitionCourseName || currentRound.courseName}
             </Animated.Text>
           </View>
-          {!isChangingCourse && <Text style={styles.dropdownArrow}>▼</Text>}
+          <Animated.Text 
+            style={[
+              styles.dropdownArrow,
+              { opacity: arrowFadeAnim }
+            ]}
+          >
+            ▼
+          </Animated.Text>
         </TouchableOpacity>
         
         <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
