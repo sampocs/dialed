@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, StatusBar, ScrollView, PanResponder, Animated } from 'react-native';
 import { useApp } from '../context/AppContext';
 import { calculateStats } from '../utils/gameLogic';
-import Svg, { Path, Circle, Line } from 'react-native-svg';
+import Svg, { Path, Circle, Line, Rect, Text as SvgText } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { format } from 'date-fns';
 
@@ -162,6 +162,50 @@ export default function StatsScreen() {
     setCurrentPage(currentPage);
   };
 
+  // Calculate the average scores for each par
+  const calculateAverageScoreByPar = () => {
+    if (completedRounds.length === 0) return [];
+
+    // Collect all holes from all completed rounds
+    const allHoles: { par: number; score: number }[] = [];
+    
+    completedRounds.forEach(round => {
+      round.course.holes.forEach(hole => {
+        if (hole.score !== undefined) {
+          allHoles.push({
+            par: hole.par,
+            score: hole.score
+          });
+        }
+      });
+    });
+    
+    // Group holes by par
+    const holesByPar = allHoles.reduce((acc, curr) => {
+      if (!acc[curr.par]) {
+        acc[curr.par] = [];
+      }
+      acc[curr.par].push(curr.score);
+      return acc;
+    }, {} as Record<number, number[]>);
+    
+    // Calculate average score for each par
+    const averageScoreByPar = Object.entries(holesByPar).map(([par, scores]) => {
+      const averageScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+      return {
+        par: parseInt(par),
+        averageScore: Math.round(averageScore * 10) / 10,
+        differential: Math.round((averageScore - parseInt(par)) * 10) / 10,
+        count: scores.length
+      };
+    });
+    
+    // Sort by par
+    return averageScoreByPar.sort((a, b) => a.par - b.par);
+  };
+  
+  const averageScoreByPar = useMemo(() => calculateAverageScoreByPar(), [completedRounds]);
+
   // Render the chart section based on the current filter settings
   const renderChartSection = () => {
     if (points.length === 0) return null;
@@ -241,11 +285,181 @@ export default function StatsScreen() {
     );
   };
 
-  // Render a second page that's blank for now
+  // Render a second page with the average score by par bar chart
   const renderSecondSection = () => {
+    if (averageScoreByPar.length === 0) {
+      return (
+        <View style={styles.blankPageContainer}>
+          <Text style={styles.blankPageText}>No data available</Text>
+        </View>
+      );
+    }
+
+    // Define chart dimensions
+    const barChartWidth = graphWidth;
+    const barChartHeight = graphHeight;
+    const paddingLeft = 40;
+    const paddingBottom = 50;
+    const paddingTop = 20;
+    const paddingRight = 20;
+    
+    // Calculate available space for bars
+    const chartAreaWidth = barChartWidth - paddingLeft - paddingRight;
+    const chartAreaHeight = barChartHeight - paddingBottom - paddingTop;
+    
+    // Calculate bar dimensions based on data
+    const barCount = averageScoreByPar.length;
+    const barWidth = Math.min(60, (chartAreaWidth / barCount) * 0.7); // Limit max width
+    const barSpacing = (chartAreaWidth - barWidth * barCount) / (barCount + 1);
+    
+    // Find min and max values for scaling
+    const scoreValues = averageScoreByPar.map(item => item.averageScore);
+    const minValue = Math.floor(Math.min(...scoreValues) - 0.5);
+    const maxValue = Math.ceil(Math.max(...scoreValues) + 0.5);
+    const valueRange = maxValue - minValue;
+    
+    // Function to scale a value to the chart height
+    const scaleY = (value: number) => {
+      return chartAreaHeight - ((value - minValue) / valueRange) * chartAreaHeight + paddingTop;
+    };
+    
+    // Function to calculate horizontal position of a bar
+    const getBarX = (index: number) => {
+      return paddingLeft + barSpacing + index * (barWidth + barSpacing);
+    };
+    
+    // Generate y-axis labels
+    const yAxisLabels = [];
+    const yStepCount = valueRange <= 4 ? valueRange : 4;
+    const yStep = valueRange / yStepCount;
+    
+    for (let i = 0; i <= yStepCount; i++) {
+      const value = minValue + i * yStep;
+      yAxisLabels.push({
+        value: Math.round(value * 10) / 10,
+        y: scaleY(value)
+      });
+    }
+    
     return (
-      <View style={styles.blankPageContainer}>
-        <Text style={styles.blankPageText}>Future chart will go here</Text>
+      <View style={styles.chartContainer}>
+        {/* Add explanation of the chart */}
+        <View style={styles.chartExplanation}>
+          <Text style={styles.chartExplanationText}>
+            Based on {completedRounds.length} completed {holeCountFilter}-hole {courseModeFilter.toLowerCase()} rounds
+          </Text>
+        </View>
+        
+        <View style={styles.graphContainer}>
+          <View style={styles.yAxis}>
+            {yAxisLabels.map((label, index) => (
+              <Text 
+                key={index} 
+                style={[
+                  styles.axisLabel, 
+                  { position: 'absolute', top: label.y - 6, width: 70, textAlign: 'right' }
+                ]}
+              >
+                {label.value}
+              </Text>
+            ))}
+          </View>
+          
+          <View style={styles.graph}>
+            <Svg width={barChartWidth} height={barChartHeight}>
+              {/* Horizontal grid lines */}
+              {yAxisLabels.map((label, index) => (
+                <Path
+                  key={`hgrid-${index}`}
+                  d={`M ${paddingLeft} ${label.y} H ${barChartWidth}`}
+                  stroke="#3D3D3D"
+                  strokeWidth="1"
+                  strokeDasharray="4,4"
+                />
+              ))}
+              
+              {/* X-axis base line */}
+              <Path
+                d={`M ${paddingLeft} ${barChartHeight - paddingBottom} H ${barChartWidth}`}
+                stroke="#B0B0B0"
+                strokeWidth="1"
+              />
+              
+              {/* Y-axis line */}
+              <Path
+                d={`M ${paddingLeft} ${paddingTop} V ${barChartHeight - paddingBottom}`}
+                stroke="#B0B0B0"
+                strokeWidth="1"
+              />
+              
+              {/* Bars */}
+              {averageScoreByPar.map((item, index) => {
+                const barHeight = chartAreaHeight - (scaleY(item.averageScore) - paddingTop);
+                const x = getBarX(index);
+                
+                return (
+                  <React.Fragment key={index}>
+                    {/* Bar */}
+                    <Rect
+                      x={x}
+                      y={barChartHeight - paddingBottom - barHeight}
+                      width={barWidth}
+                      height={barHeight}
+                      fill="#93C757"
+                      rx={4}
+                      ry={4}
+                    />
+                    
+                    {/* Par label */}
+                    <SvgText
+                      x={x + barWidth / 2}
+                      y={barChartHeight - paddingBottom + 20}
+                      fill="#FFFFFF"
+                      textAnchor="middle"
+                      fontSize="12"
+                    >
+                      Par {item.par}
+                    </SvgText>
+                    
+                    {/* Count of holes label */}
+                    <SvgText
+                      x={x + barWidth / 2}
+                      y={barChartHeight - paddingBottom + 35}
+                      fill="#B0B0B0"
+                      textAnchor="middle"
+                      fontSize="10"
+                    >
+                      ({item.count} holes)
+                    </SvgText>
+                    
+                    {/* Score value on top of bar */}
+                    <SvgText
+                      x={x + barWidth / 2}
+                      y={barChartHeight - paddingBottom - barHeight - 8}
+                      fill="#FFFFFF"
+                      textAnchor="middle"
+                      fontSize="12"
+                      fontWeight="bold"
+                    >
+                      {item.averageScore}
+                    </SvgText>
+                    
+                    {/* Differential below score */}
+                    <SvgText
+                      x={x + barWidth / 2}
+                      y={barChartHeight - paddingBottom - barHeight + 8}
+                      fill="#B0B0B0"
+                      textAnchor="middle"
+                      fontSize="10"
+                    >
+                      {item.differential > 0 ? `+${item.differential}` : item.differential}
+                    </SvgText>
+                  </React.Fragment>
+                );
+              })}
+            </Svg>
+          </View>
+        </View>
       </View>
     );
   };
@@ -622,7 +836,7 @@ export default function StatsScreen() {
             { opacity: secondTitleOpacity },
             styles.absoluteTitle
           ]}>
-            Future Chart
+            Average Score by Par
           </Animated.Text>
         </View>
         
@@ -893,5 +1107,18 @@ const styles = StyleSheet.create({
   absoluteTitle: {
     position: 'absolute',
     left: 0,
+  },
+  chartContainer: {
+    flex: 1,
+    paddingTop: 10,
+  },
+  chartExplanation: {
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  chartExplanationText: {
+    color: '#B0B0B0',
+    fontSize: 12,
+    textAlign: 'center',
   },
 }); 
