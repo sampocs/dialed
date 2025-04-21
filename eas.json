@@ -17,8 +17,7 @@
     },
     "production": {
       "distribution": "store",
-      "autoIncrement": true,
-      "checkFilenameCase": false
+      "autoIncrement": true
     }
   },
   "submit": {

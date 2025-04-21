@@ -124,9 +124,6 @@ These commands can help troubleshoot various development scenarios:
 - Increment the version number and app.json, then:
 
 ```bash
-# Regenerate native code to have updated version
-npm run prebuild:ios
-
 # Create a new production build for iOS
 npm run build:ios
 
@@ -134,8 +131,7 @@ npm run build:ios
 npm run submit:ios
 
 # Or using makefiles commands
-make version-bump
-make build-and-deploy
+make bump-and-build
 ```
 
 ## License
