@@ -9,11 +9,8 @@ interface ScorecardProps {
 }
 
 const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true, showScores = true }) => {
-  console.log('Course data received in Scorecard:', course);
-  
   // Safety check for course data
   if (!course || !course.holes || !Array.isArray(course.holes)) {
-    console.error('Invalid course data:', course);
     return (
       <View style={styles.container}>
         <Text style={styles.errorText}>Unable to display scorecard</Text>

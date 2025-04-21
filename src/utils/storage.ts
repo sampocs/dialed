@@ -15,7 +15,6 @@ export async function getPlayer(): Promise<Player | null> {
     const playerJson = await AsyncStorage.getItem(STORAGE_KEYS.PLAYER);
     return playerJson ? JSON.parse(playerJson) : null;
   } catch (error) {
-    console.error("Error getting player:", error);
     return null;
   }
 }
@@ -25,7 +24,6 @@ export async function savePlayer(player: Player): Promise<boolean> {
     await AsyncStorage.setItem(STORAGE_KEYS.PLAYER, JSON.stringify(player));
     return true;
   } catch (error) {
-    console.error("Error saving player:", error);
     return false;
   }
 }
@@ -35,7 +33,6 @@ export async function getRounds(): Promise<Round[]> {
     const roundsJson = await AsyncStorage.getItem(STORAGE_KEYS.ROUNDS);
     return roundsJson ? JSON.parse(roundsJson) : [];
   } catch (error) {
-    console.error("Error getting rounds:", error);
     return [];
   }
 }
@@ -45,7 +42,6 @@ export async function saveRounds(rounds: Round[]): Promise<boolean> {
     await AsyncStorage.setItem(STORAGE_KEYS.ROUNDS, JSON.stringify(rounds));
     return true;
   } catch (error) {
-    console.error("Error saving rounds:", error);
     return false;
   }
 }
@@ -55,7 +51,6 @@ export async function getCurrentRound(): Promise<Round | null> {
     const roundJson = await AsyncStorage.getItem(STORAGE_KEYS.CURRENT_ROUND);
     return roundJson ? JSON.parse(roundJson) : null;
   } catch (error) {
-    console.error("Error getting current round:", error);
     return null;
   }
 }
@@ -72,7 +67,6 @@ export async function saveCurrentRound(round: Round | null): Promise<boolean> {
     }
     return true;
   } catch (error) {
-    console.error("Error saving current round:", error);
     return false;
   }
 }
@@ -157,7 +151,6 @@ export async function clearAllData(): Promise<boolean> {
     ]);
     return true;
   } catch (error) {
-    console.error("Error clearing data:", error);
     return false;
   }
 }
