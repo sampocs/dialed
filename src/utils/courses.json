@@ -4,37 +4,37 @@
       {
         "number": 1,
         "par": 3,
-        "distance": 40
+        "distance": 30
       },
       {
         "number": 2,
-        "par": 3,
-        "distance": 20
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 3,
         "par": 3,
-        "distance": 40
+        "distance": 25
       },
       {
         "number": 4,
-        "par": 3,
-        "distance": 30
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 5,
         "par": 3,
-        "distance": 40
+        "distance": 20
       },
       {
         "number": 6,
         "par": 3,
-        "distance": 30
+        "distance": 20
       },
       {
         "number": 7,
-        "par": 2,
-        "distance": 15
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 8,
@@ -43,38 +43,38 @@
       },
       {
         "number": 9,
-        "par": 2,
-        "distance": 15
+        "par": 3,
+        "distance": 20
       },
       {
         "number": 10,
-        "par": 3,
-        "distance": 20
+        "par": 2,
+        "distance": 10
       },
       {
         "number": 11,
         "par": 3,
-        "distance": 30
+        "distance": 35
       },
       {
         "number": 12,
         "par": 2,
-        "distance": 15
+        "distance": 10
       },
       {
         "number": 13,
-        "par": 3,
-        "distance": 20
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 14,
         "par": 3,
-        "distance": 40
+        "distance": 25
       },
       {
         "number": 15,
         "par": 3,
-        "distance": 40
+        "distance": 30
       },
       {
         "number": 16,
@@ -84,20 +84,20 @@
       {
         "number": 17,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 18,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 30
       }
     ],
-    "totalPar": 50,
-    "totalDistance": 475,
-    "frontNinePar": 25,
-    "frontNineDistance": 260,
-    "backNinePar": 25,
-    "backNineDistance": 215,
+    "totalPar": 52,
+    "totalDistance": 450,
+    "frontNinePar": 26,
+    "frontNineDistance": 215,
+    "backNinePar": 26,
+    "backNineDistance": 235,
     "courseMode": "Outdoor",
     "holeCount": 18
   },
@@ -110,18 +110,18 @@
       },
       {
         "number": 2,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 35
       },
       {
         "number": 3,
-        "par": 3,
-        "distance": 40
+        "par": 2,
+        "distance": 10
       },
       {
         "number": 4,
         "par": 2,
-        "distance": 10
+        "distance": 15
       },
       {
         "number": 5,
@@ -131,75 +131,75 @@
       {
         "number": 6,
         "par": 3,
-        "distance": 40
+        "distance": 35
       },
       {
         "number": 7,
         "par": 3,
-        "distance": 20
+        "distance": 25
       },
       {
         "number": 8,
         "par": 3,
-        "distance": 30
+        "distance": 35
       },
       {
         "number": 9,
-        "par": 3,
-        "distance": 30
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 10,
-        "par": 3,
-        "distance": 20
+        "par": 2,
+        "distance": 10
       },
       {
         "number": 11,
-        "par": 3,
-        "distance": 20
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 12,
         "par": 3,
-        "distance": 40
-      },
-      {
-        "number": 13,
-        "par": 3,
         "distance": 30
       },
       {
+        "number": 13,
+        "par": 4,
+        "distance": 40
+      },
+      {
         "number": 14,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 20
       },
       {
         "number": 15,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 16,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 17,
         "par": 3,
-        "distance": 20
+        "distance": 25
       },
       {
         "number": 18,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 20
       }
     ],
-    "totalPar": 50,
-    "totalDistance": 430,
-    "frontNinePar": 25,
-    "frontNineDistance": 240,
-    "backNinePar": 25,
-    "backNineDistance": 190,
+    "totalPar": 52,
+    "totalDistance": 485,
+    "frontNinePar": 26,
+    "frontNineDistance": 255,
+    "backNinePar": 26,
+    "backNineDistance": 230,
     "courseMode": "Outdoor",
     "holeCount": 18
   },
@@ -207,18 +207,18 @@
     "holes": [
       {
         "number": 1,
-        "par": 3,
-        "distance": 40
+        "par": 2,
+        "distance": 10
       },
       {
         "number": 2,
         "par": 3,
-        "distance": 40
+        "distance": 20
       },
       {
         "number": 3,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 4,
@@ -227,23 +227,23 @@
       },
       {
         "number": 5,
-        "par": 2,
-        "distance": 10
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 6,
         "par": 3,
-        "distance": 30
+        "distance": 25
       },
       {
         "number": 7,
         "par": 2,
-        "distance": 15
+        "distance": 10
       },
       {
         "number": 8,
         "par": 3,
-        "distance": 30
+        "distance": 25
       },
       {
         "number": 9,
@@ -252,8 +252,8 @@
       },
       {
         "number": 10,
-        "par": 3,
-        "distance": 40
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 11,
@@ -262,46 +262,46 @@
       },
       {
         "number": 12,
-        "par": 3,
-        "distance": 20
+        "par": 2,
+        "distance": 10
       },
       {
         "number": 13,
         "par": 3,
-        "distance": 30
+        "distance": 25
       },
       {
         "number": 14,
         "par": 3,
-        "distance": 30
+        "distance": 35
       },
       {
         "number": 15,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 20
       },
       {
         "number": 16,
-        "par": 3,
-        "distance": 30
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 17,
         "par": 3,
-        "distance": 40
+        "distance": 20
       },
       {
         "number": 18,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 30
       }
     ],
-    "totalPar": 50,
-    "totalDistance": 485,
-    "frontNinePar": 25,
-    "frontNineDistance": 245,
-    "backNinePar": 25,
-    "backNineDistance": 240,
+    "totalPar": 52,
+    "totalDistance": 450,
+    "frontNinePar": 26,
+    "frontNineDistance": 225,
+    "backNinePar": 26,
+    "backNineDistance": 225,
     "courseMode": "Outdoor",
     "holeCount": 18
   },
@@ -310,12 +310,12 @@
       {
         "number": 1,
         "par": 3,
-        "distance": 40
+        "distance": 20
       },
       {
         "number": 2,
-        "par": 2,
-        "distance": 15
+        "par": 3,
+        "distance": 25
       },
       {
         "number": 3,
@@ -325,57 +325,57 @@
       {
         "number": 4,
         "par": 3,
-        "distance": 30
+        "distance": 25
       },
       {
         "number": 5,
+        "par": 3,
+        "distance": 25
+      },
+      {
+        "number": 6,
         "par": 2,
         "distance": 15
       },
       {
-        "number": 6,
-        "par": 3,
-        "distance": 40
-      },
-      {
         "number": 7,
-        "par": 3,
-        "distance": 20
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 8,
-        "par": 3,
-        "distance": 20
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 9,
         "par": 3,
-        "distance": 40
+        "distance": 30
       },
       {
         "number": 10,
         "par": 3,
-        "distance": 40
+        "distance": 35
       },
       {
         "number": 11,
-        "par": 3,
-        "distance": 30
-      },
-      {
-        "number": 12,
-        "par": 3,
-        "distance": 40
-      },
-      {
-        "number": 13,
         "par": 2,
         "distance": 15
       },
       {
+        "number": 12,
+        "par": 4,
+        "distance": 40
+      },
+      {
+        "number": 13,
+        "par": 3,
+        "distance": 25
+      },
+      {
         "number": 14,
         "par": 3,
-        "distance": 40
+        "distance": 35
       },
       {
         "number": 15,
@@ -385,25 +385,25 @@
       {
         "number": 16,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 17,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 20
       },
       {
         "number": 18,
-        "par": 3,
-        "distance": 40
+        "par": 2,
+        "distance": 10
       }
     ],
-    "totalPar": 50,
-    "totalDistance": 495,
-    "frontNinePar": 25,
-    "frontNineDistance": 240,
-    "backNinePar": 25,
-    "backNineDistance": 255,
+    "totalPar": 52,
+    "totalDistance": 450,
+    "frontNinePar": 26,
+    "frontNineDistance": 215,
+    "backNinePar": 26,
+    "backNineDistance": 235,
     "courseMode": "Outdoor",
     "holeCount": 18
   },
@@ -412,67 +412,67 @@
       {
         "number": 1,
         "par": 3,
-        "distance": 40
+        "distance": 30
       },
       {
         "number": 2,
         "par": 3,
-        "distance": 30
+        "distance": 35
       },
       {
         "number": 3,
-        "par": 2,
-        "distance": 15
+        "par": 3,
+        "distance": 35
       },
       {
         "number": 4,
-        "par": 3,
-        "distance": 30
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 5,
-        "par": 2,
-        "distance": 15
+        "par": 3,
+        "distance": 25
       },
       {
         "number": 6,
-        "par": 3,
-        "distance": 40
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 7,
         "par": 3,
-        "distance": 40
+        "distance": 25
       },
       {
         "number": 8,
         "par": 3,
-        "distance": 40
+        "distance": 20
       },
       {
         "number": 9,
-        "par": 3,
-        "distance": 30
+        "par": 2,
+        "distance": 10
       },
       {
         "number": 10,
         "par": 3,
-        "distance": 20
+        "distance": 30
       },
       {
         "number": 11,
         "par": 3,
-        "distance": 40
+        "distance": 30
       },
       {
         "number": 12,
         "par": 3,
-        "distance": 30
+        "distance": 20
       },
       {
         "number": 13,
-        "par": 3,
-        "distance": 30
+        "par": 2,
+        "distance": 10
       },
       {
         "number": 14,
@@ -481,31 +481,31 @@
       },
       {
         "number": 15,
-        "par": 3,
+        "par": 4,
         "distance": 40
       },
       {
         "number": 16,
-        "par": 3,
-        "distance": 20
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 17,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 30
       },
       {
         "number": 18,
-        "par": 2,
-        "distance": 15
+        "par": 3,
+        "distance": 35
       }
     ],
-    "totalPar": 50,
-    "totalDistance": 515,
-    "frontNinePar": 25,
-    "frontNineDistance": 280,
-    "backNinePar": 25,
-    "backNineDistance": 235,
+    "totalPar": 52,
+    "totalDistance": 475,
+    "frontNinePar": 26,
+    "frontNineDistance": 235,
+    "backNinePar": 26,
+    "backNineDistance": 240,
     "courseMode": "Outdoor",
     "holeCount": 18
   },
@@ -513,58 +513,58 @@
     "holes": [
       {
         "number": 1,
-        "par": 3,
-        "distance": 40
-      },
-      {
-        "number": 2,
-        "par": 2,
-        "distance": 10
-      },
-      {
-        "number": 3,
-        "par": 3,
-        "distance": 20
-      },
-      {
-        "number": 4,
-        "par": 3,
-        "distance": 20
-      },
-      {
-        "number": 5,
         "par": 2,
         "distance": 15
       },
       {
-        "number": 6,
+        "number": 2,
         "par": 3,
-        "distance": 20
+        "distance": 25
+      },
+      {
+        "number": 3,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 4,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 5,
+        "par": 3,
+        "distance": 30
+      },
+      {
+        "number": 6,
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 7,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 8,
         "par": 3,
-        "distance": 20
+        "distance": 25
       },
       {
         "number": 9,
         "par": 3,
-        "distance": 30
+        "distance": 25
       },
       {
         "number": 10,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 30
       },
       {
         "number": 11,
-        "par": 3,
-        "distance": 30
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 12,
@@ -573,41 +573,41 @@
       },
       {
         "number": 13,
-        "par": 3,
-        "distance": 40
+        "par": 2,
+        "distance": 10
       },
       {
         "number": 14,
-        "par": 3,
-        "distance": 20
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 15,
-        "par": 2,
-        "distance": 15
+        "par": 3,
+        "distance": 35
       },
       {
         "number": 16,
         "par": 3,
-        "distance": 30
+        "distance": 25
       },
       {
         "number": 17,
         "par": 3,
-        "distance": 40
+        "distance": 25
       },
       {
         "number": 18,
         "par": 3,
-        "distance": 30
+        "distance": 20
       }
     ],
-    "totalPar": 50,
-    "totalDistance": 440,
-    "frontNinePar": 25,
-    "frontNineDistance": 195,
-    "backNinePar": 25,
-    "backNineDistance": 245,
+    "totalPar": 52,
+    "totalDistance": 470,
+    "frontNinePar": 26,
+    "frontNineDistance": 240,
+    "backNinePar": 26,
+    "backNineDistance": 230,
     "courseMode": "Outdoor",
     "holeCount": 18
   },
@@ -615,48 +615,48 @@
     "holes": [
       {
         "number": 1,
-        "par": 3,
-        "distance": 20
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 2,
-        "par": 2,
-        "distance": 15
+        "par": 3,
+        "distance": 30
       },
       {
         "number": 3,
         "par": 3,
-        "distance": 40
-      },
-      {
-        "number": 4,
-        "par": 3,
         "distance": 30
       },
       {
-        "number": 5,
+        "number": 4,
         "par": 2,
         "distance": 10
       },
       {
-        "number": 6,
+        "number": 5,
         "par": 3,
         "distance": 30
       },
       {
+        "number": 6,
+        "par": 2,
+        "distance": 10
+      },
+      {
         "number": 7,
         "par": 3,
-        "distance": 40
+        "distance": 35
       },
       {
         "number": 8,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 9,
         "par": 3,
-        "distance": 20
+        "distance": 25
       },
       {
         "number": 10,
@@ -665,51 +665,51 @@
       },
       {
         "number": 11,
-        "par": 3,
-        "distance": 40
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 12,
         "par": 3,
-        "distance": 20
+        "distance": 30
       },
       {
         "number": 13,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 25
       },
       {
         "number": 14,
         "par": 3,
-        "distance": 40
+        "distance": 35
       },
       {
         "number": 15,
-        "par": 3,
+        "par": 4,
         "distance": 40
       },
       {
         "number": 16,
-        "par": 3,
-        "distance": 40
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 17,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 35
       },
       {
         "number": 18,
         "par": 3,
-        "distance": 20
+        "distance": 30
       }
     ],
-    "totalPar": 50,
-    "totalDistance": 465,
-    "frontNinePar": 25,
-    "frontNineDistance": 225,
-    "backNinePar": 25,
-    "backNineDistance": 240,
+    "totalPar": 52,
+    "totalDistance": 490,
+    "frontNinePar": 26,
+    "frontNineDistance": 245,
+    "backNinePar": 26,
+    "backNineDistance": 245,
     "courseMode": "Outdoor",
     "holeCount": 18
   },
@@ -718,12 +718,12 @@
       {
         "number": 1,
         "par": 3,
-        "distance": 30
+        "distance": 35
       },
       {
         "number": 2,
-        "par": 3,
-        "distance": 30
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 3,
@@ -733,85 +733,85 @@
       {
         "number": 4,
         "par": 3,
-        "distance": 30
+        "distance": 35
       },
       {
         "number": 5,
-        "par": 3,
-        "distance": 20
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 6,
         "par": 2,
-        "distance": 10
+        "distance": 15
       },
       {
         "number": 7,
         "par": 3,
-        "distance": 40
+        "distance": 20
       },
       {
         "number": 8,
-        "par": 2,
-        "distance": 15
+        "par": 3,
+        "distance": 20
       },
       {
         "number": 9,
         "par": 3,
-        "distance": 20
+        "distance": 25
       },
       {
         "number": 10,
         "par": 3,
-        "distance": 40
+        "distance": 25
       },
       {
         "number": 11,
-        "par": 3,
-        "distance": 20
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 12,
-        "par": 3,
-        "distance": 30
-      },
-      {
-        "number": 13,
         "par": 2,
         "distance": 10
       },
       {
-        "number": 14,
-        "par": 3,
-        "distance": 40
-      },
-      {
-        "number": 15,
+        "number": 13,
         "par": 3,
         "distance": 20
       },
       {
-        "number": 16,
+        "number": 14,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 15,
         "par": 2,
         "distance": 15
       },
       {
-        "number": 17,
+        "number": 16,
         "par": 3,
         "distance": 20
       },
       {
+        "number": 17,
+        "par": 3,
+        "distance": 30
+      },
+      {
         "number": 18,
         "par": 3,
-        "distance": 20
+        "distance": 25
       }
     ],
-    "totalPar": 50,
+    "totalPar": 52,
     "totalDistance": 440,
-    "frontNinePar": 25,
-    "frontNineDistance": 225,
-    "backNinePar": 25,
-    "backNineDistance": 215,
+    "frontNinePar": 26,
+    "frontNineDistance": 235,
+    "backNinePar": 26,
+    "backNineDistance": 205,
     "courseMode": "Outdoor",
     "holeCount": 18
   },
@@ -820,12 +820,12 @@
       {
         "number": 1,
         "par": 3,
-        "distance": 30
+        "distance": 20
       },
       {
         "number": 2,
-        "par": 2,
-        "distance": 10
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 3,
@@ -835,62 +835,62 @@
       {
         "number": 4,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 5,
         "par": 3,
-        "distance": 30
+        "distance": 20
       },
       {
         "number": 6,
-        "par": 3,
-        "distance": 30
+        "par": 2,
+        "distance": 10
       },
       {
         "number": 7,
         "par": 3,
-        "distance": 20
+        "distance": 30
       },
       {
         "number": 8,
         "par": 3,
-        "distance": 40
+        "distance": 30
       },
       {
         "number": 9,
         "par": 3,
-        "distance": 20
+        "distance": 25
       },
       {
         "number": 10,
         "par": 3,
-        "distance": 40
+        "distance": 35
       },
       {
         "number": 11,
         "par": 3,
-        "distance": 40
+        "distance": 30
       },
       {
         "number": 12,
-        "par": 2,
-        "distance": 15
+        "par": 3,
+        "distance": 35
       },
       {
         "number": 13,
         "par": 3,
-        "distance": 40
+        "distance": 35
       },
       {
         "number": 14,
         "par": 3,
-        "distance": 40
+        "distance": 20
       },
       {
         "number": 15,
         "par": 3,
-        "distance": 20
+        "distance": 25
       },
       {
         "number": 16,
@@ -899,21 +899,21 @@
       },
       {
         "number": 17,
-        "par": 3,
-        "distance": 20
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 18,
-        "par": 3,
-        "distance": 40
+        "par": 2,
+        "distance": 10
       }
     ],
-    "totalPar": 50,
-    "totalDistance": 475,
-    "frontNinePar": 25,
-    "frontNineDistance": 210,
-    "backNinePar": 25,
-    "backNineDistance": 265,
+    "totalPar": 52,
+    "totalDistance": 460,
+    "frontNinePar": 26,
+    "frontNineDistance": 220,
+    "backNinePar": 26,
+    "backNineDistance": 240,
     "courseMode": "Outdoor",
     "holeCount": 18
   },
@@ -921,28 +921,28 @@
     "holes": [
       {
         "number": 1,
-        "par": 2,
-        "distance": 10
+        "par": 3,
+        "distance": 35
       },
       {
         "number": 2,
-        "par": 3,
-        "distance": 30
+        "par": 2,
+        "distance": 15
       },
       {
         "number": 3,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 4,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 5,
         "par": 3,
-        "distance": 30
+        "distance": 25
       },
       {
         "number": 6,
@@ -951,58 +951,58 @@
       },
       {
         "number": 7,
-        "par": 3,
-        "distance": 30
+        "par": 4,
+        "distance": 40
       },
       {
         "number": 8,
         "par": 2,
-        "distance": 10
+        "distance": 15
       },
       {
         "number": 9,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 10,
         "par": 3,
-        "distance": 20
+        "distance": 35
       },
       {
         "number": 11,
-        "par": 3,
-        "distance": 40
-      },
-      {
-        "number": 12,
-        "par": 3,
-        "distance": 40
-      },
-      {
-        "number": 13,
-        "par": 2,
-        "distance": 10
-      },
-      {
-        "number": 14,
-        "par": 3,
-        "distance": 40
-      },
-      {
-        "number": 15,
-        "par": 3,
-        "distance": 20
-      },
-      {
-        "number": 16,
         "par": 2,
         "distance": 15
       },
       {
-        "number": 17,
+        "number": 12,
+        "par": 4,
+        "distance": 40
+      },
+      {
+        "number": 13,
         "par": 3,
         "distance": 30
+      },
+      {
+        "number": 14,
+        "par": 2,
+        "distance": 15
+      },
+      {
+        "number": 15,
+        "par": 3,
+        "distance": 35
+      },
+      {
+        "number": 16,
+        "par": 3,
+        "distance": 20
+      },
+      {
+        "number": 17,
+        "par": 3,
+        "distance": 20
       },
       {
         "number": 18,
@@ -1010,12 +1010,12 @@
         "distance": 20
       }
     ],
-    "totalPar": 50,
-    "totalDistance": 435,
-    "frontNinePar": 25,
-    "frontNineDistance": 200,
-    "backNinePar": 25,
-    "backNineDistance": 235,
+    "totalPar": 52,
+    "totalDistance": 495,
+    "frontNinePar": 26,
+    "frontNineDistance": 265,
+    "backNinePar": 26,
+    "backNineDistance": 230,
     "courseMode": "Outdoor",
     "holeCount": 18
   },
@@ -1024,47 +1024,47 @@
       {
         "number": 1,
         "par": 2,
-        "distance": 5
+        "distance": 4.5
       },
       {
         "number": 2,
-        "par": 2,
-        "distance": 6.5
+        "par": 1,
+        "distance": 2.5
       },
       {
         "number": 3,
         "par": 2,
-        "distance": 5
+        "distance": 7.5
       },
       {
         "number": 4,
-        "par": 3,
-        "distance": 10
+        "par": 2,
+        "distance": 6.5
       },
       {
         "number": 5,
-        "par": 1,
-        "distance": 3.5
-      },
-      {
-        "number": 6,
         "par": 3,
         "distance": 10
       },
       {
-        "number": 7,
+        "number": 6,
         "par": 2,
         "distance": 6
       },
       {
+        "number": 7,
+        "par": 1,
+        "distance": 3
+      },
+      {
         "number": 8,
-        "par": 2,
-        "distance": 4.5
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 9,
-        "par": 1,
-        "distance": 3.5
+        "par": 2,
+        "distance": 5
       },
       {
         "number": 10,
@@ -1073,51 +1073,51 @@
       },
       {
         "number": 11,
-        "par": 3,
-        "distance": 10
+        "par": 2,
+        "distance": 6.5
       },
       {
         "number": 12,
-        "par": 2,
-        "distance": 6.5
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 13,
         "par": 2,
-        "distance": 4.5
+        "distance": 6
       },
       {
         "number": 14,
         "par": 1,
-        "distance": 3.5
+        "distance": 2.5
       },
       {
         "number": 15,
-        "par": 1,
-        "distance": 4
+        "par": 2,
+        "distance": 5.5
       },
       {
         "number": 16,
-        "par": 2,
-        "distance": 4.5
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 17,
         "par": 2,
-        "distance": 6.5
+        "distance": 5.5
       },
       {
         "number": 18,
-        "par": 3,
-        "distance": 10
+        "par": 1,
+        "distance": 2.5
       }
     ],
     "totalPar": 36,
     "totalDistance": 109,
     "frontNinePar": 18,
-    "frontNineDistance": 54,
+    "frontNineDistance": 55,
     "backNinePar": 18,
-    "backNineDistance": 55,
+    "backNineDistance": 54,
     "courseMode": "Indoor",
     "holeCount": 18
   },
@@ -1126,17 +1126,17 @@
       {
         "number": 1,
         "par": 2,
-        "distance": 6.5
+        "distance": 7.5
       },
       {
         "number": 2,
-        "par": 1,
-        "distance": 4
+        "par": 2,
+        "distance": 4.5
       },
       {
         "number": 3,
-        "par": 3,
-        "distance": 10
+        "par": 1,
+        "distance": 3.5
       },
       {
         "number": 4,
@@ -1145,38 +1145,140 @@
       },
       {
         "number": 5,
-        "par": 2,
-        "distance": 5
+        "par": 1,
+        "distance": 3
       },
       {
         "number": 6,
         "par": 2,
-        "distance": 4.5
+        "distance": 5.5
       },
       {
         "number": 7,
-        "par": 2,
-        "distance": 7.5
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 8,
         "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 9,
+        "par": 2,
         "distance": 4.5
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 11,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 12,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 14,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 15,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 16,
+        "par": 1,
+        "distance": 3.5
+      },
+      {
+        "number": 17,
+        "par": 2,
+        "distance": 7
+      },
+      {
+        "number": 18,
+        "par": 2,
+        "distance": 5.5
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 116.5,
+    "frontNinePar": 18,
+    "frontNineDistance": 56,
+    "backNinePar": 18,
+    "backNineDistance": 60.5,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  },
+  "Pinehurst No. 2": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 2,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 3,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 4,
+        "par": 2,
+        "distance": 6.5
+      },
+      {
+        "number": 5,
+        "par": 1,
+        "distance": 4
+      },
+      {
+        "number": 6,
+        "par": 2,
+        "distance": 6
+      },
+      {
+        "number": 7,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 5
       },
       {
         "number": 9,
         "par": 1,
-        "distance": 2.5
+        "distance": 3
       },
       {
         "number": 10,
-        "par": 1,
-        "distance": 2.5
+        "par": 2,
+        "distance": 7.5
       },
       {
         "number": 11,
-        "par": 2,
-        "distance": 5.5
+        "par": 1,
+        "distance": 3.5
       },
       {
         "number": 12,
@@ -1185,141 +1287,39 @@
       },
       {
         "number": 13,
-        "par": 2,
-        "distance": 6
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 14,
-        "par": 3,
-        "distance": 10
+        "par": 2,
+        "distance": 6.5
       },
       {
         "number": 15,
         "par": 2,
-        "distance": 7.5
+        "distance": 5
       },
       {
         "number": 16,
         "par": 2,
-        "distance": 7.5
+        "distance": 5
       },
       {
         "number": 17,
-        "par": 2,
-        "distance": 5
-      },
-      {
-        "number": 18,
-        "par": 3,
-        "distance": 10
-      }
-    ],
-    "totalPar": 36,
-    "totalDistance": 112,
-    "frontNinePar": 18,
-    "frontNineDistance": 54.5,
-    "backNinePar": 18,
-    "backNineDistance": 57.5,
-    "courseMode": "Indoor",
-    "holeCount": 18
-  },
-  "Pinehurst No. 2": {
-    "holes": [
-      {
-        "number": 1,
-        "par": 2,
-        "distance": 7.5
-      },
-      {
-        "number": 2,
-        "par": 1,
-        "distance": 3
-      },
-      {
-        "number": 3,
-        "par": 2,
-        "distance": 6.5
-      },
-      {
-        "number": 4,
-        "par": 3,
-        "distance": 10
-      },
-      {
-        "number": 5,
-        "par": 2,
-        "distance": 5
-      },
-      {
-        "number": 6,
-        "par": 3,
-        "distance": 10
-      },
-      {
-        "number": 7,
-        "par": 1,
-        "distance": 3
-      },
-      {
-        "number": 8,
-        "par": 2,
-        "distance": 6.5
-      },
-      {
-        "number": 9,
-        "par": 2,
-        "distance": 6
-      },
-      {
-        "number": 10,
-        "par": 3,
-        "distance": 10
-      },
-      {
-        "number": 11,
-        "par": 1,
-        "distance": 4
-      },
-      {
-        "number": 12,
-        "par": 1,
-        "distance": 4
-      },
-      {
-        "number": 13,
-        "par": 2,
-        "distance": 4.5
-      },
-      {
-        "number": 14,
         "par": 2,
         "distance": 5.5
       },
       {
-        "number": 15,
-        "par": 2,
-        "distance": 7.5
-      },
-      {
-        "number": 16,
-        "par": 2,
-        "distance": 5
-      },
-      {
-        "number": 17,
+        "number": 18,
         "par": 3,
         "distance": 10
-      },
-      {
-        "number": 18,
-        "par": 2,
-        "distance": 6
       }
     ],
     "totalPar": 36,
-    "totalDistance": 114,
+    "totalDistance": 111,
     "frontNinePar": 18,
-    "frontNineDistance": 57.5,
+    "frontNineDistance": 54.5,
     "backNinePar": 18,
     "backNineDistance": 56.5,
     "courseMode": "Indoor",
@@ -1329,28 +1329,28 @@
     "holes": [
       {
         "number": 1,
-        "par": 1,
-        "distance": 3.5
-      },
-      {
-        "number": 2,
         "par": 3,
         "distance": 10
       },
       {
-        "number": 3,
+        "number": 2,
         "par": 1,
         "distance": 3
       },
       {
+        "number": 3,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
         "number": 4,
         "par": 2,
-        "distance": 6
+        "distance": 4.5
       },
       {
         "number": 5,
-        "par": 2,
-        "distance": 4.5
+        "par": 1,
+        "distance": 3
       },
       {
         "number": 6,
@@ -1370,17 +1370,17 @@
       {
         "number": 9,
         "par": 2,
-        "distance": 5.5
+        "distance": 7
       },
       {
         "number": 10,
-        "par": 1,
-        "distance": 4
+        "par": 2,
+        "distance": 6
       },
       {
         "number": 11,
-        "par": 3,
-        "distance": 10
+        "par": 2,
+        "distance": 6.5
       },
       {
         "number": 12,
@@ -1389,41 +1389,41 @@
       },
       {
         "number": 13,
-        "par": 2,
-        "distance": 6
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 14,
         "par": 2,
-        "distance": 7
+        "distance": 6
       },
       {
         "number": 15,
         "par": 1,
-        "distance": 4
+        "distance": 3.5
       },
       {
         "number": 16,
-        "par": 2,
-        "distance": 6
+        "par": 1,
+        "distance": 2.5
       },
       {
         "number": 17,
         "par": 2,
-        "distance": 7.5
+        "distance": 5
       },
       {
         "number": 18,
         "par": 2,
-        "distance": 6.5
+        "distance": 4.5
       }
     ],
     "totalPar": 36,
-    "totalDistance": 112.5,
+    "totalDistance": 105,
     "frontNinePar": 18,
-    "frontNineDistance": 51.5,
+    "frontNineDistance": 51,
     "backNinePar": 18,
-    "backNineDistance": 61,
+    "backNineDistance": 54,
     "courseMode": "Indoor",
     "holeCount": 18
   },
@@ -1431,115 +1431,13 @@
     "holes": [
       {
         "number": 1,
-        "par": 3,
-        "distance": 10
+        "par": 2,
+        "distance": 6
       },
       {
         "number": 2,
-        "par": 2,
-        "distance": 6
-      },
-      {
-        "number": 3,
-        "par": 2,
-        "distance": 7.5
-      },
-      {
-        "number": 4,
-        "par": 2,
-        "distance": 4.5
-      },
-      {
-        "number": 5,
-        "par": 2,
-        "distance": 6
-      },
-      {
-        "number": 6,
-        "par": 1,
-        "distance": 3
-      },
-      {
-        "number": 7,
-        "par": 1,
-        "distance": 2.5
-      },
-      {
-        "number": 8,
         "par": 3,
         "distance": 10
-      },
-      {
-        "number": 9,
-        "par": 2,
-        "distance": 5
-      },
-      {
-        "number": 10,
-        "par": 1,
-        "distance": 3
-      },
-      {
-        "number": 11,
-        "par": 2,
-        "distance": 6
-      },
-      {
-        "number": 12,
-        "par": 3,
-        "distance": 10
-      },
-      {
-        "number": 13,
-        "par": 1,
-        "distance": 2.5
-      },
-      {
-        "number": 14,
-        "par": 3,
-        "distance": 10
-      },
-      {
-        "number": 15,
-        "par": 2,
-        "distance": 5.5
-      },
-      {
-        "number": 16,
-        "par": 2,
-        "distance": 5
-      },
-      {
-        "number": 17,
-        "par": 2,
-        "distance": 5
-      },
-      {
-        "number": 18,
-        "par": 2,
-        "distance": 5.5
-      }
-    ],
-    "totalPar": 36,
-    "totalDistance": 107,
-    "frontNinePar": 18,
-    "frontNineDistance": 54.5,
-    "backNinePar": 18,
-    "backNineDistance": 52.5,
-    "courseMode": "Indoor",
-    "holeCount": 18
-  },
-  "Bethpage Black": {
-    "holes": [
-      {
-        "number": 1,
-        "par": 1,
-        "distance": 2.5
-      },
-      {
-        "number": 2,
-        "par": 2,
-        "distance": 7.5
       },
       {
         "number": 3,
@@ -1553,43 +1451,43 @@
       },
       {
         "number": 5,
-        "par": 3,
-        "distance": 10
+        "par": 1,
+        "distance": 4
       },
       {
         "number": 6,
         "par": 2,
-        "distance": 4.5
+        "distance": 5.5
       },
       {
         "number": 7,
         "par": 2,
-        "distance": 6
+        "distance": 7
       },
       {
         "number": 8,
         "par": 2,
-        "distance": 6.5
+        "distance": 4.5
       },
       {
         "number": 9,
         "par": 1,
-        "distance": 3
+        "distance": 2.5
       },
       {
         "number": 10,
         "par": 2,
-        "distance": 7.5
+        "distance": 6.5
       },
       {
         "number": 11,
         "par": 2,
-        "distance": 5.5
+        "distance": 7
       },
       {
         "number": 12,
-        "par": 1,
-        "distance": 2.5
+        "par": 2,
+        "distance": 6
       },
       {
         "number": 13,
@@ -1599,12 +1497,12 @@
       {
         "number": 14,
         "par": 2,
-        "distance": 5
+        "distance": 4.5
       },
       {
         "number": 15,
-        "par": 2,
-        "distance": 5
+        "par": 1,
+        "distance": 2.5
       },
       {
         "number": 16,
@@ -1614,7 +1512,7 @@
       {
         "number": 17,
         "par": 2,
-        "distance": 6
+        "distance": 5.5
       },
       {
         "number": 18,
@@ -1625,9 +1523,111 @@
     "totalPar": 36,
     "totalDistance": 112,
     "frontNinePar": 18,
-    "frontNineDistance": 57,
+    "frontNineDistance": 56.5,
     "backNinePar": 18,
-    "backNineDistance": 55,
+    "backNineDistance": 55.5,
+    "courseMode": "Indoor",
+    "holeCount": 18
+  },
+  "Bethpage Black": {
+    "holes": [
+      {
+        "number": 1,
+        "par": 2,
+        "distance": 7
+      },
+      {
+        "number": 2,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 3,
+        "par": 2,
+        "distance": 7
+      },
+      {
+        "number": 4,
+        "par": 2,
+        "distance": 7
+      },
+      {
+        "number": 5,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 6,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 7,
+        "par": 1,
+        "distance": 4
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 9,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 10,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 11,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 12,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 13,
+        "par": 2,
+        "distance": 5
+      },
+      {
+        "number": 14,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 15,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 16,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 17,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 18,
+        "par": 2,
+        "distance": 5
+      }
+    ],
+    "totalPar": 36,
+    "totalDistance": 113,
+    "frontNinePar": 18,
+    "frontNineDistance": 60.5,
+    "backNinePar": 18,
+    "backNineDistance": 52.5,
     "courseMode": "Indoor",
     "holeCount": 18
   },
@@ -1635,101 +1635,101 @@
     "holes": [
       {
         "number": 1,
-        "par": 3,
-        "distance": 10
-      },
-      {
-        "number": 2,
-        "par": 1,
-        "distance": 3.5
-      },
-      {
-        "number": 3,
-        "par": 1,
-        "distance": 3.5
-      },
-      {
-        "number": 4,
         "par": 2,
         "distance": 5.5
       },
       {
-        "number": 5,
-        "par": 2,
-        "distance": 5
-      },
-      {
-        "number": 6,
-        "par": 2,
-        "distance": 5
-      },
-      {
-        "number": 7,
+        "number": 2,
         "par": 3,
         "distance": 10
       },
       {
-        "number": 8,
-        "par": 2,
-        "distance": 4.5
-      },
-      {
-        "number": 9,
-        "par": 2,
-        "distance": 7.5
-      },
-      {
-        "number": 10,
-        "par": 2,
-        "distance": 7.5
-      },
-      {
-        "number": 11,
-        "par": 2,
-        "distance": 6.5
-      },
-      {
-        "number": 12,
-        "par": 1,
-        "distance": 3.5
-      },
-      {
-        "number": 13,
-        "par": 1,
-        "distance": 4
-      },
-      {
-        "number": 14,
-        "par": 3,
-        "distance": 10
-      },
-      {
-        "number": 15,
-        "par": 3,
-        "distance": 10
-      },
-      {
-        "number": 16,
+        "number": 3,
         "par": 2,
         "distance": 7
       },
       {
-        "number": 17,
+        "number": 4,
         "par": 2,
         "distance": 7.5
       },
       {
-        "number": 18,
+        "number": 5,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 6,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 7,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 8,
+        "par": 2,
+        "distance": 7
+      },
+      {
+        "number": 9,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 10,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 11,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 12,
+        "par": 2,
+        "distance": 5.5
+      },
+      {
+        "number": 13,
         "par": 2,
         "distance": 6
+      },
+      {
+        "number": 14,
+        "par": 2,
+        "distance": 4.5
+      },
+      {
+        "number": 15,
+        "par": 2,
+        "distance": 7.5
+      },
+      {
+        "number": 16,
+        "par": 1,
+        "distance": 2.5
+      },
+      {
+        "number": 17,
+        "par": 1,
+        "distance": 3
+      },
+      {
+        "number": 18,
+        "par": 3,
+        "distance": 10
       }
     ],
     "totalPar": 36,
-    "totalDistance": 116.5,
+    "totalDistance": 113.5,
     "frontNinePar": 18,
-    "frontNineDistance": 54.5,
+    "frontNineDistance": 60,
     "backNinePar": 18,
-    "backNineDistance": 62,
+    "backNineDistance": 53.5,
     "courseMode": "Indoor",
     "holeCount": 18
   },
@@ -1738,100 +1738,100 @@
       {
         "number": 1,
         "par": 2,
-        "distance": 7.5
+        "distance": 6.5
       },
       {
         "number": 2,
-        "par": 1,
-        "distance": 3
-      },
-      {
-        "number": 3,
         "par": 2,
         "distance": 5.5
       },
       {
-        "number": 4,
+        "number": 3,
         "par": 1,
-        "distance": 3.5
+        "distance": 4
+      },
+      {
+        "number": 4,
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 5,
-        "par": 3,
-        "distance": 10
+        "par": 2,
+        "distance": 7
       },
       {
         "number": 6,
-        "par": 2,
-        "distance": 5
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 7,
-        "par": 2,
-        "distance": 6.5
+        "par": 1,
+        "distance": 3
       },
       {
         "number": 8,
-        "par": 3,
-        "distance": 10
+        "par": 2,
+        "distance": 7
       },
       {
         "number": 9,
         "par": 2,
-        "distance": 7.5
+        "distance": 6
       },
       {
         "number": 10,
-        "par": 3,
-        "distance": 10
+        "par": 2,
+        "distance": 7
       },
       {
         "number": 11,
         "par": 2,
-        "distance": 6.5
+        "distance": 5.5
       },
       {
         "number": 12,
-        "par": 2,
-        "distance": 4.5
+        "par": 1,
+        "distance": 4
       },
       {
         "number": 13,
         "par": 2,
-        "distance": 4.5
+        "distance": 7.5
       },
       {
         "number": 14,
-        "par": 1,
-        "distance": 3.5
-      },
-      {
-        "number": 15,
-        "par": 2,
-        "distance": 6.5
-      },
-      {
-        "number": 16,
         "par": 2,
         "distance": 7.5
       },
       {
-        "number": 17,
+        "number": 15,
+        "par": 3,
+        "distance": 10
+      },
+      {
+        "number": 16,
         "par": 1,
         "distance": 2.5
       },
       {
-        "number": 18,
+        "number": 17,
         "par": 3,
         "distance": 10
+      },
+      {
+        "number": 18,
+        "par": 2,
+        "distance": 6.5
       }
     ],
     "totalPar": 36,
-    "totalDistance": 114,
+    "totalDistance": 119.5,
     "frontNinePar": 18,
-    "frontNineDistance": 58.5,
+    "frontNineDistance": 59,
     "backNinePar": 18,
-    "backNineDistance": 55.5,
+    "backNineDistance": 60.5,
     "courseMode": "Indoor",
     "holeCount": 18
   },
@@ -1850,12 +1850,12 @@
       {
         "number": 3,
         "par": 2,
-        "distance": 5
+        "distance": 7
       },
       {
         "number": 4,
         "par": 2,
-        "distance": 7
+        "distance": 4.5
       },
       {
         "number": 5,
@@ -1864,13 +1864,13 @@
       },
       {
         "number": 6,
-        "par": 2,
-        "distance": 5.5
+        "par": 1,
+        "distance": 4
       },
       {
         "number": 7,
         "par": 2,
-        "distance": 5
+        "distance": 6.5
       },
       {
         "number": 8,
@@ -1879,18 +1879,18 @@
       },
       {
         "number": 9,
-        "par": 1,
-        "distance": 2.5
+        "par": 2,
+        "distance": 7
       },
       {
         "number": 10,
         "par": 2,
-        "distance": 6
+        "distance": 7.5
       },
       {
         "number": 11,
-        "par": 2,
-        "distance": 7
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 12,
@@ -1900,7 +1900,7 @@
       {
         "number": 13,
         "par": 2,
-        "distance": 5.5
+        "distance": 6
       },
       {
         "number": 14,
@@ -1909,31 +1909,31 @@
       },
       {
         "number": 15,
-        "par": 1,
-        "distance": 2.5
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 16,
-        "par": 3,
-        "distance": 10
+        "par": 2,
+        "distance": 4.5
       },
       {
         "number": 17,
         "par": 2,
-        "distance": 5
+        "distance": 7
       },
       {
         "number": 18,
-        "par": 3,
-        "distance": 10
+        "par": 1,
+        "distance": 3.5
       }
     ],
     "totalPar": 36,
-    "totalDistance": 111,
+    "totalDistance": 117.5,
     "frontNinePar": 18,
-    "frontNineDistance": 56.5,
+    "frontNineDistance": 60.5,
     "backNinePar": 18,
-    "backNineDistance": 54.5,
+    "backNineDistance": 57,
     "courseMode": "Indoor",
     "holeCount": 18
   },
@@ -1941,8 +1941,8 @@
     "holes": [
       {
         "number": 1,
-        "par": 3,
-        "distance": 10
+        "par": 2,
+        "distance": 5.5
       },
       {
         "number": 2,
@@ -1956,13 +1956,13 @@
       },
       {
         "number": 4,
-        "par": 2,
-        "distance": 6
+        "par": 1,
+        "distance": 3.5
       },
       {
         "number": 5,
-        "par": 1,
-        "distance": 3.5
+        "par": 2,
+        "distance": 7.5
       },
       {
         "number": 6,
@@ -1972,47 +1972,47 @@
       {
         "number": 7,
         "par": 2,
-        "distance": 7.5
+        "distance": 4.5
       },
       {
         "number": 8,
         "par": 2,
-        "distance": 7.5
+        "distance": 7
       },
       {
         "number": 9,
-        "par": 2,
-        "distance": 6.5
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 10,
         "par": 2,
-        "distance": 7
+        "distance": 7.5
       },
       {
         "number": 11,
-        "par": 2,
-        "distance": 5.5
+        "par": 3,
+        "distance": 10
       },
       {
         "number": 12,
-        "par": 1,
-        "distance": 4
+        "par": 2,
+        "distance": 6.5
       },
       {
         "number": 13,
         "par": 2,
-        "distance": 7.5
+        "distance": 7
       },
       {
         "number": 14,
-        "par": 2,
-        "distance": 4.5
+        "par": 1,
+        "distance": 3.5
       },
       {
         "number": 15,
         "par": 2,
-        "distance": 6
+        "distance": 5.5
       },
       {
         "number": 16,
@@ -2021,8 +2021,8 @@
       },
       {
         "number": 17,
-        "par": 3,
-        "distance": 10
+        "par": 2,
+        "distance": 5.5
       },
       {
         "number": 18,
@@ -2031,11 +2031,11 @@
       }
     ],
     "totalPar": 36,
-    "totalDistance": 117,
+    "totalDistance": 115,
     "frontNinePar": 18,
-    "frontNineDistance": 59.5,
+    "frontNineDistance": 56.5,
     "backNinePar": 18,
-    "backNineDistance": 57.5,
+    "backNineDistance": 58.5,
     "courseMode": "Indoor",
     "holeCount": 18
   }
