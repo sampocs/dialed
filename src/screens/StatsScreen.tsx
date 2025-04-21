@@ -299,7 +299,7 @@ export default function StatsScreen() {
     const barChartWidth = graphWidth;
     const barChartHeight = graphHeight;
     const paddingLeft = 40;
-    const paddingBottom = 50;
+    const paddingBottom = 40;
     const paddingTop = 20;
     const paddingRight = 20;
     
@@ -412,17 +412,6 @@ export default function StatsScreen() {
                       fontSize="12"
                     >
                       Par {item.par}
-                    </SvgText>
-                    
-                    {/* Count of holes label */}
-                    <SvgText
-                      x={x + barWidth / 2}
-                      y={barChartHeight - paddingBottom + 35}
-                      fill="#B0B0B0"
-                      textAnchor="middle"
-                      fontSize="10"
-                    >
-                      ({item.count} holes)
                     </SvgText>
                     
                     {/* Score value on top of bar */}
