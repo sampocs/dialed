@@ -343,13 +343,6 @@ export default function StatsScreen() {
     
     return (
       <View style={styles.chartContainer}>
-        {/* Add explanation of the chart */}
-        <View style={styles.chartExplanation}>
-          <Text style={styles.chartExplanationText}>
-            Based on {completedRounds.length} completed {holeCountFilter}-hole {courseModeFilter.toLowerCase()} rounds
-          </Text>
-        </View>
-        
         <View style={styles.graphContainer}>
           <View style={styles.yAxis}>
             {yAxisLabels.map((label, index) => (
@@ -836,7 +829,7 @@ export default function StatsScreen() {
             { opacity: secondTitleOpacity },
             styles.absoluteTitle
           ]}>
-            Average Score by Par
+            Avg. Score by Par
           </Animated.Text>
         </View>
         
@@ -1111,14 +1104,5 @@ const styles = StyleSheet.create({
   chartContainer: {
     flex: 1,
     paddingTop: 10,
-  },
-  chartExplanation: {
-    paddingHorizontal: 20,
-    marginBottom: 10,
-  },
-  chartExplanationText: {
-    color: '#B0B0B0',
-    fontSize: 12,
-    textAlign: 'center',
   },
 }); 
