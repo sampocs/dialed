@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Course, Hole } from '../types';
+import { formatDifferential, calculateCompletedHolesScore, calculateCompletedHolesPar } from '../utils/scoreUtils';
 
 interface ScorecardProps {
   course: Course;
@@ -8,6 +9,10 @@ interface ScorecardProps {
   showScores?: boolean;
 }
 
+/**
+ * Scorecard component for displaying hole information and scores
+ * Shows par, distance, and player scores in a formatted table
+ */
 const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true, showScores = true }) => {
   // Safety check for course data
   if (!course || !course.holes || !Array.isArray(course.holes)) {
@@ -21,22 +26,18 @@ const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true, sh
   const frontNine = course.holes.slice(0, 9);
   const backNine = course.holes.slice(9);
   
-  const calculateCumulativeScore = (holes: Hole[]) => {
-    return holes.reduce((sum, hole) => sum + (hole.score || 0), 0);
-  };
-
-  const frontNineScore = calculateCumulativeScore(frontNine);
-  const backNineScore = calculateCumulativeScore(backNine);
+  const frontNineScore = calculateCompletedHolesScore(frontNine);
+  const backNineScore = calculateCompletedHolesScore(backNine);
   const totalScore = frontNineScore + backNineScore;
 
   // Get completed holes (holes with a score)
   const completedHoles = course.holes.filter(hole => hole.score !== undefined);
   
   // Calculate total par for completed holes only
-  const completedHolesPar = completedHoles.reduce((sum, hole) => sum + hole.par, 0);
+  const completedHolesPar = calculateCompletedHolesPar(course.holes);
   
   // Calculate total score for completed holes only
-  const completedHolesScore = completedHoles.reduce((sum, hole) => sum + (hole.score || 0), 0);
+  const completedHolesScore = calculateCompletedHolesScore(course.holes);
   
   // Calculate differential based on completed holes only
   const differential = completedHolesScore - completedHolesPar;
@@ -44,12 +45,6 @@ const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true, sh
   const totalDistance = course.totalDistance || frontNine.reduce((sum: number, hole: Hole) => sum + hole.distance, 0) + backNine.reduce((sum: number, hole: Hole) => sum + hole.distance, 0);
   const totalPar = course.totalPar || frontNine.reduce((sum: number, hole: Hole) => sum + hole.par, 0) + backNine.reduce((sum: number, hole: Hole) => sum + hole.par, 0);
 
-  // Format the differential with a + or - sign
-  const formatDifferential = (diff: number) => {
-    if (diff === 0) return 'E';
-    return diff > 0 ? `+${diff}` : `${diff}`;
-  };
-  
   // Check if there are any scores recorded
   const hasScores = completedHoles.length > 0;
 
@@ -75,7 +70,7 @@ const Scorecard: React.FC<ScorecardProps> = ({ course, showCourseMode = true, sh
 
   const renderTable = (holes: Hole[], totalLabel: string, title?: string) => {
     // Calculate total score for this set of holes
-    const totalScore = holes.reduce((sum, hole) => sum + (hole.score || 0), 0);
+    const totalScore = calculateCompletedHolesScore(holes);
     
     return (
       <View style={styles.tableContainer}>

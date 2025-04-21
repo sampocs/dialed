@@ -1,7 +1,16 @@
 import { Course, Hole, Round } from "../types";
 import coursesDataRaw from "./courses.json";
+import {
+  INDOOR_DISTANCES,
+  OUTDOOR_DISTANCES,
+  COURSE_CONFIG,
+  STATS_CONFIG,
+} from "./constants";
 
-// Type assertion to ensure the JSON data matches our Course type
+/**
+ * Type assertion to ensure the JSON data matches our Course type
+ * This converts raw course data from JSON to properly typed Course objects
+ */
 const coursesData: { [courseName: string]: Course } = Object.entries(
   coursesDataRaw
 ).reduce((acc, [name, course]) => {
@@ -20,16 +29,7 @@ const coursesData: { [courseName: string]: Course } = Object.entries(
   return acc;
 }, {} as { [courseName: string]: Course });
 
-// Indoor distances (in feet)
-const INDOOR_PAR_1_DISTANCES = [2.5, 3, 3.5, 4];
-const INDOOR_PAR_2_DISTANCES = [4.5, 5, 5.5, 6, 6.5, 7, 7.5];
-const INDOOR_PAR_3_DISTANCE = 10;
-
-// Outdoor distances (in yards)
-const OUTDOOR_PAR_2_DISTANCES = [10, 15];
-const OUTDOOR_PAR_3_DISTANCES = [20, 25, 30, 35];
-const OUTDOOR_PAR_4_DISTANCES = [40];
-
+/** List of all available outdoor course names */
 export const OUTDOOR_COURSES = [
   "Augusta National",
   "Pebble Beach",
@@ -43,6 +43,7 @@ export const OUTDOOR_COURSES = [
   "Sand Valley",
 ];
 
+/** List of all available indoor course names */
 export const INDOOR_COURSES = [
   "Moonlight Basin",
   "Black Desert Stone",
@@ -56,12 +57,15 @@ export const INDOOR_COURSES = [
   "Royal Melbourne",
 ];
 
-// Map to store pre-generated courses
+/** Map to store pre-generated courses loaded from JSON */
 export const PRE_GENERATED_COURSES: {
   [courseName: string]: Course;
 } = coursesData;
 
-// Function to initialize all the courses with fixed layouts
+/**
+ * Initializes all courses with fixed layouts from the courses.json file
+ * Logs verification info to console
+ */
 export function initializeAllCourses(): void {
   console.log("All courses have been loaded from courses.json");
   console.log(`Loaded ${Object.keys(PRE_GENERATED_COURSES).length} courses`);
@@ -79,6 +83,11 @@ export function initializeAllCourses(): void {
 // Call initializeAllCourses on module load
 initializeAllCourses();
 
+/**
+ * Creates a shuffled copy of an array
+ * @param array The array to shuffle
+ * @returns A new shuffled array
+ */
 function shuffleArray<T>(array: T[]): T[] {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
@@ -91,46 +100,57 @@ function shuffleArray<T>(array: T[]): T[] {
 // The following functions are now only used for testing or creating new course templates
 // They are not used during normal gameplay since courses are loaded from courses.json
 
+/**
+ * Gets a random distance for an indoor hole based on par
+ * @param par The par value for the hole
+ * @returns A random appropriate distance in feet
+ */
 function getRandomIndoorDistance(par: number): number {
-  if (par === 3) return INDOOR_PAR_3_DISTANCE;
-  const distances = par === 1 ? INDOOR_PAR_1_DISTANCES : INDOOR_PAR_2_DISTANCES;
+  if (par === 3) return INDOOR_DISTANCES.PAR_3;
+  const distances = par === 1 ? INDOOR_DISTANCES.PAR_1 : INDOOR_DISTANCES.PAR_2;
   return distances[Math.floor(Math.random() * distances.length)];
 }
 
+/**
+ * Gets a random distance for an outdoor hole based on par
+ * @param par The par value for the hole
+ * @returns A random appropriate distance in yards
+ */
 function getRandomOutdoorDistance(par: number): number {
-  let distances;
-  if (par === 2) {
-    distances = OUTDOOR_PAR_2_DISTANCES;
-  } else if (par === 3) {
-    distances = OUTDOOR_PAR_3_DISTANCES;
-  } else {
-    // par 4
-    distances = OUTDOOR_PAR_4_DISTANCES;
-  }
+  if (par === 4) return OUTDOOR_DISTANCES.PAR_4;
+  const distances =
+    par === 2 ? OUTDOOR_DISTANCES.PAR_2 : OUTDOOR_DISTANCES.PAR_3;
   return distances[Math.floor(Math.random() * distances.length)];
 }
 
+/**
+ * Generates a template for an indoor 9-hole section
+ * @returns An array of par values for 9 holes
+ */
 function generateIndoorNineTemplate(): number[] {
-  return [
-    ...Array(2).fill(1), // 2 par 1s
-    ...Array(5).fill(2), // 5 par 2s
-    ...Array(2).fill(3), // 2 par 3s
-  ];
+  return COURSE_CONFIG.INDOOR_NINE_TEMPLATE;
 }
 
+/**
+ * Generates a template for an outdoor 9-hole section
+ * @returns An array of par values for 9 holes
+ */
 function generateOutdoorNineTemplate(): number[] {
-  return [
-    ...Array(2).fill(2), // 2 par 2s
-    ...Array(6).fill(3), // 6 par 3s
-    ...Array(1).fill(4), // 1 par 4
-  ];
+  return COURSE_CONFIG.OUTDOOR_NINE_TEMPLATE;
 }
 
-// This function is now primarily used for testing or creating new course templates
-// It is not used during normal gameplay since courses are loaded from courses.json
+/**
+ * Generates a new course with randomly arranged holes
+ * Note: This function is primarily used for testing or creating new course templates
+ * and is not used during normal gameplay since courses are loaded from courses.json
+ *
+ * @param holeCount Number of holes in the course (9 or 18)
+ * @param courseMode Whether the course is indoor or outdoor
+ * @returns A new Course object
+ */
 export function generateCourse(
-  holeCount: 9 | 18 = 18,
-  courseMode: "Indoor" | "Outdoor" = "Indoor"
+  holeCount: 9 | 18 = COURSE_CONFIG.DEFAULT_HOLE_COUNT,
+  courseMode: "Indoor" | "Outdoor" = COURSE_CONFIG.DEFAULT_MODE
 ): Course {
   // Generate hole distribution for front nine based on course mode
   const frontNineTemplate =
@@ -159,8 +179,9 @@ export function generateCourse(
   }));
 
   // Calculate totals
-  const frontNineHoles = holes.slice(0, 9);
-  const backNineHoles = holeCount === 18 ? holes.slice(9) : [];
+  const frontNineHoles = holes.slice(0, COURSE_CONFIG.FRONT_NINE_COUNT);
+  const backNineHoles =
+    holeCount === 18 ? holes.slice(COURSE_CONFIG.FRONT_NINE_COUNT) : [];
 
   const frontNinePar = frontNineHoles.reduce((sum, hole) => sum + hole.par, 0);
   const backNinePar =
@@ -191,6 +212,14 @@ export function generateCourse(
   };
 }
 
+/**
+ * Creates a new round with either a specific course or a random one
+ *
+ * @param courseMode Whether to use an indoor or outdoor course
+ * @param holeCount Number of holes to play (9 or 18)
+ * @param specificCourseName Optional name of a specific course to use
+ * @returns A new Round object ready to be played
+ */
 export function createNewRound(
   courseMode: "Indoor" | "Outdoor" = "Indoor",
   holeCount: 9 | 18 = 18,
@@ -250,6 +279,14 @@ export function createNewRound(
   };
 }
 
+/**
+ * Updates the score for a specific hole in a round
+ *
+ * @param round The round to update
+ * @param holeNumber The hole number to update the score for
+ * @param score The new score value, or undefined to clear the score
+ * @returns A new Round object with the updated score and recalculated totals
+ */
 export function updateScore(
   round: Round,
   holeNumber: number,
@@ -276,12 +313,25 @@ export function updateScore(
   };
 }
 
+/**
+ * Validates if a score is within reasonable limits for a given par
+ *
+ * @param par The par value of the hole
+ * @param score The score to validate
+ * @returns True if the score is valid for the given par
+ */
 export function isValidScore(par: number, score: number): boolean {
   if (par === 1) return score >= 1 && score <= 3;
   if (par === 4) return score >= 1 && score <= 6; // For par 4, allow up to double bogey
   return score >= 1 && score <= 4; // For par 2 and par 3
 }
 
+/**
+ * Calculates various statistics from a collection of rounds
+ *
+ * @param rounds Array of rounds to analyze
+ * @returns Object containing average score, best round, trends, and handicap
+ */
 export function calculateStats(rounds: Round[]) {
   if (rounds.length === 0) {
     return {
@@ -317,10 +367,10 @@ export function calculateStats(rounds: Round[]) {
     !best || current.differential < best.differential ? current : best
   );
 
-  // Calculate trend using last 5 rounds
+  // Calculate trend using last N rounds
   const recentRounds = completedRounds
     .sort((a, b) => b.date - a.date)
-    .slice(0, 5);
+    .slice(0, STATS_CONFIG.TREND_ROUND_COUNT);
 
   const recentTrend =
     recentRounds.length > 1
@@ -329,15 +379,21 @@ export function calculateStats(rounds: Round[]) {
         recentRounds.length
       : 0;
 
-  // Calculate handicap based on best 8 of last 20 rounds (or fewer if not enough rounds)
+  // Calculate handicap based on best rounds from recent rounds
   const sortedByDate = [...completedRounds].sort((a, b) => b.date - a.date);
-  const last20Rounds = sortedByDate.slice(0, 20);
-  const sortedByDifferential = [...last20Rounds].sort(
+  const recentRoundsForHandicap = sortedByDate.slice(
+    0,
+    STATS_CONFIG.HANDICAP_MAX_ROUNDS
+  );
+  const sortedByDifferential = [...recentRoundsForHandicap].sort(
     (a, b) => a.differential - b.differential
   );
 
-  // Take best 8 rounds (or all if fewer than 8)
-  const countToUse = Math.min(8, sortedByDifferential.length);
+  // Take best N rounds (or all if fewer than N)
+  const countToUse = Math.min(
+    STATS_CONFIG.HANDICAP_BEST_COUNT,
+    sortedByDifferential.length
+  );
   const bestRounds = sortedByDifferential.slice(0, countToUse);
 
   // Calculate average differential of best rounds (this is the handicap)
@@ -426,19 +482,46 @@ export function generateDummyRounds(): Round[] {
   return rounds.sort((a, b) => b.date - a.date);
 }
 
-// Helper function to generate a weighted random score difference from par
-// Using the exact percentages: 55% par, 20% birdie, 15% bogey, 5% albatross, 5% double bogey
+/**
+ * Generates a random score differential based on course mode
+ * Used for creating realistic dummy data
+ *
+ * @param courseMode The course mode (Indoor/Outdoor)
+ * @returns A weighted random score differential
+ */
 function getWeightedRandomScoreDiff(courseMode: "Indoor" | "Outdoor"): number {
-  const rand = Math.random();
+  // Different score distribution based on course mode
+  const weights =
+    courseMode === "Indoor"
+      ? [0.05, 0.1, 0.25, 0.3, 0.2, 0.1] // Indoor weight distribution
+      : [0.02, 0.08, 0.15, 0.3, 0.3, 0.15]; // Outdoor weight distribution
 
-  // Use the same distribution for both Indoor and Outdoor now
-  if (rand < 0.05) return -2; // 5% chance of albatross (2 under par)
-  if (rand < 0.25) return -1; // 20% chance of birdie (1 under par)
-  if (rand < 0.8) return 0; // 55% chance of par
-  if (rand < 0.95) return 1; // 15% chance of bogey (1 over par)
-  return 2; // 5% chance of double bogey (2 over par)
+  const values = [-2, -1, 0, 1, 2, 3]; // Possible score differentials (per hole)
+
+  // Random selection based on weights
+  const random = Math.random();
+  let cumulativeWeight = 0;
+
+  for (let i = 0; i < weights.length; i++) {
+    cumulativeWeight += weights[i];
+    if (random < cumulativeWeight) {
+      return values[i];
+    }
+  }
+
+  return values[values.length - 1]; // Default to last value if something goes wrong
 }
 
+/**
+ * Generates a set of rounds with specific configuration
+ * Helper function for generateDummyRounds
+ *
+ * @param courseMode Indoor or Outdoor
+ * @param holeCount 9 or 18 holes
+ * @param count Number of rounds to generate
+ * @param startDate Starting timestamp for the generated rounds
+ * @returns Array of generated rounds
+ */
 function generateRoundsWithConfig(
   courseMode: "Indoor" | "Outdoor",
   holeCount: 9 | 18,
@@ -446,32 +529,35 @@ function generateRoundsWithConfig(
   startDate: number
 ): Round[] {
   const rounds: Round[] = [];
+  const dayInMs = 24 * 60 * 60 * 1000;
+
+  // Get all courses for this mode
+  const courseNames =
+    courseMode === "Indoor" ? INDOOR_COURSES : OUTDOOR_COURSES;
 
   for (let i = 0; i < count; i++) {
-    // Space rounds out by 1 day each to prevent bunching
-    const dayOffset = i;
-    const date = startDate + dayOffset * 24 * 60 * 60 * 1000;
+    // Use a different course for each round, cycling through available courses
+    const courseName = courseNames[i % courseNames.length];
 
-    // Create a new round using the pre-generated courses
-    const round = createNewRound(courseMode, holeCount);
+    // Create a new round
+    const round = createNewRound(courseMode, holeCount, courseName);
 
-    // Set the date
-    round.date = date;
+    // Set date (spread out over time)
+    round.date = startDate + i * dayInMs;
 
-    // If we're using a historical date for the round, make sure the ID is still unique
-    // by keeping the random part but using the historical date
-    round.id = `${date}_${round.id.split("_")[1]}`;
-
-    // Add realistic scores to each hole
+    // Randomly generate scores for each hole
     let totalScore = 0;
     round.course.holes.forEach((hole) => {
-      // Generate a score based on hole par and course mode
+      // Generate a random score differential for this hole
       const scoreDiff = getWeightedRandomScoreDiff(courseMode);
-      const score = Math.max(1, hole.par + scoreDiff);
+      const score = hole.par + scoreDiff;
 
-      // Update the hole score
-      hole.score = score;
-      totalScore += score;
+      // Ensure score is at least 1
+      const finalScore = Math.max(1, score);
+
+      // Update the hole's score
+      hole.score = finalScore;
+      totalScore += finalScore;
     });
 
     // Update round totals

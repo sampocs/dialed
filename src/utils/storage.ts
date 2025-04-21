@@ -1,15 +1,33 @@
+/**
+ * Storage utility functions for persisting app data
+ * Uses AsyncStorage to save player information, rounds, and game state
+ */
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Player, Round, AppState } from "../types";
 
-// Flag to control whether dummy data should be generated
+/**
+ * Flag to control whether dummy data should be generated
+ * Set to true for demo purposes, false for normal operation
+ *
+ * When set to true, dummy rounds will be generated when the app
+ * loads for the first time or when no rounds exist.
+ */
 export const USE_DUMMY_DATA = false;
 
+/**
+ * Storage keys used for AsyncStorage
+ */
 const STORAGE_KEYS = {
   PLAYER: "@dialed:player",
   ROUNDS: "@dialed:rounds",
   CURRENT_ROUND: "@dialed:currentRound",
 };
 
+/**
+ * Retrieves saved player information
+ *
+ * @returns The saved player or null if not found
+ */
 export async function getPlayer(): Promise<Player | null> {
   try {
     const playerJson = await AsyncStorage.getItem(STORAGE_KEYS.PLAYER);
@@ -19,6 +37,12 @@ export async function getPlayer(): Promise<Player | null> {
   }
 }
 
+/**
+ * Saves player information
+ *
+ * @param player The player object to save
+ * @returns Success status
+ */
 export async function savePlayer(player: Player): Promise<boolean> {
   try {
     await AsyncStorage.setItem(STORAGE_KEYS.PLAYER, JSON.stringify(player));
@@ -28,6 +52,11 @@ export async function savePlayer(player: Player): Promise<boolean> {
   }
 }
 
+/**
+ * Retrieves all saved rounds
+ *
+ * @returns Array of saved rounds or empty array if none found
+ */
 export async function getRounds(): Promise<Round[]> {
   try {
     const roundsJson = await AsyncStorage.getItem(STORAGE_KEYS.ROUNDS);
@@ -37,6 +66,12 @@ export async function getRounds(): Promise<Round[]> {
   }
 }
 
+/**
+ * Saves an array of rounds
+ *
+ * @param rounds Array of rounds to save
+ * @returns Success status
+ */
 export async function saveRounds(rounds: Round[]): Promise<boolean> {
   try {
     await AsyncStorage.setItem(STORAGE_KEYS.ROUNDS, JSON.stringify(rounds));
@@ -46,6 +81,11 @@ export async function saveRounds(rounds: Round[]): Promise<boolean> {
   }
 }
 
+/**
+ * Retrieves the current round in progress
+ *
+ * @returns The current round or null if no round is in progress
+ */
 export async function getCurrentRound(): Promise<Round | null> {
   try {
     const roundJson = await AsyncStorage.getItem(STORAGE_KEYS.CURRENT_ROUND);
@@ -55,6 +95,12 @@ export async function getCurrentRound(): Promise<Round | null> {
   }
 }
 
+/**
+ * Saves the current round or clears it
+ *
+ * @param round The round to save, or null to clear
+ * @returns Success status
+ */
 export async function saveCurrentRound(round: Round | null): Promise<boolean> {
   try {
     if (round === null) {
@@ -71,6 +117,12 @@ export async function saveCurrentRound(round: Round | null): Promise<boolean> {
   }
 }
 
+/**
+ * Loads the initial app state, performing data migrations if needed
+ * If USE_DUMMY_DATA is true and no rounds exist, generates dummy rounds
+ *
+ * @returns Initial app state with player, rounds, and current round
+ */
 export async function loadInitialState(): Promise<Partial<AppState>> {
   const [player, rounds, currentRound] = await Promise.all([
     getPlayer(),
@@ -150,6 +202,12 @@ export async function loadInitialState(): Promise<Partial<AppState>> {
   };
 }
 
+/**
+ * Clears all app data
+ * Use with caution! This will delete all saved rounds and settings.
+ *
+ * @returns Success status
+ */
 export async function clearAllData(): Promise<boolean> {
   try {
     await AsyncStorage.multiRemove([
