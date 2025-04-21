@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "dialed.app"
-               BlueprintName = "dialed"
-               ReferencedContainer = "container:dialed.xcodeproj">
+               BuildableName = "Dialed.app"
+               BlueprintName = "Dialed"
+               ReferencedContainer = "container:Dialed.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "dialedTests.xctest"
-               BlueprintName = "dialedTests"
-               ReferencedContainer = "container:dialed.xcodeproj">
+               BuildableName = "DialedTests.xctest"
+               BlueprintName = "DialedTests"
+               ReferencedContainer = "container:Dialed.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "dialed.app"
-            BlueprintName = "dialed"
-            ReferencedContainer = "container:dialed.xcodeproj">
+            BuildableName = "Dialed.app"
+            BlueprintName = "Dialed"
+            ReferencedContainer = "container:Dialed.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "dialed.app"
-            BlueprintName = "dialed"
-            ReferencedContainer = "container:dialed.xcodeproj">
+            BuildableName = "Dialed.app"
+            BlueprintName = "Dialed"
+            ReferencedContainer = "container:Dialed.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
