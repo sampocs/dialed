@@ -9,32 +9,30 @@ const INDOOR_PAR_3_DISTANCE = 10;
 const OUTDOOR_PAR_2_DISTANCES = [10, 15];
 const OUTDOOR_PAR_3_DISTANCES = [20, 30, 40];
 
-export const COURSES = [
-  "Moonlight Basin",
-  "Black Desert Stone",
+export const OUTDOOR_COURSES = [
   "Augusta National",
   "Pebble Beach",
   "TPC Sawgrass",
   "Torrey Pines",
-  "Pinehurst No. 2",
-  "Royal Troon",
-  "St. Andrews",
-  "Whispering Pines",
-  "Crystal Springs",
-  "Sunset Done",
-  "Diamond Ridge",
-  "Misty Harbor",
-  "Royal Highlands",
-  "Whistling Straights",
+  "Ojai Valley",
+  "PGA West",
+  "Shadow Creek",
+  "Coeur d'Alene",
   "Greywalls",
-  "George Dunne",
-  "Coyote Run",
-  "Chevy Chase",
-  "Mount Prospect",
-  "Schaumburg",
-  "Arboretum Club",
-  "Villiage Links",
-  "Oak Meadows",
+  "Sand Valley",
+];
+
+export const INDOOR_COURSES = [
+  "Moonlight Basin",
+  "Black Desert Stone",
+  "Pinehurst No. 2",
+  "Pine Valley",
+  "Whistling Straits",
+  "Bethpage Black",
+  "Valhalla",
+  "St. Andrews",
+  "Erin Hills",
+  "Royal Melbourne",
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -140,9 +138,10 @@ export function createNewRound(
   courseMode: "Indoor" | "Outdoor" = "Indoor",
   holeCount: 9 | 18 = 18
 ): Round {
-  // Get a random course name from the COURSES array
-  const randomIndex = Math.floor(Math.random() * COURSES.length);
-  const courseName = COURSES[randomIndex];
+  // Get a random course name based on course mode
+  const courses = courseMode === "Indoor" ? INDOOR_COURSES : OUTDOOR_COURSES;
+  const randomIndex = Math.floor(Math.random() * courses.length);
+  const courseName = courses[randomIndex];
 
   const course = generateCourse(holeCount, courseMode);
 
