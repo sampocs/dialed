@@ -184,12 +184,21 @@ export function generateCourse(
 
 export function createNewRound(
   courseMode: "Indoor" | "Outdoor" = "Indoor",
-  holeCount: 9 | 18 = 18
+  holeCount: 9 | 18 = 18,
+  specificCourseName?: string
 ): Round {
-  // Get a random course name based on course mode
-  const courses = courseMode === "Indoor" ? INDOOR_COURSES : OUTDOOR_COURSES;
-  const randomIndex = Math.floor(Math.random() * courses.length);
-  const courseName = courses[randomIndex];
+  // Get a course name - either the specified one or a random one
+  let courseName: string;
+
+  if (specificCourseName) {
+    // Use the specified course name if provided
+    courseName = specificCourseName;
+  } else {
+    // Get a random course name based on course mode
+    const courses = courseMode === "Indoor" ? INDOOR_COURSES : OUTDOOR_COURSES;
+    const randomIndex = Math.floor(Math.random() * courses.length);
+    courseName = courses[randomIndex];
+  }
 
   // Get the pre-generated course
   const preGeneratedCourse = PRE_GENERATED_COURSES[courseName];

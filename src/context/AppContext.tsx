@@ -7,7 +7,7 @@ import { AppState as RNAppState, AppStateStatus } from 'react-native';
 
 interface AppContextType extends AppState {
   setPlayer: (player: Player) => Promise<void>;
-  startNewGame: (courseMode?: "Indoor" | "Outdoor", holeCount?: 9 | 18) => Promise<void>;
+  startNewGame: (courseMode?: "Indoor" | "Outdoor", holeCount?: 9 | 18, courseName?: string) => Promise<void>;
   startRound: () => Promise<void>;
   updateHoleScore: (holeNumber: number, score: number | undefined) => Promise<void>;
   completeRound: () => Promise<void>;
@@ -109,8 +109,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState(current => ({ ...current, player }));
   };
 
-  const startNewGame = async (courseMode: "Indoor" | "Outdoor" = "Indoor", holeCount: 9 | 18 = 18) => {
-    const newRound = createNewRound(courseMode, holeCount);
+  const startNewGame = async (courseMode: "Indoor" | "Outdoor" = "Indoor", holeCount: 9 | 18 = 18, courseName?: string) => {
+    const newRound = createNewRound(courseMode, holeCount, courseName);
     await storage.saveCurrentRound(newRound);
     setState(current => ({
       ...current,

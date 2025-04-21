@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,11 @@ import {
   ScrollView,
   Alert,
   Modal,
+  FlatList,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useApp } from '../context/AppContext';
-import { isValidScore } from '../utils/gameLogic';
+import { isValidScore, INDOOR_COURSES, OUTDOOR_COURSES, PRE_GENERATED_COURSES } from '../utils/gameLogic';
 import Scorecard from '../components/Scorecard';
 import HoleEditor from '../components/HoleEditor';
 import { 
@@ -32,11 +33,18 @@ export default function PlayScreen() {
   const [showRules, setShowRules] = useState(false);
   const [courseMode, setCourseMode] = useState<"Indoor" | "Outdoor">("Indoor");
   const [holeCount, setHoleCount] = useState<9 | 18>(18);
+  const [showCourseDropdown, setShowCourseDropdown] = useState(false);
+  const [availableCourses, setAvailableCourses] = useState<string[]>([]);
   
   // Load the Bebas Neue font
   const [fontsLoaded] = useFonts({
     BebasNeue_400Regular,
   });
+
+  // Update available courses when course mode changes
+  useEffect(() => {
+    setAvailableCourses(courseMode === "Indoor" ? INDOOR_COURSES : OUTDOOR_COURSES);
+  }, [courseMode]);
 
   const handleStartNewGame = () => {
     startNewGame(courseMode, holeCount);
@@ -44,6 +52,18 @@ export default function PlayScreen() {
 
   const handleStartRound = () => {
     startRound();
+  };
+
+  const handleSelectCourse = (courseName: string) => {
+    if (currentRound) {
+      // Update the current round with the new course
+      quitGame();
+      setTimeout(() => {
+        startNewGame(courseMode, holeCount, courseName);
+      }, 100);
+    }
+    
+    setShowCourseDropdown(false);
   };
 
   // Rule content based on the selected mode
@@ -231,7 +251,16 @@ export default function PlayScreen() {
           </TouchableOpacity>
         </View>
         
-        <Text style={styles.titleSmall}>{currentRound.courseName}</Text>
+        <TouchableOpacity 
+          style={styles.courseNameContainer} 
+          onPress={() => setShowCourseDropdown(true)}
+        >
+          <View style={styles.titleSmallContainer}>
+            <Text style={styles.titleSmall}>{currentRound.courseName}</Text>
+          </View>
+          <Text style={styles.dropdownArrow}>▼</Text>
+        </TouchableOpacity>
+        
         <Text style={styles.courseTypeText}>{currentRound.course.courseMode}</Text>
         
         <View style={styles.scorecardContainer}>
@@ -241,6 +270,52 @@ export default function PlayScreen() {
         <TouchableOpacity style={[styles.button, styles.startRoundButton]} onPress={handleStartRound}>
           <Text style={styles.buttonText}>Start Round</Text>
         </TouchableOpacity>
+        
+        {/* Course Selection Modal */}
+        <Modal
+          visible={showCourseDropdown}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowCourseDropdown(false)}
+        >
+          <View style={styles.modalContainer}>
+            <BlurView intensity={80} style={StyleSheet.absoluteFill} tint="dark" />
+            
+            <View style={styles.courseDropdownContent}>
+              <View style={styles.dropdownHeader}>
+                <Text style={styles.dropdownHeaderTitle}>Select Course</Text>
+                <TouchableOpacity 
+                  onPress={() => setShowCourseDropdown(false)}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.closeButtonText}>✕</Text>
+                </TouchableOpacity>
+              </View>
+              
+              <FlatList
+                data={availableCourses}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (
+                  <TouchableOpacity 
+                    style={[
+                      styles.courseItem, 
+                      currentRound?.courseName === item && styles.courseItemSelected
+                    ]} 
+                    onPress={() => handleSelectCourse(item)}
+                  >
+                    <Text style={[
+                      styles.courseItemText,
+                      currentRound?.courseName === item && styles.courseItemTextSelected
+                    ]}>
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                style={styles.courseList}
+              />
+            </View>
+          </View>
+        </Modal>
         
         {/* Rules Modal */}
         <Modal
@@ -666,9 +741,66 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#FFFFFF',
+    marginVertical: 0,
+    paddingVertical: 0,
+  },
+  titleSmallContainer: {
     marginTop: 20,
     marginBottom: 20,
+  },
+  courseNameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dropdownArrow: {
+    color: '#93C757',
+    fontSize: 16,
+    marginLeft: 8,
+    marginTop: 2,
+  },
+  courseDropdownContent: {
+    width: '90%',
+    maxHeight: '70%',
+    backgroundColor: '#292929',
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#3D3D3D',
+  },
+  dropdownHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3D3D3D',
+  },
+  dropdownHeaderTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
     color: '#FFFFFF',
+  },
+  courseList: {
+    width: '100%',
+  },
+  courseItem: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3D3D3D',
+  },
+  courseItemSelected: {
+    backgroundColor: '#3D3D3D',
+  },
+  courseItemText: {
+    fontSize: 18,
+    color: '#FFFFFF',
+  },
+  courseItemTextSelected: {
+    color: '#93C757',
+    fontWeight: 'bold',
   },
   scorecardContainer: {
     width: '90%',
