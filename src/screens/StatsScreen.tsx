@@ -380,7 +380,8 @@ export default function StatsScreen() {
           setSelectedPointIndex(findClosestPointIndex(touchX));
         },
         onPanResponderRelease: () => {
-          // Keep showing the selected point after release
+          // Clear the selected point when touch is released
+          setSelectedPointIndex(null);
         },
       }),
     [points]
@@ -462,6 +463,11 @@ export default function StatsScreen() {
       );
     }
   };
+
+  // Clear selectedPointIndex when switching to a different filter or page
+  useEffect(() => {
+    setSelectedPointIndex(null);
+  }, [holeCountFilter, courseModeFilter, currentPage]);
 
   return (
     <View style={styles.container}>
