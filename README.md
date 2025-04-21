@@ -95,9 +95,6 @@ npm list -g eas-cli | grep eas-cli
 For convenience, the project includes several useful npm scripts:
 
 ```bash
-# Start the Metro bundler without launching the app (useful for manual launches)
-npm start
-
 # Standard command to run your iOS app
 npm run ios
 
@@ -106,6 +103,9 @@ npm run ios:clean
 
 # Reinstall CocoaPods dependencies (after adding new dependencies)
 npm run ios:pods
+
+# Start the Metro bundler without launching the app (useful for manual launches)
+npm start
 
 # Full clean build using Xcode's clean command (for stubborn build issues)
 npm run rebuild:ios
