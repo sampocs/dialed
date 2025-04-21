@@ -1,4 +1,4 @@
-.PHONY: generate-courses bump-and-build
+.PHONY: generate-courses version-bump build-deploy
 
 generate-courses:
 	@echo "Generating courses.json..."
@@ -15,10 +15,12 @@ version-bump:
 	jq '.expo.version = "'"$$NEW_VERSION"'"' app.json > tmp.json && mv tmp.json app.json && \
 	echo "Version bumped to $$NEW_VERSION"
 
-build-and-deploy:
+build-deploy:
 	@echo "Running iOS prebuild..."
 	npm run prebuild:ios
 	@echo "Building for iOS..."
 	npm run build:ios
 	@echo "Submitting to TestFlight..."
-	npm run submit:ios 
+	npm run submit:ios
+
+bump-and-build: version-bump build-deploy 
