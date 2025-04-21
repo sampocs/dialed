@@ -13,11 +13,11 @@ version-bump:
 	NEW_MINOR=$$((MINOR + 1)) && \
 	NEW_VERSION="$$MAJOR.$$NEW_MINOR.$$PATCH" && \
 	jq '.expo.version = "'"$$NEW_VERSION"'"' app.json > tmp.json && mv tmp.json app.json && \
-	echo "Version bumped to $$NEW_VERSION"
+	echo "Version bumped to $$NEW_VERSION" && \
+	echo "Removing ios.buildNumber since EAS is managing it remotely..." && \
+	jq 'del(.expo.ios.buildNumber)' app.json > tmp.json && mv tmp.json app.json
 
 build-deploy:
-	@echo "Running iOS prebuild..."
-	npm run prebuild:ios
 	@echo "Building for iOS..."
 	npm run build:ios
 	@echo "Submitting to TestFlight..."
