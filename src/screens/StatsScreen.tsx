@@ -300,7 +300,7 @@ export default function StatsScreen() {
     const barChartHeight = graphHeight;
     const paddingLeft = 20;
     const paddingBottom = 40;
-    const paddingTop = 20;
+    const paddingTop = 10;
     const paddingRight = 20;
     
     // Calculate available space for bars
@@ -342,7 +342,7 @@ export default function StatsScreen() {
     }
     
     return (
-      <View style={styles.chartContainer}>
+      <View style={styles.barChartContainer}>
         <View style={styles.graphContainer}>
           <View style={styles.yAxis}>
             {yAxisLabels.map((label, index) => (
@@ -1099,9 +1099,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
   },
+  barChartContainer: {
+    flex: 1,
+    paddingTop: 0, // Reduced top padding for the bar chart
+  },
   chartContainer: {
     flex: 1,
-    paddingTop: 10,
+    paddingTop: 10, // Original padding
   },
   lineChartGraphContainer: {
     flex: 1,
