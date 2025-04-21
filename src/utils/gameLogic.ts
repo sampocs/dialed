@@ -5,12 +5,12 @@ import coursesDataRaw from "./courses.json";
 const coursesData: { [courseName: string]: Course } = Object.entries(
   coursesDataRaw
 ).reduce((acc, [name, course]) => {
-  // Ensure the par property in each hole is properly typed as 1 | 2 | 3
+  // Ensure the par property in each hole is properly typed as 1 | 2 | 3 | 4
   const typedCourse: Course = {
     ...course,
     holes: course.holes.map((hole) => ({
       ...hole,
-      par: hole.par as 1 | 2 | 3,
+      par: hole.par as 1 | 2 | 3 | 4,
     })),
     courseMode: course.courseMode as "Indoor" | "Outdoor",
     holeCount: course.holeCount as 9 | 18,
@@ -27,7 +27,8 @@ const INDOOR_PAR_3_DISTANCE = 10;
 
 // Outdoor distances (in yards)
 const OUTDOOR_PAR_2_DISTANCES = [10, 15];
-const OUTDOOR_PAR_3_DISTANCES = [20, 25, 30, 35, 40];
+const OUTDOOR_PAR_3_DISTANCES = [20, 25, 30, 35];
+const OUTDOOR_PAR_4_DISTANCES = [40];
 
 export const OUTDOOR_COURSES = [
   "Augusta National",
@@ -97,8 +98,15 @@ function getRandomIndoorDistance(par: number): number {
 }
 
 function getRandomOutdoorDistance(par: number): number {
-  const distances =
-    par === 2 ? OUTDOOR_PAR_2_DISTANCES : OUTDOOR_PAR_3_DISTANCES;
+  let distances;
+  if (par === 2) {
+    distances = OUTDOOR_PAR_2_DISTANCES;
+  } else if (par === 3) {
+    distances = OUTDOOR_PAR_3_DISTANCES;
+  } else {
+    // par 4
+    distances = OUTDOOR_PAR_4_DISTANCES;
+  }
   return distances[Math.floor(Math.random() * distances.length)];
 }
 
@@ -113,7 +121,8 @@ function generateIndoorNineTemplate(): number[] {
 function generateOutdoorNineTemplate(): number[] {
   return [
     ...Array(2).fill(2), // 2 par 2s
-    ...Array(7).fill(3), // 7 par 3s
+    ...Array(6).fill(3), // 6 par 3s
+    ...Array(1).fill(4), // 1 par 4
   ];
 }
 
@@ -145,7 +154,7 @@ export function generateCourse(
   // Generate holes with distances
   const holes: Hole[] = [...frontNine, ...backNine].map((par, index) => ({
     number: index + 1,
-    par: par as 1 | 2 | 3,
+    par: par as 1 | 2 | 3 | 4,
     distance: getDistance(par),
   }));
 
@@ -269,6 +278,7 @@ export function updateScore(
 
 export function isValidScore(par: number, score: number): boolean {
   if (par === 1) return score >= 1 && score <= 3;
+  if (par === 4) return score >= 1 && score <= 6; // For par 4, allow up to double bogey
   return score >= 1 && score <= 4; // For par 2 and par 3
 }
 

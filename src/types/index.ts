@@ -4,7 +4,7 @@ export interface Player {
 
 export interface Hole {
   number: number;
-  par: 1 | 2 | 3;
+  par: 1 | 2 | 3 | 4;
   distance: number;
   score?: number;
 }

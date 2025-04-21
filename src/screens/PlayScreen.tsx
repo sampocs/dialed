@@ -187,14 +187,15 @@ export default function PlayScreen() {
           <Text style={styles.rulesTitle}>Outdoor Putting Game Rules</Text>
           <Text style={styles.rulesSubtitle}>Game Setup</Text>
           <Text style={styles.rulesText}>
-            Outdoor mode creates a course with 7 Par 2 holes and 2 Par 3 holes for each 9-hole section.
+            Outdoor mode creates a course with 2 Par 2 holes, 6 Par 3 holes, and 1 Par 4 hole for each 9-hole section.
             The placement of the holes is randomized for each new course.
           </Text>
           
           <Text style={styles.rulesSubtitle}>Distances</Text>
           <Text style={styles.rulesText}>
             • Par 2 holes: 10 or 15 yards{'\n'}
-            • Par 3 holes: 20, 30, or 40 yards
+            • Par 3 holes: 20, 25, 30, or 35 yards{'\n'}
+            • Par 4 holes: 40 yards
           </Text>
           
           <Text style={styles.rulesSubtitle}>Playing Rules</Text>

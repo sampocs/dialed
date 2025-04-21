@@ -14,10 +14,11 @@ The app generates a unique course layout with specific distances for each hole. 
 
 ### Outdoor Mode
 
-In outdoor mode, each 9-hole section features 7 Par 2 holes and 2 Par 3 holes. Distances are randomly assigned based on par:
+In outdoor mode, each 9-hole section features 2 Par 2 holes, 6 Par 3 holes, and 1 Par 4 hole. Distances are randomly assigned based on par:
 
 - Par 2 holes: 10 or 15 yards
-- Par 3 holes: 20, 30, or 40 yards
+- Par 3 holes: 20, 25, 30, or 35 yards
+- Par 4 holes: 40 yards
 
 For each hole, select a target flag and place your ball approximately at the specified distance. You can pace out your distance, but precision isn't strictly necessary - reasonable approximations work well. Always start from off the green (unless space is limited on shorter Par 2 holes).
 
