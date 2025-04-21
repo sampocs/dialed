@@ -818,7 +818,7 @@ export default function StatsScreen() {
             { opacity: secondTitleOpacity },
             styles.absoluteTitle
           ]}>
-            Avg. Score by Par
+            Average Score by Par
           </Animated.Text>
         </View>
         
@@ -930,7 +930,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 25,
     marginTop: 8,
     marginBottom: 8,
   },
@@ -1083,7 +1083,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     position: 'relative',
     height: 20,
-    width: 120,
+    width: 160,
     justifyContent: 'center',
   },
   absoluteTitle: {
