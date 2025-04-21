@@ -30,6 +30,28 @@ export default function StatsScreen() {
   // Reference to ScrollView for programmatic navigation
   const scrollViewRef = useRef<ScrollView>(null);
 
+  // Create pan responder for title bar swipe
+  const titlePanResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: (_, gestureState) => {
+          // Only respond to horizontal movements greater than 10px
+          return Math.abs(gestureState.dx) > 10;
+        },
+        onPanResponderRelease: (_, gestureState) => {
+          if (gestureState.dx < -50 && currentPage === 0) {
+            // Swipe left, go to next page
+            navigateToPage(1);
+          } else if (gestureState.dx > 50 && currentPage === 1) {
+            // Swipe right, go to previous page
+            navigateToPage(0);
+          }
+        },
+      }),
+    [currentPage]
+  );
+  
   // Calculate available space for the graph
   useEffect(() => {
     // Get window height and subtract estimated space for other components
@@ -562,15 +584,14 @@ export default function StatsScreen() {
       <View style={styles.divider} />
 
       {/* Graph title bar with page indicator */}
-      <View style={styles.graphTitleBar}>
-        <TouchableOpacity 
-          style={styles.graphTitleContainer}
-          onPress={() => navigateToPage(currentPage === 0 ? 1 : 0)}
-        >
-          <Text style={styles.graphTitleText}>
-            {currentPage === 0 ? "Score by Round" : "Future Chart"}
-          </Text>
-        </TouchableOpacity>
+      <View 
+        style={styles.graphTitleBar}
+        {...titlePanResponder.panHandlers}
+      >
+        {/* Title that shows the current page */}
+        <Text style={styles.graphTitleText}>
+          {currentPage === 0 ? "Score by Round" : "Future Chart"}
+        </Text>
         <TouchableOpacity 
           style={styles.pageIndicator}
           onPress={() => navigateToPage(currentPage === 0 ? 1 : 0)}
@@ -682,9 +703,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 8,
     marginBottom: 8,
-  },
-  graphTitleContainer: {
-    padding: 5, // Add padding to increase touch area
   },
   graphTitleText: {
     fontSize: 16,
