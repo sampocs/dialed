@@ -52,7 +52,9 @@ export default function PlayScreen() {
 
   // Update available courses when course mode changes
   useEffect(() => {
-    setAvailableCourses(courseMode === "Indoor" ? INDOOR_COURSES : OUTDOOR_COURSES);
+    // Sort the courses alphabetically before setting them
+    const sortedCourses = [...(courseMode === "Indoor" ? INDOOR_COURSES : OUTDOOR_COURSES)].sort();
+    setAvailableCourses(sortedCourses);
   }, [courseMode]);
 
   const handleStartNewGame = () => {
