@@ -16,6 +16,14 @@ import * as Haptics from 'expo-haptics';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import { Round } from '../types';
 import Scorecard from './Scorecard';
+import { 
+  formatDifferential, 
+  getScoreResultText, 
+  isHoleInOne, 
+  isBirdieOrBetter, 
+  getRemainingHolesCount,
+  getScoredHolesSet
+} from '../utils/scoreUtils';
 
 interface HoleEditorProps {
   round: Round;
@@ -28,6 +36,10 @@ interface HoleEditorProps {
   hasChanges?: boolean;
 }
 
+/**
+ * HoleEditor component for editing scores during a round
+ * Provides UI for selecting scores, navigating between holes, and viewing the scorecard
+ */
 export default function HoleEditor({
   round,
   isEditMode = false,
@@ -42,7 +54,7 @@ export default function HoleEditor({
   const [showScorecard, setShowScorecard] = useState(false);
   const [scoreResult, setScoreResult] = useState<string | null>(null);
   const [scoredHoles, setScoredHoles] = useState<Set<number>>(
-    new Set(round.course.holes.filter(hole => hole.score !== undefined).map((_, idx) => idx + 1))
+    getScoredHolesSet(round.course.holes)
   );
   const [fireBirdieConfetti, setFireBirdieConfetti] = useState(false);
   const [fireHoleInOneConfetti, setFireHoleInOneConfetti] = useState(false);
@@ -157,22 +169,14 @@ export default function HoleEditor({
     
     // Determine the score result text
     const scoreDiff = score - hole.par;
-    let resultText = '';
-    
-    if (scoreDiff === 0) resultText = 'Par';
-    else if (scoreDiff === 1) resultText = 'Bogey';
-    else if (scoreDiff === 2) resultText = 'Double Bogey';
-    else if (scoreDiff > 2) resultText = 'Triple+';
-    else if (scoreDiff === -1) resultText = 'Birdie!';
-    else if (scoreDiff === -2) resultText = 'Eagle!';
-    else if (scoreDiff < -2) resultText = 'Albatross!';
+    const resultText = getScoreResultText(scoreDiff);
     
     // Check for special achievements
-    const isHoleInOne = score === 1 && hole.par > 1;
-    const isBirdie = scoreDiff < 0 && !isHoleInOne;
+    const isHoleInOneAchievement = isHoleInOne(score, hole.par);
+    const isBirdie = isBirdieOrBetter(score, hole.par);
     
     // Set confetti flags
-    if (isHoleInOne) {
+    if (isHoleInOneAchievement) {
       // Extra intense haptic feedback for hole in one
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setTimeout(() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success), 300);
@@ -182,7 +186,7 @@ export default function HoleEditor({
     }
     
     // Provide appropriate haptic feedback based on score
-    if (scoreDiff < 0 && !isHoleInOne) {
+    if (scoreDiff < 0 && !isHoleInOneAchievement) {
       // Success feedback for under par
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } else if (scoreDiff === 0) {
@@ -248,10 +252,10 @@ export default function HoleEditor({
         // Auto-navigate to next hole ONLY if this is the first time scoring this hole
         // and we're not in edit mode and we're not on the last hole
         if (isFirstTimeScoring && !isEditMode && currentHole < round.course.holeCount) {
-          handleNavigateHole('next');
+          setCurrentHole(currentHole + 1);
         }
       });
-    }, isHoleInOne ? 2000 : 1200); // Longer display for hole in one
+    }, 1000);
   };
 
   const handleNavigateHole = (direction: 'prev' | 'next') => {
@@ -323,21 +327,35 @@ export default function HoleEditor({
     }
   };
 
-  // Calculate the total score and differential
   const calculateScoreDetails = () => {
     // Get completed holes (holes with a score)
     const completedHoles = round.course.holes.filter(hole => hole.score !== undefined);
     
-    // Calculate total par for completed holes only
-    const completedHolesPar = completedHoles.reduce((sum, hole) => sum + hole.par, 0);
+    // Calculate remaining holes
+    const remainingHoles = getRemainingHolesCount(completedHoles.length, round.course.holeCount);
     
-    // Calculate total score for completed holes only
-    const completedHolesScore = completedHoles.reduce((sum, hole) => sum + (hole.score || 0), 0);
+    // Get the total par for all holes
+    const totalPar = round.course.totalPar;
     
-    // Calculate differential based on completed holes only
-    const differential = completedHolesScore - completedHolesPar;
+    // Calculate total score so far
+    let totalScore = 0;
+    let totalCompletedPar = 0;
     
-    return { totalScore: completedHolesScore, differential };
+    completedHoles.forEach(hole => {
+      totalScore += hole.score || 0;
+      totalCompletedPar += hole.par;
+    });
+    
+    // Calculate current differential
+    const differential = totalScore - totalCompletedPar;
+    
+    return {
+      totalScore,
+      differential,
+      completedHoles: completedHoles.length,
+      remainingHoles,
+      formattedDifferential: formatDifferential(differential)
+    };
   };
 
   const currentHoleData = round.course.holes[currentHole - 1];

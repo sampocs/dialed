@@ -5,24 +5,49 @@ import { createNewRound, updateScore } from '../utils/gameLogic';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { AppState as RNAppState, AppStateStatus } from 'react-native';
 
+/**
+ * Interface defining all the methods available in the AppContext
+ * Extends the base AppState with functions to manipulate the state
+ */
 interface AppContextType extends AppState {
+  /** Set the current player */
   setPlayer: (player: Player) => Promise<void>;
+  /** Start a new game with optional configuration */
   startNewGame: (courseMode?: "Indoor" | "Outdoor", holeCount?: 9 | 18, courseName?: string) => Promise<void>;
+  /** Start playing a round */
   startRound: () => Promise<void>;
+  /** Update a hole's score */
   updateHoleScore: (holeNumber: number, score: number | undefined) => Promise<void>;
+  /** Mark the current round as complete */
   completeRound: () => Promise<void>;
+  /** Quit the current game */
   quitGame: () => Promise<void>;
+  /** Delete a specific round by ID */
   deleteRound: (roundId: string) => Promise<void>;
+  /** Edit a round with updated data */
   editRound: (roundId: string, updatedRound: Round) => Promise<void>;
+  /** Start edit mode for a round */
   startEditMode: (roundId: string) => Promise<void>;
+  /** Save changes made in edit mode */
   saveRoundEdit: () => Promise<void>;
+  /** Cancel changes made in edit mode */
   cancelRoundEdit: () => Promise<void>;
+  /** Check if there are unsaved changes in edit mode */
   hasEditChanges: () => boolean;
+  /** Switch to a different course */
   switchCourse: (courseName: string) => Promise<void>;
 }
 
+/**
+ * Main app context
+ * Provides game state and methods to components in the app
+ */
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+/**
+ * AppProvider component that manages the global state of the application
+ * Handles persistence, game state, and screen locking functionality
+ */
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AppState>({
     player: undefined,
@@ -36,6 +61,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const screenLockTimerRef = useRef<NodeJS.Timeout | null>(null);
   const appStateRef = useRef<AppStateStatus>(RNAppState.currentState);
 
+  /**
+   * Initialize the app and set up event listeners
+   */
   useEffect(() => {
     const setup = async () => {
       await loadInitialState();
@@ -62,6 +90,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
   
+  /**
+   * Handle app state changes (foreground/background)
+   * Manages screen wake lock according to app state
+   */
   const handleAppStateChange = async (nextAppState: AppStateStatus) => {
     if (appStateRef.current.match(/inactive|background/) && nextAppState === 'active') {
       // App has come to the foreground
@@ -78,6 +110,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     appStateRef.current = nextAppState;
   };
   
+  /**
+   * Start a timer to allow the screen to lock after 2 minutes
+   * Prevents the screen from staying on indefinitely
+   */
   const startScreenLockTimer = () => {
     // Clear any existing timer
     if (screenLockTimerRef.current) {
@@ -90,6 +126,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }, 120000);
   };
 
+  /**
+   * Load the initial state from storage when the app starts
+   */
   const loadInitialState = async () => {
     const initialState = await storage.loadInitialState();
     
@@ -105,11 +144,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState(current => ({ ...current, ...initialState }));
   };
 
+  /**
+   * Update the player information
+   */
   const setPlayer = async (player: Player) => {
     await storage.savePlayer(player);
     setState(current => ({ ...current, player }));
   };
 
+  /**
+   * Create a new game with the specified settings
+   */
   const startNewGame = async (courseMode: "Indoor" | "Outdoor" = "Indoor", holeCount: 9 | 18 = 18, courseName?: string) => {
     const newRound = createNewRound(courseMode, holeCount, courseName);
     await storage.saveCurrentRound(newRound);
@@ -120,6 +165,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  /**
+   * Begin playing the current round
+   */
   const startRound = async () => {
     if (!state.currentRound) return;
     
@@ -129,6 +177,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  /**
+   * Start editing an existing round
+   */
   const startEditMode = async (roundId: string) => {
     const roundToEdit = state.rounds.find(round => round.id === roundId);
     if (!roundToEdit) return;
@@ -155,6 +206,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  /**
+   * Update the score for a specific hole
+   */
   const updateHoleScore = async (holeNumber: number, score: number | undefined) => {
     if (!state.currentRound) return;
 
@@ -163,7 +217,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     
     // If in edit mode, check if there are changes
     if (state.gameState === 'edit-mode' && state.editState) {
-      const originalScore = state.editState.originalScores[holeNumber];
       const hasChanges = Object.keys(state.editState.originalScores).some(holeNum => {
         const holeNumber = parseInt(holeNum);
         const originalScore = state.editState?.originalScores[holeNumber];
@@ -184,6 +237,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  /**
+   * Complete the current round and save it to history
+   */
   const completeRound = async () => {
     if (!state.currentRound) return;
 
@@ -205,6 +261,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  /**
+   * Save changes made in edit mode
+   */
   const saveRoundEdit = async () => {
     if (!state.currentRound || !state.editState) return;
     
@@ -227,6 +286,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  /**
+   * Cancel all changes made in edit mode
+   */
   const cancelRoundEdit = async () => {
     await storage.saveCurrentRound(null);
     setState(current => ({
@@ -237,10 +299,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
+  /**
+   * Check if there are unsaved changes in edit mode
+   */
   const hasEditChanges = () => {
     return state.editState?.hasChanges || false;
   };
 
+  /**
+   * Quit the current game without saving
+   */
   const quitGame = async () => {
     await storage.saveCurrentRound(null);
     setState(current => ({
