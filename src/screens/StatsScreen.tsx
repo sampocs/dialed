@@ -26,6 +26,9 @@ export default function StatsScreen() {
 
   // Current page for the horizontal scroll view
   const [currentPage, setCurrentPage] = useState(0);
+  
+  // Reference to ScrollView for programmatic navigation
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // Calculate available space for the graph
   useEffect(() => {
@@ -100,6 +103,15 @@ export default function StatsScreen() {
 
   const points = getGraphPoints();
 
+  // Function to navigate to specific page
+  const navigateToPage = (pageIndex: number) => {
+    if (scrollViewRef.current) {
+      const pageWidth = Dimensions.get('window').width;
+      scrollViewRef.current.scrollTo({ x: pageIndex * pageWidth, animated: true });
+      setCurrentPage(pageIndex);
+    }
+  };
+  
   // Handle scroll event to update current page
   const handleScroll = (event: { nativeEvent: { contentOffset: { x: number } } }) => {
     const offsetX = event.nativeEvent.contentOffset.x;
@@ -551,23 +563,34 @@ export default function StatsScreen() {
 
       {/* Graph title bar with page indicator */}
       <View style={styles.graphTitleBar}>
-        <Text style={styles.graphTitleText}>
-          {currentPage === 0 ? "Score by Round" : "Future Chart"}
-        </Text>
+        <TouchableOpacity 
+          style={styles.graphTitleContainer}
+          onPress={() => navigateToPage(currentPage === 0 ? 1 : 0)}
+        >
+          <Text style={styles.graphTitleText}>
+            {currentPage === 0 ? "Score by Round" : "Future Chart"}
+          </Text>
+        </TouchableOpacity>
         <View style={styles.pageIndicator}>
-          <View style={[styles.pageIndicatorDot, currentPage === 0 && styles.pageIndicatorDotActive]} />
-          <View style={[styles.pageIndicatorDot, currentPage === 1 && styles.pageIndicatorDotActive]} />
+          <TouchableOpacity onPress={() => navigateToPage(0)}>
+            <View style={[styles.pageIndicatorDot, currentPage === 0 && styles.pageIndicatorDotActive]} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigateToPage(1)}>
+            <View style={[styles.pageIndicatorDot, currentPage === 1 && styles.pageIndicatorDotActive]} />
+          </TouchableOpacity>
         </View>
       </View>
 
       {/* Horizontal scroll view for the chart section */}
       <ScrollView 
+        ref={scrollViewRef}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onScroll={handleScroll}
         scrollEventThrottle={16}
         style={styles.horizontalScrollView}
+        scrollEnabled={false} // Disable scroll gestures
       >
         {/* First page - Score chart */}
         <View style={{width: Dimensions.get('window').width}}>
@@ -661,6 +684,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 8,
   },
+  graphTitleContainer: {
+    padding: 5, // Add padding to increase touch area
+  },
   graphTitleText: {
     fontSize: 16,
     fontWeight: '500',
@@ -676,6 +702,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#3D3D3D',
     marginHorizontal: 4,
+    padding: 8, // Add padding to increase touch area
   },
   pageIndicatorDotActive: {
     backgroundColor: '#93C757',
