@@ -973,6 +973,13 @@ export default function StatsScreen() {
 
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
+          <Text style={styles.statLabel}>Rounds</Text>
+          <View style={styles.scoreContainer}>
+            <Text style={styles.statValue}>{completedRounds.length}</Text>
+          </View>
+        </View>
+
+        <View style={styles.statItem}>
           <Text style={styles.statLabel}>Handicap</Text>
           <View style={styles.scoreContainer}>
             <Text style={styles.statValue}>
