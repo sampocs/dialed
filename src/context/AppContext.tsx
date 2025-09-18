@@ -245,11 +245,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     const completedRound = { ...state.currentRound, completed: true };
     const updatedRounds = [...state.rounds, completedRound];
-    
-    // Save the completed round to storage
+
+    // Save the completed round to storage and clear currentRound
     await Promise.all([
       storage.saveRounds(updatedRounds),
-      storage.saveCurrentRound(completedRound),
+      storage.saveCurrentRound(null),
     ]);
 
     // Update state to show the completed round
